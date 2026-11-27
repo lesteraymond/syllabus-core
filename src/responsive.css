@@ -12,7 +12,8 @@
 	body { min-width: 0; }
 }
 
-.topbar-brand { display: none; }
+.topbar-brand,
+.mobile-search-btn { display: none; }
 
 /* Tablet and below: page content spacing. (The desktop sidebar stays down to 768px; it starts on its narrow rail below 1024px.) */
 @media (max-width: 1023.98px) {
@@ -20,17 +21,19 @@
 	.page-head { flex-wrap: wrap; gap: 12px; }
 	.page-actions { flex-wrap: wrap; }
 	.msg-drop { width: min(340px, calc(100vw - 32px)); }
-	.toast { right: 16px; left: 16px; bottom: max(16px, env(safe-area-inset-bottom)); }
+	.toast { right: 16px; left: auto; max-inline-size: min(440px, calc(100dvw - 32px)); bottom: max(16px, env(safe-area-inset-bottom)); }
 	/* The long eyebrow wrapped to three lines in the 80px topbar; keep it on one line and let it truncate. */
+	.topbar { padding: 10px 16px; gap: 12px; }
 	.topbar-heading { flex: 1 1 0; min-width: 0; }
 	.topbar-heading .eyebrow { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-	.top-actions { flex: none; }
+	.top-actions { flex: 0 1 auto; min-width: 0; gap: 8px; }
+	.top-actions .search { flex: 1 1 180px; width: clamp(148px, 24vw, 240px); min-width: 140px; }
 }
 
 /* Below md (768px): no sidebar. A brand bar with the actions sits on top, followed by the accordion card; both are in the page flow, so
    opening the accordion pushes the content down. The content area uses the full width. */
 @media (max-width: 767.98px) {
-	.workspace { margin-left: 0; }
+	.workspace { margin-left: 0; transition: none; }
 	.topbar {
 		position: relative;
 		height: auto;
@@ -43,6 +46,26 @@
 	.topbar-brand strong { font: var(--fw-bold) var(--text-lg) var(--font-display); line-height: 1.3; }
 	.topbar-heading,
 	.search { display: none; }
+	.mobile-search-btn { display: inline-grid; place-items: center; }
+	.top-actions .search.is-mobile-open {
+		display: flex;
+		position: absolute;
+		top: calc(100% + 6px);
+		left: 12px;
+		right: 12px;
+		width: auto;
+		min-width: 0;
+		z-index: 65;
+		background: var(--card);
+		border: 1px solid var(--line);
+		box-shadow: var(--shadow);
+	}
+	.top-actions .search.is-mobile-open .search-drop {
+		left: 0;
+		right: 0;
+		width: auto;
+		max-width: none;
+	}
 	.top-actions { flex: none; gap: 6px; }
 	.top-actions .icon-btn { width: 40px; height: 40px; }
 	/* Log out is icon-only here; the button keeps its aria-label, so assistive tech still announces it. */
@@ -80,7 +103,7 @@
 	}
 	.mnav-tile { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px; background: var(--btn-primary-tint); color: var(--btn-primary); }
 	.mnav-heading { display: grid; min-width: 0; line-height: 1.25; }
-	.mnav-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-sm); font-weight: var(--fw-bold); text-transform: uppercase; letter-spacing: var(--tracking-label); }
+	.mnav-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-sm); font-weight: var(--fw-semibold); letter-spacing: -0.005em; }
 	.mnav-heading small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: var(--text-xs); color: var(--muted); }
 	.mnav-chevron { color: var(--muted); transition: transform 200ms ease; }
 	.mnav[data-open="true"] .mnav-chevron { transform: rotate(180deg); }
@@ -109,15 +132,14 @@
 		border: 0;
 		border-radius: 9px;
 		font-size: var(--text-sm);
-		font-weight: var(--fw-semibold);
-		text-transform: uppercase;
-		letter-spacing: var(--tracking-label);
+		font-weight: var(--fw-medium);
+		letter-spacing: -0.005em;
 	}
 	.mnav-list button .nav-icon { color: var(--side-icon); }
 	.mnav-list button:hover { background: var(--side-hover); color: var(--ink); }
-	.mnav-list button.active { background: var(--side-active); color: var(--ink); }
-	.mnav-list button.active:hover { background: var(--side-active-hover); }
-	.mnav-list button:hover .nav-icon, .mnav-list button.active .nav-icon { color: var(--btn-primary); }
+	.mnav-list button.active, .mnav-list button:active { background: var(--side-active-blue); color: var(--ink); }
+	.mnav-list button.active:hover { background: var(--side-active-blue-hover); }
+	.mnav-list button.active .nav-icon, .mnav-list button:active .nav-icon { color: var(--btn-primary); }
 }
 
 /* Phone */
@@ -131,12 +153,12 @@
 }
 
 /* ---- Sign-in, register and forgot-password (they share .login-page) ---- */
-/* Laptops: the two columns are equal, so the half-width brand side gets a smaller logo circle and heading to keep the text from being cut off. */
+/* Laptops: the two columns are equal, so the half-width brand side gets compact padding and fluid heading sizing. */
 @media (max-width: 1599.98px) {
 	.login-brand { padding: 28px 4vw 68px; gap: 0; }
 	.login-brand > div:last-child { min-width: 0; }
 	.brand-orb { width: 230px; height: 230px; min-width: 230px; padding: 0; margin-bottom: -8px; }
-	.login-brand h1 { font-size: clamp(26px, 2.8vw, 44px); white-space: nowrap; }
+	.login-brand h1 { font-size: clamp(1.85rem, 1.2rem + 1.6vw, 2.75rem); white-space: normal; }
 	.login-brand p { font-size: var(--text-base); overflow-wrap: anywhere; }
 }
 @media (max-width: 1279.98px) {
@@ -162,8 +184,10 @@
 	.table-card { overflow-x: auto; -webkit-overflow-scrolling: touch; }
 	.table-wrap:not(.syllabus-table) table,
 	.table-card table { min-width: 640px; }
+	.dashboard-grid,
 	.dashboard-grid.lower,
 	.pick-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.dashboard-grid > .card:last-child:nth-child(odd) { grid-column: 1 / -1; }
 	.review-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 	.report-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 	.ai-layout { grid-template-columns: minmax(0, 1fr); }
@@ -235,6 +259,15 @@
 	.usage-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
+/* Medium tablet: stack 2-up cards/charts and wrap repository filters cleanly before phone breakpoint. */
+@media (max-width: 900px) {
+	.analytics-grid.two,
+	.comp-grid,
+	.syl-grid { grid-template-columns: minmax(0, 1fr); }
+	.filter-card.repository-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	.filter-card.repository-filters .reset { justify-self: start; }
+}
+
 /* Phone: single-column forms and grids, full-screen sheets for modals. */
 @media (max-width: 639.98px) {
 	.form-grid,
@@ -250,19 +283,64 @@
 	.review-summary,
 	.reports-grid,
 	.analytics-grid.two { grid-template-columns: minmax(0, 1fr); }
+	.rp-stages { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
 	.reports-grid .card:nth-child(3) { grid-column: auto; }
 	.report-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 	.field.full { grid-column: auto; }
-	.filter-card { grid-template-columns: minmax(0, 1fr); }
+	.filter-card,
+	.filter-card.repository-filters,
+	.aic-filter-row { grid-template-columns: minmax(0, 1fr); }
+	.catalog-page .sm-toolbar .field,
+	.catalog-page .sm-toolbar .field.sm-search-field { flex: 1 1 100%; max-width: none; min-width: 0; }
+	.pick-card.pick-compact > .btn { flex: 1 1 auto; }
+	.pick-foot { flex-wrap: wrap; gap: 10px; }
+	.pick-foot .btn { flex: 1 1 auto; }
+	.hist-card { padding: 16px; }
+	.hist-grid { margin: 2px -16px -16px; }
+	.hist-filter { width: 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); justify-content: stretch; gap: 10px; }
+	.hist-filter .dp { width: 100%; }
+	.hist-filter .btn { grid-column: 1 / -1; width: 100%; }
+	.hist-filter-error { grid-column: 1 / -1; text-align: left; }
+	.hist-item { grid-template-columns: 44px minmax(0, 1fr) 12px; column-gap: 12px; row-gap: 6px; padding: 12px 16px; }
+	.hist-item::after { grid-column: 3; grid-row: 1; }
+	.hist-score { grid-column: 1; grid-row: 1; }
+	.hist-score small { display: none; }
+	.hist-main { grid-column: 2; grid-row: 1; }
+	.hist-main > span { white-space: normal; }
+	.hist-tags { grid-column: 2 / 4; grid-row: 2; justify-content: flex-start; flex-wrap: wrap; }
+	.hist-foot time { grid-column: 2 / 4; grid-row: 3; text-align: left; }
+	.chk-layout > .chk-rail:only-child { flex: 1 1 100%; margin-left: 0; }
+	.profile-photo-row { flex-wrap: wrap; }
+	.profile-photo-menu { max-width: calc(100vw - 32px); }
+	.page-wrap { padding-bottom: max(32px, calc(16px + env(safe-area-inset-bottom))); }
+	.rd-panel.cm-modal .rd-head { padding: 14px 16px; }
+	.cm-modal .cm-body { padding: 16px; }
+	.cm-modal .cm-score { flex-direction: column; align-items: center; gap: 18px; padding-bottom: 18px; }
+	.cm-modal .cm-score .big-ring.cm-ring { width: 136px; height: 136px; }
+	.cm-modal .cm-score .big-ring.cm-ring > div { width: 122px; height: 122px; }
+	.cm-modal .cm-score .big-ring.cm-ring strong { font-size: 28px; }
+	.cm-modal .cm-areas { width: 100%; grid-template-columns: minmax(0, 1fr); gap: 12px; }
+	.cm-modal .cm-area { min-width: 0; }
+	.rd-foot { padding: 12px 16px max(12px, env(safe-area-inset-bottom)); flex-wrap: wrap; }
+	.rd-foot .btn { flex: 1 1 auto; }
+	.ar-bar { padding: 14px 16px; }
+	.ar-card { padding: 16px; }
 	.stat-grid > .stat-card { flex-basis: min(150px, 100%); }
 
 	.overlay:not(.overlay-confirm) { padding: 0; align-items: stretch; justify-items: stretch; }
 	.overlay .modal:not(.confirm-modal) {
-		width: 100vw;
-		max-width: 100vw;
+		width: 100%;
+		max-width: 100%;
 		height: 100dvh;
 		max-height: 100dvh;
 		border-radius: 0;
+	}
+	.overlay .modal.qa-modal {
+		width: min(480px, 100%);
+		max-width: 100%;
+		height: auto;
+		max-height: calc(100dvh - 32px);
+		border-radius: var(--radius-card);
 	}
 	.modal-head { padding: 14px 16px; }
 	.modal-body { padding: 16px; }
@@ -284,6 +362,14 @@
 	input:not([type="checkbox"]):not([type="radio"]),
 	select,
 	textarea { font-size: max(16px, 1em); }
+}
+
+@media (max-width: 519.98px) {
+	.topbar .profile-btn span:last-child { display: none; }
+	.ar-card-head { flex-wrap: wrap; align-items: flex-start; }
+	.ar-metrics > div { padding: 0 8px; }
+	.page-actions { width: 100%; }
+	.page-actions > .select { width: 100%; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -405,12 +491,14 @@
 		flex-direction: column;
 		justify-content: flex-start;
 		gap: 6px;
+		padding-bottom: 4px;
+		box-sizing: border-box;
 	}
 
 	.dashboard-grids-wrap .quick-actions button {
-		flex: 1 1 auto;
-		min-height: 52px;
-		max-height: 72px;
+		flex: 1 1 0%;
+		min-height: 48px;
+		max-height: 64px;
 		padding: 6px 10px;
 		align-items: center;
 		overflow: hidden;

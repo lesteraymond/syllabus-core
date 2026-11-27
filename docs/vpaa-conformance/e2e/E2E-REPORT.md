@@ -4,7 +4,7 @@
 
 **Label: LOCAL E2E (staging-like topology: https frontend, TLS proxy, NODE_ENV=staging server, isolated scratch database, the new AI Checker on an offline stand-in for the Anthropic API). Not a staging E2E; no live Claude request.**
 
-Browser: Microsoft Edge (Chromium) via playwright-core · Node v26.12.1 · finished 2026-11-17T22:38:39.032Z
+Browser: Microsoft Edge (Chromium) via playwright-core · Node v26.12.1 · finished 2026-11-24T16:58:25.104Z
 
 | | |
 |---|---|
@@ -60,7 +60,7 @@ Browser: Microsoft Edge (Chromium) via playwright-core · Node v26.12.1 · finis
 - ✔ connect.sid is HttpOnly, Secure and SameSite=Lax over https (httpOnly=true secure=true sameSite=Lax)
 - ✔ no remember-me cookie unless it was requested
 - ✔ the session authenticates API calls made with credentials from the https frontend origin
-- ✔ CORS answers the configured frontend origin only, with credentials ({"origin":"https://localhost:3664","credentials":"true","vary":"Origin"})
+- ✔ CORS answers the configured frontend origin only, with credentials ({"origin":"https://localhost:3658","credentials":"true","vary":"Origin"})
 - ✔ after logging out the API refuses the old session (401)
 - ✔ the login form is shown again after logout
 - ✔ E01: no uncaught page errors (none)
@@ -121,7 +121,7 @@ Evidence: [E03-faculty-checker-1440.png](E03-faculty-checker-1440.png)
 
 ### E04 — Faculty submits through the UI; the syllabus locks; another faculty member and signed-out callers cannot reach it
 
-- ✔ My Syllabi shows Submitted with the review chain (Dean, Asst. VPAA, LIC Director)
+- ✔ My Syllabi shows the syllabus as Submitted
 - ✔ the page explains that the submitted syllabus is locked
 - ✔ the submit call was answered 200
 - ✔ a locked syllabus refuses edits from its own owner (HTTP 409)
@@ -199,7 +199,7 @@ Evidence: [E07-faculty-after-return-1440.png](E07-faculty-after-return-1440.png)
 - ✔ E08: no unexpected API failures (none)
 - ✔ E08: no request left this machine (none blocked)
   - note: provider requests during Check & improve: 0
-  - note: after Check & improve: AI Recommendation (1) Accept applies and saves the displayed recommendation. Edit and apply saves your revision. You can accept other recommendations whose target fields are unchanged. Click Re-Check again when ready for a new score. Suggested alignment revision Step 3: Learning Plan · Learning plan (Row 2) Why this is suggested: fixes 1 ACTIVITY-FIT Partly aligned −1 points
+  - note: after Check & improve: AI Recommendation (1) Suggested alignment revision Step 3: Learning Plan · Learning plan (Row 2) Why this is suggested: fixes 1 Edit proposed text Checked against 4 related items: 1 improve and none get worse. It is safe to accept. Accept Check & improve Reject AI questions: 146 of 146 answered What did you change? (required) Write at least a sentence so the reviewer knows w
 
 Evidence: [E08-recommendation-actions-1440.png](E08-recommendation-actions-1440.png)
 
@@ -213,7 +213,7 @@ Evidence: [E08-recommendation-actions-1440.png](E08-recommendation-actions-1440.
 - ✔ Submit new version stays disabled until the author says what changed
 - ✔ Submit new version is enabled once the change note is written
 - ✔ the corrected syllabus is Submitted again
-- ✔ a new version (v1.1) exists in the history
+- ✔ a new version (v2) exists in the history
 - ✔ E09: no uncaught page errors (none)
 - ✔ E09: no JavaScript console errors (none)
 - ✔ E09: no unexpected API failures (none)
@@ -227,7 +227,7 @@ Evidence: [E09-resubmitted-1440.png](E09-resubmitted-1440.png)
 - ✔ the re-check of the corrected version meets the standard with no AI points left (100%)
 - ✔ the VPAA cannot approve while the three stages have not cleared (HTTP 409 {"error":"The dean, the Asst. VPAA and the LIC Director must each clear this syllabus before it can be approved.","code")
 - ✔ a Dean (administrator) cannot approve: only the VPAA can (HTTP 403)
-- ✔ the Dean stage shows as cleared (Decision Comments Messages Dean Test Administrator Asst. VPAA Not yet LIC Director Not yet Note to the faculty member Return for revision Revision history Close)
+- ✔ the Dean stage shows as cleared (Decision Comments Messages Dean Test Administrator Asst. VPAA Reviewing now LIC Director Waiting VPAA Waiting You cleared this version. It has moved on to the n)
 - ✔ asst stage cleared through the UI
 - ✔ lic stage cleared through the UI
 - ✔ once all three stages cleared, the VPAA is offered Approve
@@ -299,13 +299,13 @@ Evidence: [E12-ai-down-1440.png](E12-ai-down-1440.png)
 - ✔ the navigation is shown in Filipino
 - ✔ the AI Checker and the new checker's report are shown in Filipino
 - ✔ no English report heading is left in the translated page
-- ✔ the language choice survives a full reload (saved on the account)
+- ✔ the language choice survives a full reload (saved on the account), on the same screen
 - ✔ switching back restores English
 - ✔ E13: no uncaught page errors (none)
 - ✔ E13: no JavaScript console errors (none)
 - ✔ E13: no unexpected API failures (none)
 - ✔ E13: no request left this machine (none blocked)
-  - note: AI Checker page in Filipino: CITE PANGKALAHATANG TANAW TAGABUO NG SILABUS AI CHECKER AKING MGA SILABUS IMBAKAN ESTADISTIKA MGA ULAT MGA SETTING SISTEMA NG PAMAMAHALA NG SILABUS 2 TF Test Faculty Guro Mag-sign out Tagasuri ng Silabus gamit ang AI Sinusuri ayon sa form ng Undergraduate Syllabus. Ang hindi pagsunod sa template lamang ang pumipigil sa pagpasa; gabay para sa iyo at sa tagasuri ang mark
+  - note: AI Checker page in Filipino: CITE Pangkalahatang Tanaw Tagabuo ng Silabus Tagasuri Tagalikha ng Silabus Mga Silabus Imbakan Estadistika Mga Ulat Mga Setting SISTEMA NG PAMAMAHALA NG SILABUS 2 TF Test Faculty Guro Mag-sign out Tagasuri ng Silabus Suriin ang iyong silabus ayon sa template ng institusyon bago ipasa. 2026–2027 Asignatura IT 205 — Data Structures and Algorithms (synthetic) Baguhin ang 
 
 Evidence: [E13-filipino-checker-1440.png](E13-filipino-checker-1440.png)
 
@@ -313,10 +313,10 @@ Evidence: [E13-filipino-checker-1440.png](E13-filipino-checker-1440.png)
 
 - ✔ phone 375px: Dashboard renders
 - ✔ phone 375px: Dashboard has no horizontal page overflow (scrollWidth 375 <= 375)
-- ✔ phone 375px: My Syllabi renders
-- ✔ phone 375px: My Syllabi has no horizontal page overflow (scrollWidth 375 <= 375)
-- ✔ phone 375px: AI Checker renders
-- ✔ phone 375px: AI Checker has no horizontal page overflow (scrollWidth 375 <= 375)
+- ✔ phone 375px: Syllabi renders
+- ✔ phone 375px: Syllabi has no horizontal page overflow (scrollWidth 375 <= 375)
+- ✔ phone 375px: Checker renders
+- ✔ phone 375px: Checker has no horizontal page overflow (scrollWidth 375 <= 375)
 - ✔ phone 375px: Repository renders
 - ✔ phone 375px: Repository has no horizontal page overflow (scrollWidth 375 <= 375)
 - ✔ E14-375: no uncaught page errors (none)
@@ -325,10 +325,10 @@ Evidence: [E13-filipino-checker-1440.png](E13-filipino-checker-1440.png)
 - ✔ E14-375: no request left this machine (none blocked)
 - ✔ tablet 768px: Dashboard renders
 - ✔ tablet 768px: Dashboard has no horizontal page overflow (scrollWidth 768 <= 768)
-- ✔ tablet 768px: My Syllabi renders
-- ✔ tablet 768px: My Syllabi has no horizontal page overflow (scrollWidth 768 <= 768)
-- ✔ tablet 768px: AI Checker renders
-- ✔ tablet 768px: AI Checker has no horizontal page overflow (scrollWidth 768 <= 768)
+- ✔ tablet 768px: Syllabi renders
+- ✔ tablet 768px: Syllabi has no horizontal page overflow (scrollWidth 768 <= 768)
+- ✔ tablet 768px: Checker renders
+- ✔ tablet 768px: Checker has no horizontal page overflow (scrollWidth 768 <= 768)
 - ✔ tablet 768px: Repository renders
 - ✔ tablet 768px: Repository has no horizontal page overflow (scrollWidth 768 <= 768)
 - ✔ E14-768: no uncaught page errors (none)
@@ -337,10 +337,10 @@ Evidence: [E13-filipino-checker-1440.png](E13-filipino-checker-1440.png)
 - ✔ E14-768: no request left this machine (none blocked)
 - ✔ laptop 1024px: Dashboard renders
 - ✔ laptop 1024px: Dashboard has no horizontal page overflow (scrollWidth 1024 <= 1024)
-- ✔ laptop 1024px: My Syllabi renders
-- ✔ laptop 1024px: My Syllabi has no horizontal page overflow (scrollWidth 1024 <= 1024)
-- ✔ laptop 1024px: AI Checker renders
-- ✔ laptop 1024px: AI Checker has no horizontal page overflow (scrollWidth 1024 <= 1024)
+- ✔ laptop 1024px: Syllabi renders
+- ✔ laptop 1024px: Syllabi has no horizontal page overflow (scrollWidth 1024 <= 1024)
+- ✔ laptop 1024px: Checker renders
+- ✔ laptop 1024px: Checker has no horizontal page overflow (scrollWidth 1024 <= 1024)
 - ✔ laptop 1024px: Repository renders
 - ✔ laptop 1024px: Repository has no horizontal page overflow (scrollWidth 1024 <= 1024)
 - ✔ E14-1024: no uncaught page errors (none)
@@ -349,10 +349,10 @@ Evidence: [E13-filipino-checker-1440.png](E13-filipino-checker-1440.png)
 - ✔ E14-1024: no request left this machine (none blocked)
 - ✔ desktop 1440px: Dashboard renders
 - ✔ desktop 1440px: Dashboard has no horizontal page overflow (scrollWidth 1440 <= 1440)
-- ✔ desktop 1440px: My Syllabi renders
-- ✔ desktop 1440px: My Syllabi has no horizontal page overflow (scrollWidth 1440 <= 1440)
-- ✔ desktop 1440px: AI Checker renders
-- ✔ desktop 1440px: AI Checker has no horizontal page overflow (scrollWidth 1440 <= 1440)
+- ✔ desktop 1440px: Syllabi renders
+- ✔ desktop 1440px: Syllabi has no horizontal page overflow (scrollWidth 1440 <= 1440)
+- ✔ desktop 1440px: Checker renders
+- ✔ desktop 1440px: Checker has no horizontal page overflow (scrollWidth 1440 <= 1440)
 - ✔ desktop 1440px: Repository renders
 - ✔ desktop 1440px: Repository has no horizontal page overflow (scrollWidth 1440 <= 1440)
 - ✔ E14-1440: no uncaught page errors (none)
@@ -381,7 +381,7 @@ Evidence: [E14-checker-375.png](E14-checker-375.png), [E14-checker-768.png](E14-
 ### E17 — Post-deployment smoke test (scripts/smoke-test.cjs) passes against the https staging-like stack
 
 - ✔ the smoke test exits 0 (no failing check)
-  - note: [PASS] the API is reached over https : localhost:3663 \|\| [PASS] GET /api/health is 200 with the database reachable : HTTP 200 \|\| [PASS] the health response reveals nothing but status and database \|\| [PASS] an unauthenticated request is refused (401) : HTTP 401 \|\| [PASS] CORS answers the configured frontend origin with credentials \|\| [PASS] a foreign origin gets no CORS permission \|\| [P
+  - note: [PASS] the API is reached over https : localhost:3657 \|\| [PASS] GET /api/health is 200 with the database reachable : HTTP 200 \|\| [PASS] the health response reveals nothing but status and database \|\| [PASS] an unauthenticated request is refused (401) : HTTP 401 \|\| [PASS] CORS answers the configured frontend origin with credentials \|\| [PASS] a foreign origin gets no CORS permission \|\| [P
 
 ### E18 — Admin sets a subject's academic year, semester, year level and pre-requisite; faculty picks it, the values fill in and cannot be changed
 
@@ -443,7 +443,7 @@ Evidence: [E19-subject-filters-1440.png](E19-subject-filters-1440.png), [E19-sub
 - ✔ the open list tags 2026–2027 as current
 - ✔ Make current is not offered while the current year is shown
 - ✔ adding a year that exists is refused with the message inside the popover
-- ✔ the page header does not change height while the add-year popover is open (53 px before, 53 px after)
+- ✔ the page header does not change height while the add-year popover is open (72 px before, 72 px after)
 - ✔ + Add subject stays in the header row
 - ✔ + Add year added 2028–2029
 - ✔ the change is explained and confirmed first
@@ -460,7 +460,7 @@ Evidence: [E19-subject-filters-1440.png](E19-subject-filters-1440.png), [E19-sub
 - ✔ the closed year filter shows the year alone and is not clipped ("2027–2028", {"clipped":false,"scroll":93,"client":93,"trigger":140})
 - ✔ the open list tags the current year for faculty
 - ✔ choosing 2026–2027 in the year filter brings last year's syllabus back
-- ✔ the faculty member can start a new syllabus on IT 204 in 2027–2028 (HTTP 200 {"savedAt":"2026-11-17T22:36:33.494Z","bytes":731,"clos":[{"id":"c1","title":"Outcome 1","level":"Introductory","stateme)
+- ✔ the faculty member can start a new syllabus on IT 204 in 2027–2028 (HTTP 200 {"savedAt":"2026-11-24T16:56:12.227Z","bytes":731,"clos":[{"id":"c1","title":"Outcome 1","level":"Introductory","stateme)
 - ✔ the new syllabus is stamped with the current year
 - ✔ Step 1 can read the syllabus year
 - ✔ the administrator may open any year
@@ -514,9 +514,9 @@ Evidence: [E21-admin-empty-new-year-1440.png](E21-admin-empty-new-year-1440.png)
 
 ### E22 — A new program is flagged until the administrator sets its EGAs and Program Outcomes in the app; a past year is read-only; the school vision and mission are saved from the Add subject form, which replaced the separate card
 
-- ✔ the program created in 2028–2029 has no EGAs and no outcomes ({"id":3,"code":"BSIT","name":"Bachelor of Science in Information Technology","outcomeCount":0,"egaCount":0,"inheritedFrom":null})
+- ✔ the program created in 2028–2029 has no EGAs and no outcomes ({"id":3,"code":"BSIT","name":"Bachelor of Science in Information Technology","outcomeCount":0,"egaCount":0,"unlinkedPoCount":0,"inheritedFrom":null})
 - ✔ the program shows a "Set up EGAs and POs" badge and the page lists it in a banner
-- ✔ an outcome cannot be added before an EGA is saved
+- ✔ an outcome cannot be added before an EGA is added
 - ✔ the EGA is saved for this program only (1 EGA, 0 outcomes)
 - ✔ with an EGA but no outcome the program still needs setup
 - ✔ the outcome is saved and mapped to EGA 1
@@ -540,7 +540,7 @@ Evidence: [E22-admin-needs-setup-1440.png](E22-admin-needs-setup-1440.png), [E22
 ### E23 — Add subject with a new program: the administrator types its EGAs, Program Outcomes and the school vision; faculty get them for that program and subject; a later change reaches existing subjects only through Apply to subjects
 
 - ✔ the Add program form shows the EGA and Program Outcome part
-- ✔ the program was created with its EGA and its Program Outcome ({"id":4,"code":"BSEE","name":"BS Electrical Engineering (synthetic)","outcomeCount":1,"egaCount":1,"inheritedFrom":null})
+- ✔ the program was created with its EGA and its Program Outcome ({"id":4,"code":"BSEE","name":"BS Electrical Engineering (synthetic)","outcomeCount":1,"egaCount":1,"unlinkedPoCount":0,"inheritedFrom":null})
 - ✔ the subject list no longer reports the EGAs, POs or vision as missing (["the learning outcomes of EE 101"])
 - ✔ the school vision typed in the form was saved
 - ✔ the subject was assigned to the faculty member (HTTP 200)
@@ -560,7 +560,7 @@ Evidence: [E22-admin-needs-setup-1440.png](E22-admin-needs-setup-1440.png), [E22
 - ✔ the new program has version 1 in force for 2028–2029, and the panel shows it
 - ✔ the panel asks for no approval or document, and a saved version has no edit control
 - ✔ the existing subject keeps its own copy after the program is edited
-- ✔ Save outcomes put version 2 in force and kept version 1
+- ✔ Saving the outcomes put version 2 in force and kept version 1
 - ✔ the change log says who saved it, the previous version and the new one
 - ✔ the panel shows the new version and the change log without reopening the dialog
 - ✔ Apply to subjects gives the existing subject the revised outcome
@@ -579,8 +579,8 @@ Evidence: [E23-admin-add-program-outcomes-1440.png](E23-admin-add-program-outcom
 
 - ✔ admin Dashboard: the closed filter reads only the year ("2028–2029")
 - ✔ admin Dashboard: the open list tags 2028–2029 as current
-- ✔ admin My Syllabi: the closed filter reads only the year ("2028–2029")
-- ✔ admin My Syllabi: the open list tags 2028–2029 as current
+- ✔ admin Syllabi: the closed filter reads only the year ("2028–2029")
+- ✔ admin Syllabi: the open list tags 2028–2029 as current
 - ✔ admin Repository: the closed filter reads only the year ("2028–2029")
 - ✔ admin Repository: the open list tags 2028–2029 as current
 - ✔ admin Compliance: the closed filter reads only the year ("2028–2029")
@@ -591,8 +591,8 @@ Evidence: [E23-admin-add-program-outcomes-1440.png](E23-admin-add-program-outcom
 - ✔ admin Reports: the open list tags 2028–2029 as current
 - ✔ faculty Dashboard: the closed filter reads only the year ("2028–2029")
 - ✔ faculty Dashboard: the open list tags 2028–2029 as current
-- ✔ faculty My Syllabi: the closed filter reads only the year ("2028–2029")
-- ✔ faculty My Syllabi: the open list tags 2028–2029 as current
+- ✔ faculty Syllabi: the closed filter reads only the year ("2028–2029")
+- ✔ faculty Syllabi: the open list tags 2028–2029 as current
 - ✔ faculty Repository: the closed filter reads only the year ("2028–2029")
 - ✔ faculty Repository: the open list tags 2028–2029 as current
 - ✔ faculty Analytics: the closed filter reads only the year ("2028–2029")
@@ -634,6 +634,6 @@ Evidence: [E24-admin-dashboard-year-filter-1440.png](E24-admin-dashboard-year-fi
 - ✔ E25-admin: no JavaScript console errors (none)
 - ✔ E25-admin: no unexpected API failures (none)
 - ✔ E25-admin: no request left this machine (none blocked)
-  - note: compliance history after adoption: 75868 bytes
+  - note: compliance history after adoption: 86261 bytes
 
 Evidence: [E25-faculty-review-notice-1440.png](E25-faculty-review-notice-1440.png), [E25-faculty-review-compare-1440.png](E25-faculty-review-compare-1440.png), [E25-faculty-after-adopt-1440.png](E25-faculty-after-adopt-1440.png)

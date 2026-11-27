@@ -4,7 +4,7 @@ require('dotenv').config();
 const mysql = require('mysql2/promise');
 const COLUMNS = [['academic_year', 'VARCHAR(9) NULL'], ['semester', 'VARCHAR(20) NULL'], ['year_level', 'TINYINT NULL'], ['prerequisite', 'VARCHAR(255) NULL']];
 async function main() {
-  const conn = await mysql.createConnection({ host: process.env.DB_HOST, user: process.env.DB_USER, password: process.env.DB_PASS, database: process.env.DB_NAME });
+  const conn = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   try {
     for (const [name, type] of COLUMNS) {
       const [found] = await conn.query('SHOW COLUMNS FROM courses LIKE ?', [name]);

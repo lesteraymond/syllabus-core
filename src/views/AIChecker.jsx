@@ -1,20 +1,24 @@
 import { YearFilter, useYearScope } from '../components/AcademicYearScope';
-import { canApproveAdminDraft, isReturned, noteMissing, EDITABLE_STATUSES } from '../lib/syllabusRules';
+import { canApproveAdminDraft, courseLockReason, sentForReview, EDITABLE_STATUSES } from '../lib/syllabusRules';
 import { isApprover, isReviewer } from '../lib/roles';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { PageHead } from '../components/ui';
+import GeistStatusDot from '../components/GeistStatusDot';
 import StableButton from '../components/StableButton';
 import Select from '../components/Select';
-import { compliance as api, syllabi as syllabiApi, isRevisionConflict } from '../lib/api';
-import { groupByFacultyProgram, listBasis, needsCheck, rangeToInstants, warningCount } from '../lib/complianceView';
+import { compliance as api, syllabi as syllabiApi, users as usersApi, isRevisionConflict } from '../lib/api';
+import { groupByFacultyProgram, historyTally, listBasis, needsCheck, rangeToInstants } from '../lib/complianceView';
+import CheckOverview from '../components/CheckOverview';
 import SyllabusPicker from '../components/SyllabusPicker';
 import OwnSyllabusPicker from '../components/OwnSyllabusPicker';
 import ComplianceModal from '../components/ComplianceModal';
+import { GeminiEmblem, GeminiThinkingLine } from '../components/GeminiLoader';
 import CheckHistory from '../components/CheckHistory';
 import ComplianceSection from './builder2/ComplianceSection';
-import { canSubmitHybrid, applySuggestion } from '../lib/hybridCheck';
+import ComplianceCard from './ComplianceCard';
+import { applySuggestion } from '../lib/hybridCheck';
 import { sectionsOf } from '../lib/draftSave';
 import { useAiGate } from '../lib/checkPolicy';
 import { useAdminPolicy } from '../lib/adminPolicy';
@@ -32,9 +36,8 @@ const readRange = () => {
 };
 const writeRange = (r) => { try { if (r.from || r.to) localStorage.setItem(RANGE_KEY, JSON.stringify(r)); else localStorage.removeItem(RANGE_KEY); } catch { /* storage blocked: the filter just does not persist */ } };
 
-function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, notify, onSubmitted }) {
+function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage }) {
   const uid = useId();
-  const aiGate = useAiGate();
   const policy = useAdminPolicy(); // the administrator's AI checking switch: off means the format rules only
   // Only a syllabus the faculty can still edit is offered: a draft, or one sent back (returned for revision, or rejected). A submitted one is with the
   // reviewers and an approved one is final (it lives in the Repository); neither is checked again from here (owner decision 2026-11-15; the server
@@ -43,11 +46,7 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
   const hasOthers = useMemo(() => syllabi.some(s => s.userId === user.id && !EDITABLE_STATUSES.includes(s.status)), [syllabi, user.id]);
   const offered = (id) => !!id && mine.some(s => s.id === id);
   const [selectedId, setSelectedId] = useState(() => (offered(editing?.syllabusId) ? editing.syllabusId : mine[0]?.id || null));
-  const [doc, setDoc] = useState({ loading: false, error: '', content: null, editable: false, status: 'draft', version: 'v1.0' });
-  const [lastRun, setLastRun] = useState(null);
-  const [note, setNote] = useState('');
-  const [submitFailed, setSubmitFailed] = useState([]);
-  const [submitting, setSubmitting] = useState(false);
+  const [doc, setDoc] = useState({ loading: false, error: '', content: null, editable: false, status: 'draft', version: 'v1' });
 
   // The selection is always one of the offered syllabi: one opened from the builder that has since been submitted (or approved) is not kept.
   useEffect(() => {
@@ -57,33 +56,24 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
 
   useEffect(() => {
     if (!selectedId) {
-      setDoc({ loading: false, error: '', content: null, editable: false, status: 'draft', version: 'v1.0' });
-      setLastRun(null);
-      setSubmitFailed([]);
+      setDoc({ loading: false, error: '', content: null, editable: false, status: 'draft', version: 'v1' });
       return undefined;
     }
     let live = true;
     setDoc(prev => ({ ...prev, loading: true, error: '' }));
-    setLastRun(null);
-    setSubmitFailed([]);
     syllabiApi.getContent(selectedId).then(res => {
       if (!live) return;
-      setDoc({ loading: false, error: '', content: res.content || null, editable: !!res.editable, status: res.status || 'draft', version: res.version || 'v1.0', academicYear: res.academicYear || null });
+      setDoc({ loading: false, error: '', content: res.content || null, editable: !!res.editable, status: res.status || 'draft', version: res.version || 'v1', academicYear: res.academicYear || null });
     }).catch(err => {
       if (!live) return;
-      setDoc({ loading: false, error: err.message || '', content: null, editable: false, status: 'draft', version: 'v1.0' });
+      setDoc({ loading: false, error: err.message || '', content: null, editable: false, status: 'draft', version: 'v1' });
     });
     return () => { live = false; };
   }, [selectedId]);
 
-  const receiveRun = useCallback((run) => {
-    setLastRun(run ? { ...run, draftSignature: doc.content ? JSON.stringify(doc.content) : '' } : null);
-  }, [doc.content]);
-
   const applyDraftRecommendation = async (patch) => {
     if (!selectedId || !doc.content) return false;
     const next = applySuggestion(doc.content, patch, { requireOriginal: true });
-    setLastRun(null);
     try {
       await syllabiApi.saveContent(selectedId, sectionsOf(next), next.schemaVersion || 3);
     } catch (e) {
@@ -105,26 +95,7 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
     setPage?.('builder');
   };
 
-  const existing = doc.status !== 'draft';
-  const revising = isReturned(doc.status);
-  const needNote = noteMissing(doc.status, note);
-  const warnings = warningCount(lastRun);
   const selectedRow = mine.find(s => s.id === selectedId) || null;
-
-  const submitChecked = async () => {
-    if (!selectedId || submitting) return;
-    setSubmitting(true);
-    setSubmitFailed([]);
-    try {
-      const res = await syllabiApi.submitContent(selectedId, note.trim());
-      if (onSubmitted) await onSubmitted(res, existing);
-    } catch (e) {
-      if (e.data && Array.isArray(e.data.failed)) setSubmitFailed(e.data.failed);
-      notify?.(translateUI("ui.submit_failed_adb15a") + e.message);
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
   // One slim row: the subject, Edit Syllabus, then the check. The check state comes from ComplianceSection (ctl), which keeps the report drawer.
   const pickBar = (ctl) => (
@@ -137,13 +108,12 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
         </Select>
       </div>
       <StableButton type="button" className="btn outline" disabled={!selectedId} onClick={openBuilder}>{translateUI('publication.editDraft')}</StableButton>
-      {ctl && ctl.run && !ctl.busy && <StableButton type="button" className={'btn outline pick-score ' + ctl.tone} onClick={ctl.openReport} title={translateUI('aiChecker.viewReport')}>{(ctl.score !== null ? ctl.score + '% · ' : '') + ctl.label}</StableButton>}
-      {ctl && ctl.canRun && <StableButton type="button" className="btn primary" disabled={ctl.busy} onClick={ctl.recheck}>{ctl.busy ? translateUI('ui.checking_820d60') : translateUI(ctl.run ? "hybrid.recheckButton" : "aiChecker.run")}</StableButton>}
+      {ctl && ctl.canRun && <StableButton type="button" className="btn primary" disabled={ctl.busy} onClick={ctl.recheck}>{ctl.busy && <span className="chk-btn-spin" aria-hidden="true" />}{ctl.busy ? translateUI('ui.checking_820d60') : translateUI(ctl.run ? "hybrid.recheckButton" : "aiChecker.run")}</StableButton>}
     </section>
   );
 
   return (
-    <>
+    <div className="chk-page">
       <PageHead title={translateUI("ui.ai_syllabus_checker_0c99c9")} subtitle={translateUI("ui.checked_against_the_undergraduate_syllabus_form_only_a_form_that__68429a")} actions={<YearFilter group="queue" />} />
       {!selectedId && mine.length === 0 ? (
         <div className="empty">{translateUI(hasOthers ? 'aiChecker.nothingToCheck' : "ui.no_syllabi_yet_click_new_syllabus_to_get_started_2e4bc9")}</div>
@@ -153,12 +123,6 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
 
           {policy.loaded && !policy.aiChecking && <div className="ai-note" role="note" data-testid="ai-off-note">{translateUI('policy.aiOff')}</div>}
           {doc.error && <div className="info-banner warning" role="alert">{tr(doc.error)}</div>}
-          {submitFailed.length > 0 && (
-            <div className="blockers" role="alert">
-              <b>{translateUI("ui.the_server_did_not_accept_this_submit_fix_these_first_31d8e3")}</b>
-              <ul>{submitFailed.map(c => <li key={c.id}>{tr(c.message)}</li>)}</ul>
-            </div>
-          )}
 
           {selectedId && (
             <ComplianceSection
@@ -168,43 +132,25 @@ function FacultyAIChecker({ user, syllabi = [], editing, setEditing, setPage, no
               canCheck={doc.editable}
               syllabusYear={doc.academicYear}
               onOpenStep={openBuilder}
-              onRun={receiveRun}
               onApplyDraft={doc.editable && doc.content ? applyDraftRecommendation : undefined}
+              hideError={!!doc.error}
               layout="panel"
               renderBar={pickBar}
+              renderResult={(ctl) => (
+                <div className="chk-layout solo">
+                  {ctl.installed && (ctl.run || ctl.busy) && (
+                    <div className="chk-main">
+                      <section className="card chk-report"><ComplianceCard run={ctl.run} checking={ctl.busy} onOpenStep={openBuilder} onApplyDraft={ctl.onApplyDraft} modalSections /></section>
+                    </div>
+                  )}
+                </div>
+              )}
               subjectLabel={selectedRow ? (selectedRow.courseCode || '—') + (selectedRow.title ? ' — ' + selectedRow.title : '') : ''}
             />
           )}
-
-          {revising && doc.editable && (
-            <label className="field" style={{ marginBottom: 14 }}>
-              <span>{translateUI("ui.what_did_you_change_required_c57040")}</span>
-              <textarea rows="3" maxLength={1000} value={note} aria-required="true" onChange={e => setNote(e.target.value)} placeholder={translateUI("ui.saved_with_this_version_in_the_history_e_g_updated_the_grading_co_4d98a9")} />
-              {needNote && <small className="hint">{translateUI("ui.write_at_least_a_sentence_so_the_reviewer_knows_what_to_look_at_3f7338")}</small>}
-            </label>
-          )}
-
-          {warnings > 0 && doc.editable && <div className="step-hint advice" role="note">{tr(warnings + (warnings === 1 ? ' warning remains' : ' warnings remain')) + translateUI("ui.in_the_compliance_check_they_do_not_block_you_the_reviewer_will_s_d35203")}</div>}
-
-          {selectedId && doc.editable && (
-            <div className="editor-footer">
-              {!lastRun && <small className="hint" data-testid="submit-hint">{translateUI('aiChecker.submitHint')}</small>}
-              <div>
-                <StableButton
-                  type="button"
-                  className="btn primary"
-                  disabled={submitting || !doc.content || needNote || !canSubmitHybrid(lastRun, JSON.stringify(doc.content), 'advisory')}
-                  title={!doc.content || !canSubmitHybrid(lastRun, JSON.stringify(doc.content), 'advisory') ? translateUI('hybrid.hardGateRequired') : undefined}
-                  onClick={submitChecked}
-                >
-                  {existing ? translateUI('hybrid.submitVersion') : translateUI('hybrid.submit')}
-                </StableButton>
-              </div>
-            </div>
-          )}
         </>
       )}
-    </>
+    </div>
   );
 }
 
@@ -230,6 +176,13 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
   const [error, setError] = useState('');
   const [busy, setBusy] = useState({});       // syllabus id -> true while its check runs
   const checkLocks = useRef(new Set());
+  const [mine, setMine] = useState(null);     // administrator's own assigned programs & subjects
+  useEffect(() => {
+    if (user?.role !== 'admin') { setMine(null); return undefined; }
+    let live = true;
+    usersApi.myAssignments().then((a) => { if (live) setMine(a); }).catch(() => {});
+    return () => { live = false; };
+  }, [user?.role, user?.id, syllabi]);
 
   const loadList = useCallback(async () => { try { setList(await api.list('all', year)); setError(''); } catch (e) { setError(e.message); } }, [year]);
   const loadDetail = useCallback(async (id) => { try { setDetail(await api.list(id)); setError(''); return true; } catch (e) { setError(e.message); return false; } }, []);
@@ -265,10 +218,16 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
   }, [pending, openId, loadDetail]);
 
   const rows = list ? list.syllabi.filter(row => row.status !== 'draft') : [];
-  const waiting = useMemo(() => groupByFacultyProgram(rows.filter(row => needsCheck(row) || (row.userId === user?.id && row.status === 'under_review'))), [rows, user?.id]); // unchecked and not approved: what the picker offers
+  // The administrator's own syllabi already sent for review (the dean stage is cleared on the newest version): they are with the other reviewers now,
+  // so they are neither offered for checking again nor sent or taken back to draft from here (the server refuses both too).
+  const sentOwn = useMemo(() => new Set(syllabi.filter((s) => s.userId === user?.id && sentForReview(s)).map((s) => s.id)), [syllabi, user?.id]);
+  // Unchecked and not approved: what the picker offers. A stage reviewer is offered a submission once it has reached them in the chain (myTurn from the
+  // server: the dean first, then the Asst. VPAA, then the LIC Director); a row without it (an older server) is offered as before.
+  const canAuthorOwn = useCallback((s) => (user?.role !== 'admin' ? true : !!mine && !courseLockReason(user, mine, s)), [user, mine]);
+  const waiting = useMemo(() => groupByFacultyProgram(rows.filter(row => (needsCheck(row) && row.myTurn !== false) || (row.userId === user?.id && row.status === 'under_review' && !sentOwn.has(row.syllabusId) && canAuthorOwn(row)))), [rows, user?.id, sentOwn, canAuthorOwn]);
   // The administrator writes syllabi too: their own drafts, and their syllabi returned for revision or rejected, can be checked from here as well as from the
-  // builder (OwnSyllabusPicker). Once sent to be checked one is Under Review and is in the list above with everyone else's.
-  const ownToCheck = useMemo(() => (user?.role === 'admin' ? syllabi.filter((s) => s.userId === user.id && !s.archived && ['draft', 'for_revision', 'rejected'].includes(s.status)) : []), [syllabi, user?.id, user?.role]);
+  // builder (OwnSyllabusPicker) — only for subjects currently assigned to them. Once sent to be checked one is Under Review and is in the list above with everyone else's.
+  const ownToCheck = useMemo(() => (user?.role === 'admin' && mine ? syllabi.filter((s) => s.userId === user.id && !s.archived && ['draft', 'for_revision', 'rejected'].includes(s.status) && !courseLockReason(user, mine, s)) : []), [syllabi, user, mine]);
 
   // A check started before this page was left is still running on the server (the row says so): keep the button waiting, look again until it
   // ends, then refresh the history so the new check appears.
@@ -280,7 +239,7 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
   }, [remoteChecking, loadList, loadHistory]);
 
   if (user?.role === 'faculty') {
-    return <FacultyAIChecker user={user} syllabi={syllabi} editing={editing} setEditing={setEditing} setPage={setPage} notify={notify} onSubmitted={onSubmitted} />;
+    return <FacultyAIChecker user={user} syllabi={syllabi} editing={editing} setEditing={setEditing} setPage={setPage} />;
   }
   if (!user || !isReviewer(user.role)) return <div className="empty">{translateUI("ui.the_compliance_check_is_in_step_7_of_the_syllabus_builder_1f3135")}</div>;
 
@@ -366,13 +325,15 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
 
   const installed = !list || list.installed !== false;
   const how = listBasis(rows.map((r) => r.run));
+  const waitingCount = waiting.reduce((sum, f) => sum + f.count, 0); // the syllabi still waiting for their first check, across every faculty member
+  const tally = historyTally(history.runs);
   const working = Object.keys(busy).length > 0 || remoteChecking;
   const open = openId !== null && detail && detail.syllabus && detail.syllabus.syllabusId === openId
     ? { ...(rows.find((r) => r.syllabusId === openId) || {}), ...detail.syllabus }
     : null;
 
-  const ownSyllabus = open?.userId === user.id && open.status === 'under_review';
-  const approveEnabled = canApproveAdminDraft(user,open,detail?.run,detail?.isLatest !== false,aiGate);
+  const ownSyllabus = open?.userId === user.id && open.status === 'under_review' && !sentOwn.has(open.syllabusId);
+  const approveEnabled = ownSyllabus && canApproveAdminDraft(user,open,detail?.run,detail?.isLatest !== false,aiGate,{ aiOff: policy.loaded && !policy.aiChecking });
   const editDraft = async () => {
     if (approvalLock.current || !ownSyllabus || !onEditDraft) return;
     approvalLock.current=true; setEditingDraft(true); setError('');
@@ -402,11 +363,32 @@ export default function AIChecker({ user, syllabi = [], editing, setEditing, set
       {!open && error && <div className="info-banner warning" role="alert">{tr(error)}</div>}
       {!error && !loading && !installed && <div className="info-banner warning">{translateUI("ui.compliance_checks_are_not_set_up_on_this_server_yet_ask_an_admini_815abc")}</div>}
 
-      {installed && policy.loaded && !policy.aiChecking && <div className="ai-note" role="note" data-testid="ai-off-note">{translateUI('policy.aiOff')}</div>}
-      {installed && isApprover(user.role) && <div className="ai-note" role="note" data-testid="approver-queue-note">{translateUI('reviewChain.approverQueueNote')}</div>}
-      {installed && user.role === 'admin' && <OwnSyllabusPicker rows={ownToCheck} busy={working} onCheck={prepareAndCheck} onOpen={openOwn} />}
-      {installed && <SyllabusPicker groups={waiting} loading={loading} busy={working} onCheck={checkAndOpen} onWithoutAi={aiGate === 'required' ? undefined : reviewWithoutAi} />}
-      {installed && aiGate === 'required' && <div className="ai-note" role="note">{translateUI('aiChoice.requiredNote')}</div>}
+      {installed && (policy.loaded && !policy.aiChecking || isApprover(user.role) || aiGate === 'required') && (
+        <div className="chk-notes">
+          {policy.loaded && !policy.aiChecking && <div className="ai-note" role="note" data-testid="ai-off-note">{translateUI('policy.aiOff')}</div>}
+          {isApprover(user.role) && <div className="ai-note" role="note" data-testid="approver-queue-note">{translateUI('reviewChain.approverQueueNote')}</div>}
+          {aiGate === 'required' && <div className="ai-note" role="note">{translateUI('aiChoice.requiredNote')}</div>}
+        </div>
+      )}
+
+      {installed && <CheckOverview waiting={waitingCount} faculty={waiting.length} tally={tally} loading={loading || history.loading && history.runs.length === 0} />}
+
+      {installed && (
+        <div className={'chk-work' + (user.role === 'admin' ? '' : ' solo')}>
+          <SyllabusPicker groups={waiting} loading={loading} busy={working} onCheck={checkAndOpen} onWithoutAi={aiGate === 'required' ? undefined : reviewWithoutAi} viewerId={user?.id ?? null} />
+          {user.role === 'admin' && <OwnSyllabusPicker rows={ownToCheck} busy={working} onCheck={prepareAndCheck} onOpen={openOwn} />}
+        </div>
+      )}
+
+      {installed && working && (
+        <div className="chk-progress" role="status" aria-live="polite">
+          <GeminiEmblem size={48} />
+          <div className="chk-progress-body">
+            <strong className="geist-status-inline"><GeistStatusDot state="BUILDING" />{translateUI("ui.checking_your_syllabus_1278c5")}</strong>
+            <GeminiThinkingLine active={working} />
+          </div>
+        </div>
+      )}
 
       {installed && <CheckHistory runs={history.runs} loading={history.loading} error={history.error} opening={opening} onOpen={openRun} range={range} onApply={applyRange} onReset={() => applyRange(NO_RANGE)} />}
 

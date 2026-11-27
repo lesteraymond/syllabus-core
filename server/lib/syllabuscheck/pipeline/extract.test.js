@@ -6,7 +6,7 @@ const { extract, itemsOf, fingerprint } = require('./extract');
 
 test('extract builds one map: course, masters, 4 CLOs with fixed levels, weeks, references', () => {
   const map = extract(F.good());
-  assert.deepEqual(map.course, { code: 'IT 204', title: 'Computer Programming 2', program: 'BSIT' });
+  assert.deepEqual(map.course, { code: 'IT 204', title: 'Computer Programming 2', program: 'BSIT', lectureUnits: 2, labUnits: 1, contactHoursPerWeek: 5 });
   assert.equal(map.masters.egas.length, 4);
   assert.equal(map.masters.pos.length, 5);
   assert.deepEqual(map.clos.map(c => c.requiredLevel), ['Introductory', 'Enabling', 'Demonstrating', 'Integration of Values']);

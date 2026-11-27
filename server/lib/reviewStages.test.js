@@ -106,3 +106,62 @@ test('an administrator\'s Under Review syllabus is hidden from other reviewers u
   const unreadable = { query: async () => { throw new Error('db down'); } };
   assert.deepStrictEqual([...(await rs.hiddenFromReviewers(unreadable, rows, 3, stages))], [], 'roles unreadable: nothing hidden');
 });
+
+// The order of the chain (turnOf, assertTurn): the dean, then the Asst. VPAA, then the LIC Director, then the VPAA.
+test('the chain goes in order: the turn is the first stage not cleared on the newest version, then the VPAA', () => {
+  const rs = require('./reviewStages');
+  assert.strictEqual(rs.summarize([], 7).turn, 'dean');
+  assert.strictEqual(rs.summarize([row('dean', 7)], 7).turn, 'asst_vpaa');
+  assert.strictEqual(rs.summarize([row('dean', 7), row('asst_vpaa', 7)], 7).turn, 'lic_director');
+  assert.strictEqual(rs.summarize([row('dean', 7), row('asst_vpaa', 7), row('lic_director', 7)], 7).turn, 'vpaa');
+  assert.strictEqual(rs.summarize([row('dean', 6)], 7).turn, 'dean', 'a stage on an older version does not count');
+  assert.strictEqual(rs.summarize([row('asst_vpaa', 7), row('lic_director', 7)], 7).turn, 'dean', 'cleared out of order before this rule: still the dean first');
+  rs.assertTurn(rs.summarize([row('dean', 7)], 7), 'asst_vpaa');
+  assert.throws(() => rs.assertTurn(rs.summarize([], 7), 'lic_director'), (e) => e.status === 409 && e.body.code === 'stage_out_of_order' && e.body.turn === 'dean' && /with the dean now/.test(e.message));
+  assert.throws(() => rs.assertTurn(rs.summarize([row('dean', 7)], 7), 'dean'), (e) => e.body.turn === 'asst_vpaa', 'the dean has passed it on');
+});
+
+// A resubmission goes back to whoever returned it (returnedBy, keptStages, carryForward).
+test('a resubmission keeps the stages cleared before the reviewer who returned it, and only those', async () => {
+  const rs = require('./reviewStages');
+  const all = rs.summarize([row('dean', 7), row('asst_vpaa', 7), row('lic_director', 7)], 7);
+  const two = rs.summarize([row('dean', 7), row('asst_vpaa', 7)], 7);
+  assert.deepStrictEqual(rs.keptStages(two, 'lic_director'), ['dean', 'asst_vpaa'], 'the LIC Director returned it');
+  assert.deepStrictEqual(rs.keptStages(rs.summarize([row('dean', 7)], 7), 'asst_vpaa'), ['dean'], 'the Asst. VPAA returned it');
+  assert.deepStrictEqual(rs.keptStages(rs.summarize([], 7), 'dean'), [], 'the dean returned it');
+  assert.deepStrictEqual(rs.keptStages(all, 'vpaa'), ['dean', 'asst_vpaa', 'lic_director'], 'the VPAA returned or rejected it');
+  assert.deepStrictEqual(rs.keptStages(all, 'dean'), [], 'a stage after the returner is never kept');
+  assert.deepStrictEqual(rs.keptStages(rs.summarize([row('asst_vpaa', 7)], 7), 'lic_director'), [], 'only stages cleared in order are kept');
+  assert.deepStrictEqual(rs.keptStages(all, null), []);
+
+  // carryForward against a fake connection: the last return in the log names the reviewer; the kept rows are copied with their reviewer and date.
+  const make = (log, rows) => {
+    const inserted = [];
+    const conn = { inserted, query: async (sql, p) => {
+      sql = String(sql).replace(/\s+/g, ' ').trim();
+      if (sql.startsWith('SELECT 1 FROM syllabus_review_stages')) return [[]];
+      if (sql.startsWith('SELECT l.log_id, l.action, u.role FROM submission_logs')) return [log ? [log] : []];
+      if (sql.startsWith('SELECT stage, reviewer_id, note, cleared_at FROM syllabus_review_stages')) return [rows];
+      if (sql.startsWith('INSERT INTO syllabus_review_stages')) { inserted.push(p); return [{}]; }
+      throw new Error('unexpected query: ' + sql);
+    } };
+    return conn;
+  };
+  const cleared = [{ stage: 'dean', reviewer_id: 1, note: 'ok', cleared_at: '2026-11-01' }, { stage: 'asst_vpaa', reviewer_id: 2, note: null, cleared_at: '2026-11-02' }];
+  rs.resetInstalledCache();
+  let conn = make({ log_id: 9, action: 'revision', role: 'lic_director' }, cleared);
+  assert.deepStrictEqual(await rs.carryForward(conn, { syllabusId: 1, fromVersionId: 7, toVersionId: 8 }), { returner: 'lic_director', kept: ['dean', 'asst_vpaa'] });
+  assert.deepStrictEqual(conn.inserted, [[1, 8, 'dean', 1, 'ok', '2026-11-01'], [1, 8, 'asst_vpaa', 2, null, '2026-11-02']]);
+  conn = make({ log_id: 9, action: 'revision', role: 'asst_vpaa' }, cleared);
+  assert.deepStrictEqual((await rs.carryForward(conn, { syllabusId: 1, fromVersionId: 7, toVersionId: 8 })).kept, ['dean']);
+  conn = make({ log_id: 9, action: 'revision', role: 'admin' }, cleared);
+  assert.deepStrictEqual((await rs.carryForward(conn, { syllabusId: 1, fromVersionId: 7, toVersionId: 8 })).kept, [], 'the dean returned it: the chain starts again');
+  conn = make({ log_id: 9, action: 'reject', role: 'vpaa' }, [...cleared, { stage: 'lic_director', reviewer_id: 3, note: null, cleared_at: '2026-11-03' }]);
+  assert.deepStrictEqual((await rs.carryForward(conn, { syllabusId: 1, fromVersionId: 7, toVersionId: 8 })).kept, ['dean', 'asst_vpaa', 'lic_director']);
+  conn = make({ log_id: 9, action: 'submit', role: 'faculty' }, cleared);
+  assert.deepStrictEqual(await rs.carryForward(conn, { syllabusId: 1, fromVersionId: 7, toVersionId: 8 }), { returner: null, kept: [] }, 'no return since the last submit: nothing kept');
+  assert.strictEqual(conn.inserted.length, 0);
+  assert.deepStrictEqual(await rs.carryForward(conn, { syllabusId: 1, fromVersionId: null, toVersionId: 8 }), { returner: null, kept: [] });
+  const broken = { query: async (sql) => { if (String(sql).startsWith('SELECT 1')) return [[]]; throw new Error('db down'); } };
+  assert.strictEqual(await rs.returnedBy(broken, 1), null, 'an unreadable log keeps nothing');
+});

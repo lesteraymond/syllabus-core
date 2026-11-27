@@ -11,7 +11,7 @@
 // written with FROM_UNIXTIME, so the database server's time zone cannot shift a deadline.
 
 const { httpError } = require('./http');
-const { pastCourseIds } = require('./academicYear');
+const { pastCourseIds, assertSubjectEditable } = require('./academicYear');
 
 const TERM_MAX = 30;
 const INSTRUCTIONS_MAX = 1000;
@@ -169,8 +169,9 @@ async function mine(db, userId, now = Date.now(), { admin = false } = {}) {
   const [rows] = admin
     ? await db.query(SELECT + ' WHERE d.cancelled_at IS NULL AND (d.course_id IN (SELECT course_id FROM faculty_courses WHERE user_id = ?) OR d.course_id IN (SELECT course_id FROM syllabi WHERE user_id = ? AND archived_at IS NULL AND course_id IS NOT NULL)) ORDER BY d.due_at, d.deadline_id', [userId, userId])
     : await db.query(SELECT + ' JOIN faculty_courses fc ON fc.course_id = d.course_id WHERE fc.user_id = ? AND d.cancelled_at IS NULL ORDER BY d.due_at, d.deadline_id', [userId]);
+  const past = await pastCourseIds(db); // as the administrator's list: a past academic year's subjects are not listed
   const out = [];
-  for (const row of rows) {
+  for (const row of rows.filter((r) => !past.has(r.course_id))) {
     const deadline = shape(row);
     let submittedAt = null;
     if (admin) submittedAt = (await adminSubmissions(db, deadline.courseId, deadline.opensAt, [userId])).get(userId) || null;
@@ -189,6 +190,7 @@ async function mine(db, userId, now = Date.now(), { admin = false } = {}) {
 async function createDeadline(db, adminId, courseId, body, now = Date.now()) {
   const [courses] = await db.query('SELECT course_id FROM courses WHERE course_id = ?', [courseId]);
   if (!courses.length) throw httpError(404, 'Subject not found');
+  await assertSubjectEditable(db, courseId); // a past academic year's subject is a record: no new deadline (E2E report 2026-11-23, BUG-020)
   const input = readInput(body, now);
   const [same] = await db.query('SELECT deadline_id, UNIX_TIMESTAMP(cancelled_at) AS cancelled FROM subject_deadlines WHERE course_id = ? AND term = ?', [courseId, input.term]);
   if (same.length && (same[0].cancelled === null || same[0].cancelled === undefined)) throw httpError(409, 'This subject already has a deadline for that term. Edit it instead.');
@@ -208,6 +210,7 @@ async function createDeadline(db, adminId, courseId, body, now = Date.now()) {
 async function updateDeadline(db, id, body, now = Date.now()) {
   const existing = await loadDeadline(db, id);
   if (!existing || existing.cancelled) throw httpError(404, 'Deadline not found');
+  await assertSubjectEditable(db, existing.courseId);
   const input = readInput(body, now, existing);
   const [clash] = await db.query('SELECT deadline_id FROM subject_deadlines WHERE course_id = ? AND term = ? AND deadline_id <> ?', [existing.courseId, input.term, id]);
   if (clash.length) throw httpError(409, 'This subject already has a deadline for that term.');

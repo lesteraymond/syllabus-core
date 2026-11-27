@@ -199,8 +199,14 @@ test('the dean, the Asst. VPAA and the LIC Director may send a syllabus back for
   assert.strictEqual(row.stages.cleared, 1);
   assert.strictEqual(row.readyForApproval, false);
   const mine = (await call(fay, 'GET', '/syllabi')).body.find((x) => x.id === 1);
-  assert.deepStrictEqual(mine.reviewProgress, { dean: true, asst_vpaa: false, lic_director: false });
+  assert.deepStrictEqual(mine.reviewProgress, { dean: true, asst_vpaa: false, lic_director: false, turn: 'asst_vpaa' });
   assert.ok(!('stages' in mine));
+  // In order: the dean has passed it on and the LIC Director's turn has not come, so neither returns it; the Asst. VPAA, whose turn it is, does.
+  for (const role of ['admin', 'lic_director']) {
+    const early = await call({ id: 20, role, firstName: 'R', lastName: 'R' }, 'PUT', '/syllabi/1', { status: 'for_revision', adminComment: 'Fix the grading.' });
+    assert.strictEqual(early.status, 409, role); assert.strictEqual(early.body.code, 'stage_out_of_order'); assert.strictEqual(early.body.turn, 'asst_vpaa');
+  }
+  assert.strictEqual(db.s.syllabi[1].status, 'submitted');
   assert.strictEqual((await call({ id: 20, role: 'asst_vpaa', firstName: 'A', lastName: 'V' }, 'PUT', '/syllabi/1', { status: 'for_revision', adminComment: 'Fix the grading.' })).status, 200);
 }));
 
@@ -238,6 +244,28 @@ test('the version history says what changed between versions and what the admini
   assert.strictEqual((await call({ id: 6, role: 'faculty', firstName: 'Gus', lastName: 'G' }, 'GET', '/syllabi/1/versions')).status, 404);
 }));
 
+// What the lists hide from a reviewer stays closed in the version history too (lib/reviewStages.js assertReviewerMayOpen; pre-deploy report 2026-11-24, M4).
+test('the version history reaches the VPAA only once the three stages are cleared, and the dean\'s unsent syllabus only its author', () => withServer(async ({ call, db }) => {
+  const asst = { id: 3, role: 'asst_vpaa', firstName: 'Ash', lastName: 'V' };
+  const early = await call(vpaa, 'GET', '/syllabi/1/versions');
+  assert.strictEqual(early.status, 409, 'just submitted: not the VPAA\'s yet');
+  assert.strictEqual(early.body.code, 'STAGES_PENDING');
+  assert.strictEqual((await call(asst, 'GET', '/syllabi/1/versions')).status, 200, 'a stage reviewer reads it');
+  clearAll(db, 1, 10);
+  assert.strictEqual((await call(vpaa, 'GET', '/syllabi/1/versions')).status, 200, 'all three cleared: it reaches the VPAA');
+  db.s.syllabi[2].status = 'approved';
+  assert.strictEqual((await call(vpaa, 'GET', '/syllabi/2/versions')).status, 200, 'an approved syllabus stays readable');
+
+  db.s.syllabi[4] = { syllabus_id: 4, user_id: 1, status: 'under_review', version: 'v1', title: 'Dean own', course_code: 'DN 101' };
+  db.s.versions.push({ version_id: 40, syllabus_id: 4, content: '{"meta":{}}', file_path: null });
+  const unsent = await call(asst, 'GET', '/syllabi/4/versions');
+  assert.strictEqual(unsent.status, 409, 'the dean has not sent it yet');
+  assert.strictEqual(unsent.body.code, 'not_sent_for_review');
+  assert.strictEqual((await call(admin, 'GET', '/syllabi/4/versions')).status, 200, 'its author reads it');
+  db.s.stages.push({ syllabus_id: 4, version_id: 40, stage: 'dean' }); // the dean sends it for review
+  assert.strictEqual((await call(asst, 'GET', '/syllabi/4/versions')).status, 200, 'sent: the Asst. VPAA reads it');
+}));
+
 // Each reviewer may check a submission with AI or review it without an AI check (lib/reviewAiChoice.js). The choice is theirs and the version's.
 const asst = { id: 21, role: 'asst_vpaa', firstName: 'As', lastName: 'St' };
 const lic = { id: 22, role: 'lic_director', firstName: 'Li', lastName: 'C' };
@@ -245,6 +273,7 @@ const listedAs = async (call, who, id) => (await call(who, 'GET', '/syllabi')).b
 
 test('a reviewer who chooses to review without an AI check may clear their own stage; the choice opens nothing for anyone else', () => withServer(async ({ call, db }) => {
   db.s.aiChoice = true;
+  db.s.stages.push({ syllabus_id: 1, version_id: 10, stage: 'dean' }); // the dean has cleared it: the Asst. VPAA's turn (the chain goes in order)
   const refused = await call(asst, 'POST', '/syllabi/1/stage-clear', {});
   assert.strictEqual(refused.status, 409); assert.strictEqual(refused.body.code, 'ai_check_or_choice_required'); assert.match(refused.body.error, /Check this syllabus in the AI Checker/);
   const chose = await call(asst, 'POST', '/syllabi/1/review-without-ai', { note: 'Read in full.' });

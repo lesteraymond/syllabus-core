@@ -17,7 +17,7 @@ const ENV = {
 };
 
 // aiChecking: the administrator's switch as saved (lib/adminSettings.js); left out, the settings are not readable here and AI checking counts as on.
-async function harness(t, { status = 'draft', aiChecking } = {}) {
+async function harness(t, { status = 'draft', aiChecking, runBy = 26 } = {}) { // runBy: who ran the check (each person reaches only their own checks)
   const saved = {};
   for (const [key, value] of Object.entries(ENV)) { saved[key] = process.env[key]; process.env[key] = value; }
   t.after(() => { for (const [key, value] of Object.entries(saved)) { if (value === undefined) delete process.env[key]; else process.env[key] = value; } });
@@ -36,7 +36,7 @@ async function harness(t, { status = 'draft', aiChecking } = {}) {
   app.locals.db = { query: async (sql, params) => {
     if (/program_po_reference_remediation/.test(sql)) return [[]];
     if (sql.startsWith('SELECT user_id FROM users')) return [[{ user_id: params[0] }]];
-    if (sql.startsWith('SELECT s.*, r.run_id')) return [[{ syllabus_id: 100, user_id: 26, status, content: JSON.stringify(content) }]];
+    if (sql.startsWith('SELECT s.*, r.run_id')) return [[{ syllabus_id: 100, user_id: 26, status, content: JSON.stringify(content), run_id: 1, run_created_by: runBy }]];
     if (aiChecking !== undefined && sql.includes("setting_key = 'administration'")) return [[{ setting_value: JSON.stringify({ aiChecking }) }]];
     throw Error('Unexpected query: ' + sql);
   } };
@@ -80,13 +80,21 @@ test('the author gets a verified rewrite back with a token, and nothing is saved
 });
 
 test('the administrator and other people cannot ask for one, and nothing is sent to the AI for them', async (t) => {
-  const { call, calls } = await harness(t, { status: 'under_review' });
+  const { call, calls } = await harness(t, { status: 'under_review', runBy: 1 }); // the administrator's own check of the submitted version
   const admin = await call('admin');
   assert.equal(admin.status, 403);
   assert.match(admin.body.error, /Only the author/);
   assert.equal((await call('other')).status, 404);
   assert.equal((await call(null)).status, 401);
   assert.equal(calls.length, 0);
+});
+
+test('nobody reaches another person\'s check: the author cannot open a reviewer\'s check, nor a reviewer the author\'s (2026-11-24)', async (t) => {
+  const byReviewer = await harness(t, { status: 'draft', runBy: 1 });
+  assert.equal((await byReviewer.call('faculty')).status, 404, 'the author cannot open the administrator\'s check');
+  const byAuthor = await harness(t, { status: 'under_review', runBy: 26 });
+  assert.equal((await byAuthor.call('admin')).status, 404, 'the administrator cannot open the author\'s check');
+  assert.equal(byReviewer.calls.length + byAuthor.calls.length, 0);
 });
 
 test('a locked syllabus is refused before any AI request', async (t) => {

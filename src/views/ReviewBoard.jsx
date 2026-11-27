@@ -20,7 +20,7 @@ const CARD = [
   'tw:motion-reduce:[transition:none]',
 ].join(' ');
 const PROGRAM = 'tw:[grid-area:label] tw:block tw:max-w-full tw:rounded-[99px] tw:[background:none] tw:p-0 tw:text-muted tw:text-xs tw:leading-[18px] tw:font-semibold tw:uppercase tw:tracking-[var(--tracking-label)] tw:wrap-anywhere';
-const SUBJECT = 'tw:[grid-area:value] tw:mt-0.5 tw:text-md tw:leading-[1.3] tw:font-bold tw:font-display tw:text-[#000] tw:wrap-anywhere';
+const SUBJECT = 'tw:[grid-area:value] tw:mt-0.5 tw:text-md tw:leading-[1.3] tw:font-bold tw:font-display tw:text-[var(--ink)] tw:wrap-anywhere';
 const AVATAR = 'avatar tw:[grid-area:icon] tw:size-[35px] tw:flex-none tw:rounded-full tw:[border:0] tw:bg-[color:var(--tone-soft)] tw:text-[color:var(--tone)] tw:text-xs tw:[box-shadow:none]';
 const FACULTY = 'tw:[grid-area:note] tw:[align-self:end] tw:mt-2 tw:min-w-0 tw:flex-[1_1_0] tw:text-xs tw:leading-[18px] tw:font-semibold tw:text-muted tw:wrap-anywhere';
 const ARROW = [

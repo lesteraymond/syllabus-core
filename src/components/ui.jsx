@@ -3,49 +3,53 @@ import { t as translateUI } from "../i18n/index.js";
 import { useState, useEffect, useSyncExternalStore } from 'react';
 import { resolveAvatar, subscribeAvatars } from '../lib/avatarStore';
 import { API_ORIGIN } from '../lib/api';
-import { Notebook } from '@phosphor-icons/react/dist/csr/Notebook';
-import { ArrowUpRight } from '@phosphor-icons/react/dist/csr/ArrowUpRight';
-import { ArrowUUpLeft } from '@phosphor-icons/react/dist/csr/ArrowUUpLeft';
-import { XCircle } from '@phosphor-icons/react/dist/csr/XCircle';
-import { ChatCircleText } from '@phosphor-icons/react/dist/csr/ChatCircleText';
-import { ClockCounterClockwise } from '@phosphor-icons/react/dist/csr/ClockCounterClockwise';
-import { SealCheck } from '@phosphor-icons/react/dist/csr/SealCheck';
-import { HourglassMedium } from '@phosphor-icons/react/dist/csr/HourglassMedium';
-import { NotePencil } from '@phosphor-icons/react/dist/csr/NotePencil';
-import { ShieldCheck } from '@phosphor-icons/react/dist/csr/ShieldCheck';
-import { GraduationCap } from '@phosphor-icons/react/dist/csr/GraduationCap';
-import { PaperPlaneTilt } from '@phosphor-icons/react/dist/csr/PaperPlaneTilt';
-import { UploadSimple } from '@phosphor-icons/react/dist/csr/UploadSimple';
-import { SquaresFour } from '@phosphor-icons/react/dist/csr/SquaresFour';
-import { SignOut } from '@phosphor-icons/react/dist/csr/SignOut';
-// the account's own activity in Recent Activity (lib/activityView.js)
-import { SignIn } from '@phosphor-icons/react/dist/csr/SignIn';
-import { Key } from '@phosphor-icons/react/dist/csr/Key';
-import { IdentificationCard } from '@phosphor-icons/react/dist/csr/IdentificationCard';
-import { UserCircle } from '@phosphor-icons/react/dist/csr/UserCircle';
-import { Translate } from '@phosphor-icons/react/dist/csr/Translate';
-import { FilePlus } from '@phosphor-icons/react/dist/csr/FilePlus';
-import { Trash } from '@phosphor-icons/react/dist/csr/Trash';
-import { PencilRuler } from '@phosphor-icons/react/dist/csr/PencilRuler';
-import { Sparkle } from '@phosphor-icons/react/dist/csr/Sparkle';
-import { GridFour } from '@phosphor-icons/react/dist/csr/GridFour';
-import { Archive } from '@phosphor-icons/react/dist/csr/Archive';
-import { ChartBar } from '@phosphor-icons/react/dist/csr/ChartBar';
-import { DownloadSimple } from '@phosphor-icons/react/dist/csr/DownloadSimple';
-import { UsersThree } from '@phosphor-icons/react/dist/csr/UsersThree';
-import { GearSix } from '@phosphor-icons/react/dist/csr/GearSix';
-import { CaretRight } from '@phosphor-icons/react/dist/csr/CaretRight';
-import { Eye } from '@phosphor-icons/react/dist/csr/Eye';
-import { EyeSlash } from '@phosphor-icons/react/dist/csr/EyeSlash';
-import { Envelope } from '@phosphor-icons/react/dist/csr/Envelope';
-import { Bell } from '@phosphor-icons/react/dist/csr/Bell';
-import { MagnifyingGlass } from '@phosphor-icons/react/dist/csr/MagnifyingGlass';
-import { CheckCircle } from '@phosphor-icons/react/dist/csr/CheckCircle';
-import { Warning } from '@phosphor-icons/react/dist/csr/Warning';
-import { FloppyDisk } from '@phosphor-icons/react/dist/csr/FloppyDisk';
-import { CalendarBlank } from '@phosphor-icons/react/dist/csr/CalendarBlank';
-import { BellRinging } from '@phosphor-icons/react/dist/csr/BellRinging';
-import { ProgramIcon, SubjectIcon, UnderReviewIcon, ApprovedIcon, ReviseIcon, BinIcon, PencilSquareIcon, DeniedIcon } from './customIcons';
+import GeistProgress from './GeistProgress';
+import {
+  Archive,
+  ArrowUpRight,
+  BarChart,
+  Bell,
+  BookClosed,
+  BookOpen,
+  Calendar,
+  CheckCircle,
+  ChevronRight,
+  Clock,
+  ClockDashed,
+  ClockRewind,
+  CloudUpload,
+  CornerUpLeft,
+  CrossCircle,
+  Download,
+  Envelope,
+  Eye,
+  EyeOff,
+  FileText,
+  FloppyDisk,
+  Globe,
+  GridMasonry,
+  GridSquare,
+  Key,
+  ListUnordered,
+  Logout,
+  MagnifyingGlass,
+  Message,
+  Notebook,
+  Notification,
+  PaperAirplane,
+  PencilEdit,
+  RefreshClockwise,
+  SettingsGear,
+  ShieldCheck,
+  SignIn,
+  Sparkles,
+  StopCircle,
+  Trash,
+  User,
+  Users,
+  UserScreen,
+  Warning,
+} from 'geist-icons';
 
 export function Card({ title, action, children, hideScrollbar = false }) {
   return <div className="card"><div className="card-head"><h3>{title}</h3>{action && <span>{tr(action)}</span>}</div><div className={hideScrollbar ? 'card-body scrollbar-hidden' : 'card-body'} {...(hideScrollbar ? { tabIndex: 0, role: 'region', 'aria-label': title } : {})}>{children}</div></div>;
@@ -56,9 +60,9 @@ export function Legend({ color, text, value }) {
 }
 
 // `value` is a percentage, or null when there is nothing to measure yet (shown as a dash with an empty bar). `note` is a small line under the bar.
-export function Progress({ label, value, note }) {
+export function Progress({ label, value, note, type = 'default' }) {
   const known = Number.isFinite(value);
-  return <div className="progress-row"><div><span>{label}</span><b>{known ? `${value}%` : '—'}</b></div><div className="bar"><i style={{ width: `${known ? value : 0}%` }} /></div>{note && <small className="progress-note">{note}</small>}</div>;
+  return <div className="progress-row"><div><span>{label}</span><b>{known ? `${value}%` : '—'}</b></div><GeistProgress value={known ? value : 0} type={type} ariaLabel={typeof label === 'string' ? label : undefined} />{note && <small className="progress-note">{note}</small>}</div>;
 }
 
 // `value` is 0-100, or null when no syllabus has a score for this area yet.
@@ -113,16 +117,16 @@ export function Assessment({ name, weight, cos }) {
 }
 
 export function Policy({ title, text }) {
-  return <div className="policy"><h3>{title}</h3><textarea defaultValue={text} /></div>;
+  return <div className="policy"><h3>{title}</h3><textarea className="geist-textarea" defaultValue={text} /></div>;
 }
 
-// One icon set (Phosphor) for the whole UI. Only the icons listed here are bundled.
+// One icon set (Vercel Geist Iconography) for the whole UI. Only the icons listed here are bundled.
 // Decorative by default (aria-hidden); pass `label` when the icon alone conveys meaning.
-const ICONS = { signOut: SignOut, arrowUpRight: ArrowUpRight, arrowUUpLeft: ArrowUUpLeft, xCircle: XCircle, chatText: ChatCircleText, clockBack: ClockCounterClockwise, notebook: Notebook, sealCheck: SealCheck, hourglassMedium: HourglassMedium, notePencil: NotePencil, shieldCheck: ShieldCheck, graduationCap: GraduationCap, paperPlaneTilt: PaperPlaneTilt, uploadSimple: UploadSimple, squaresFour: SquaresFour, pencilRuler: PencilRuler, sparkle: Sparkle, gridFour: GridFour, archive: Archive, chartBar: ChartBar, downloadSimple: DownloadSimple, usersThree: UsersThree, gearSix: GearSix, caretRight: CaretRight, eye: Eye, eyeSlash: EyeSlash, envelope: Envelope, bell: Bell, magnifyingGlass: MagnifyingGlass, checkCircle: CheckCircle, warning: Warning, floppyDisk: FloppyDisk, calendarBlank: CalendarBlank, bellRinging: BellRinging, program: ProgramIcon, subject: SubjectIcon, underReview: UnderReviewIcon, approved: ApprovedIcon, revise: ReviseIcon, bin: BinIcon, pencilSquare: PencilSquareIcon, denied: DeniedIcon, signIn: SignIn, key: Key, identificationCard: IdentificationCard, userCircle: UserCircle, translate: Translate, filePlus: FilePlus, trash: Trash };
-export function Icon({ name, size = 20, weight = 'duotone', label, className, ...rest }) {
+const ICONS = { signOut: Logout, arrowUpRight: ArrowUpRight, arrowUUpLeft: CornerUpLeft, xCircle: CrossCircle, chatText: Message, clockBack: ClockRewind, notebook: Notebook, sealCheck: CheckCircle, hourglassMedium: ClockDashed, notePencil: PencilEdit, shieldCheck: ShieldCheck, graduationCap: BookOpen, paperPlaneTilt: PaperAirplane, uploadSimple: CloudUpload, squaresFour: GridSquare, pencilRuler: PencilEdit, sparkle: Sparkles, gridFour: GridMasonry, archive: Archive, chartBar: BarChart, downloadSimple: Download, usersThree: Users, gearSix: SettingsGear, caretRight: ChevronRight, eye: Eye, eyeSlash: EyeOff, envelope: Envelope, bell: Bell, magnifyingGlass: MagnifyingGlass, checkCircle: CheckCircle, warning: Warning, floppyDisk: FloppyDisk, calendarBlank: Calendar, bellRinging: Notification, program: BookClosed, subject: ListUnordered, underReview: Clock, approved: CheckCircle, revise: RefreshClockwise, bin: Trash, pencilSquare: PencilEdit, denied: StopCircle, signIn: SignIn, key: Key, identificationCard: UserScreen, userCircle: User, translate: Globe, filePlus: FileText, trash: Trash };
+export function Icon({ name, size = 18, weight, label, className, ...rest }) {
   const Glyph = ICONS[name];
   if (!Glyph) return null;
-  return <Glyph size={size} weight={weight} className={className} {...(label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': 'true' })} {...rest} />;
+  return <Glyph size={size} className={className} {...(label ? { role: 'img', 'aria-label': label } : { 'aria-hidden': 'true' })} {...rest} />;
 }
 
 // Profile picture: shows the image, or the initials circle when there is no URL or it fails to load.

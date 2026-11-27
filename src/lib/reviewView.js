@@ -32,7 +32,7 @@ export function fileName(path) {
 
 const dateText = (d) => phDate(d); // Philippine time
 
-// One entry of the version picker: "v1.1 · Submitted · Jan 2, 2026 (current)".
+// One entry of the version picker: "v2 · Submitted · Jan 2, 2026 (current)".
 export function versionOption(v, isLatest) {
   return [v.label, tr(STATUS_LABELS[v.statusAtSave] || v.statusAtSave), dateText(v.createdAt)].filter(Boolean).join(' · ') + (isLatest ? ' (' + tr('current') + ')' : '');
 }
@@ -69,21 +69,72 @@ export const readyForReview = (s) => !!s && PENDING.includes(s.status) && !s.awa
 //   s.stages           { dean, asst_vpaa, lic_director: { cleared, by, at }, allCleared } (a reviewer's list only)
 //   s.myStageCleared   did this reviewer already clear their own stage on the newest version
 //   s.readyForApproval all three cleared, and still waiting for the VPAA
+//   s.turn             whose turn it is: 'dean', then 'asst_vpaa', then 'lic_director', then 'vpaa' (the chain is cleared in that order)
+//   s.myTurn           it is waiting for this reviewer now (their stage is the turn, or for the VPAA all three are cleared)
+// When the server sends no turn (an older server) the screens behave as before: a reviewer's own stage, in any order.
 // The queue is what needs this person now: a stage reviewer's open checks, or the VPAA's approvals. `rest` is what is still with others.
 // A reviewer never checks their own syllabus (a dean who wrote one sends it for review).
 export function reviewQueue(list, role, userId) {
-  const open = (list || []).filter((s) => readyForReview(s) && s.userId !== userId);
-  if (isApprover(role)) return { queue: open.filter((s) => s.readyForApproval), rest: open.filter((s) => !s.readyForApproval) };
+  const pending = (list || []).filter((s) => !!s && PENDING.includes(s.status) && s.userId !== userId);
+  const open = pending.filter(readyForReview);
+  if (isApprover(role)) {
+    return {
+      queue: open.filter((s) => s.readyForApproval),
+      rest: pending.filter((s) => !s.readyForApproval && (!s.awaitingAiCheck || s.myTurn === false)),
+    };
+  }
   if (!stageOf(role)) return { queue: [], rest: [] };
-  return { queue: open.filter((s) => !s.myStageCleared), rest: open.filter((s) => s.myStageCleared) };
+  const mine = (s) => (s.myTurn === undefined ? !s.myStageCleared : !!s.myTurn);
+  return {
+    queue: open.filter(mine),
+    rest: pending.filter((s) => !mine(s) && (!s.awaitingAiCheck || s.myTurn === false)),
+  };
 }
+// Is it this role's turn on this syllabus? true when the server sends no turn (see above).
+export const isMyTurn = (role, s) => !s || s.turn === undefined || s.turn === (isApprover(role) ? 'vpaa' : stageOf(role));
+// The stage reviewer may return it for revision only on their turn; the VPAA once it has reached them.
+export const canReturnNow = (role, s) => isMyTurn(role, s);
 // The stages that have not been cleared yet, in the order the form lists them. [] when nothing is known.
 export const openStages = (s) => (s && s.stages ? STAGES.filter((stage) => !s.stages[stage].cleared) : []);
 // What the person may do with an open syllabus: the VPAA decides; the others clear their stage or send it back. A reviewer who wrote the
 // syllabus themselves can do neither (it is already cleared by authoring).
 export const decisionKeysFor = (role) => (isApprover(role) ? ['approve', 'revise', 'reject'] : ['revise']);
-export const canClearStage = (role, s, userId) => !!stageOf(role) && !!s && canDecide(s.status) && !s.awaitingAiCheck && !s.myStageCleared && s.userId !== userId;
+export const canClearStage = (role, s, userId) => !!stageOf(role) && !!s && canDecide(s.status) && !s.awaitingAiCheck && !s.myStageCleared && s.userId !== userId && isMyTurn(role, s);
 export const canApprove = (role, s) => isApprover(role) && !!s && canDecide(s.status) && !s.awaitingAiCheck && !!(s.stages && s.stages.allCleared);
+// The review progress: the three stages and the VPAA, in order, each { key, state, by, at }. state is
+//   'cleared'   the stage is cleared on the newest version (or, for the VPAA, approved)
+//   'current'   it is with this step now
+//   'returned'  this step returned it for revision (or the VPAA rejected it): the resubmission comes back here
+//   'waiting'   a later step, not reached yet
+// stages: { dean, asst_vpaa, lic_director: { cleared, by, at } } (from the list or GET /:id/stages); status: the syllabus status;
+// decision: { action: 'approve'|'reject'|'revision', by, role, at } (the last one), optional; approved: { by, at } (GET /:id/stages), optional.
+const ROLE_STEP = { admin: 'dean', asst_vpaa: 'asst_vpaa', lic_director: 'lic_director', vpaa: 'vpaa' };
+export const PROGRESS_STEPS = Object.freeze([...STAGES, 'vpaa']);
+export function progressSteps(stages, status, decision, approved) {
+  if (!stages) return [];
+  const pending = PENDING.includes(status);
+  const returned = status === 'for_revision' || status === 'rejected';
+  const returner = returned && decision && ['revision', 'reject'].includes(decision.action) ? ROLE_STEP[decision.role] || null : null;
+  const turn = STAGES.find((s) => !(stages[s] && stages[s].cleared)) || 'vpaa';
+  return PROGRESS_STEPS.map((key) => {
+    if (key === 'vpaa') {
+      if (status === 'approved') {
+        const who = approved || (decision && decision.action === 'approve' ? decision : null);
+        return { key, state: 'cleared', by: who ? who.by || '' : '', at: who ? who.at || null : null };
+      }
+      if (returner === 'vpaa') return { key, state: 'returned', by: decision.by || '', at: decision.at || null, action: decision.action };
+      return { key, state: pending && turn === 'vpaa' ? 'current' : 'waiting', by: '', at: null };
+    }
+    const st = stages[key] || {};
+    if (returner === key) return { key, state: 'returned', by: decision.by || '', at: decision.at || null, action: decision.action };
+    if (st.cleared) return { key, state: 'cleared', by: st.by || '', at: st.at || null };
+    return { key, state: pending && turn === key ? 'current' : 'waiting', by: '', at: null };
+  });
+}
+
+// The owner's list row carries only which stages are cleared ({ dean: true, asst_vpaa: false, lic_director: false }): shaped as stages for progressSteps.
+export const stagesFromFlags = (flags) => (flags ? Object.fromEntries(STAGES.map((s) => [s, { cleared: !!flags[s], by: '', at: null }])) : null);
+
 export const CLEAR = { label: 'Clear my check', hint: 'Passes it on to the VPAA once all three have', icon: 'approved', confirm: 'Clear your check of this syllabus? It goes to the VPAA once the dean, the Asst. VPAA and the LIC Director have all cleared it.' };
 
 export const MIN_REASON = 5;

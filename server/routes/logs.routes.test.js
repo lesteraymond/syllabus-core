@@ -10,7 +10,8 @@ const gus = { id: 6, role: 'faculty', firstName: 'Gus', lastName: 'G' };
 const NAMES = { 1: ['Diana', 'Evale'], 5: ['Fay', 'F'], 6: ['Gus', 'G'] };
 
 // `account`: the account_activity rows (lib/accountActivity.js); null is a database before npm run migrate-account-activity.
-function makeDb({ account = [] } = {}) {
+// `years`: academic_years rows; null simulates a database before migrate-academic-year-scope.
+function makeDb({ account = [], years = null, syllabusYears = {} } = {}) {
   const rows = [];
   let n = 0;
   const add = (user_id, action, syllabus_id = 10) => rows.push({ log_id: ++n, syllabus_id, user_id, action, action_date: new Date(Date.UTC(2026, 2, 1) + n * 60000).toISOString(), notes: action + ' note' });
@@ -21,19 +22,27 @@ function makeDb({ account = [] } = {}) {
   const handle = (text, p = []) => {
     const sql = String(text).replace(/\s+/g, ' ').trim();
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [NAMES[p[0]] ? [{ user_id: p[0] }] : []];
+    if (sql.startsWith('SELECT label, start_year, is_current FROM academic_years')) {
+      if (!years) throw Object.assign(new Error("Table 'academic_years' doesn't exist"), { code: 'ER_NO_SUCH_TABLE' });
+      return [years];
+    }
     if (sql.startsWith('SELECT l.*, u.first_name, u.last_name, s.title, s.course_code FROM submission_logs l')) {
-      const one = sql.includes('WHERE l.user_id = ?');
+      const one = sql.includes('l.user_id = ?');
       assert.ok(one || state.everyone, 'the read is limited to one account in the query itself');
       const limit = Number(/LIMIT (\d+)/.exec(sql)[1]);
-      return [rows.filter((r) => !one || r.user_id === p[0]).sort((a, b) => b.log_id - a.log_id).slice(0, limit)
+      const byYear = sql.includes('COALESCE(s.academic_year, ?) IN (?)');
+      const [curYear, allowed] = byYear ? p.slice(-2) : [null, null];
+      return [rows.filter((r) => (!one || r.user_id === p[0]) && (!byYear || (r.syllabus_id != null && allowed.includes(syllabusYears[r.syllabus_id] || curYear)))).sort((a, b) => b.log_id - a.log_id).slice(0, limit)
         .map((r) => ({ ...r, first_name: NAMES[r.user_id][0], last_name: NAMES[r.user_id][1], title: 'Fundamentals of Mathematics', course_code: 'FM 202' }))];
     }
     if (sql.startsWith('SELECT a.activity_id, a.user_id, a.action')) {
       if (account === null) throw Object.assign(new Error("Table 'account_activity' doesn't exist"), { code: 'ER_NO_SUCH_TABLE' });
-      const one = sql.includes('WHERE a.user_id = ?');
+      const one = sql.includes('a.user_id = ?');
       assert.ok(one || state.everyone, 'the account activity read is limited to one account in the query itself');
       const limit = Number(/LIMIT (\d+)/.exec(sql)[1]);
-      return [account.filter((r) => !one || r.user_id === p[0]).sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at)).slice(0, limit)
+      const byYear = sql.includes('COALESCE(s.academic_year, ?) IN (?)');
+      const [curYear, allowed] = byYear ? p.slice(-2) : [null, null];
+      return [account.filter((r) => (!one || r.user_id === p[0]) && (!byYear || (r.syllabus_id != null && allowed.includes(syllabusYears[r.syllabus_id] || curYear)))).sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at)).slice(0, limit)
         .map((r) => ({ syllabus_id: null, subject: null, notes: null, course_code: null, title: null, ...r, first_name: NAMES[r.user_id][0], last_name: NAMES[r.user_id][1] }))];
     }
     if (/program_outcome_sources/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // not migrated yet
@@ -128,4 +137,27 @@ test('the administrator reads everyone\'s activity, or one person\'s; anyone els
   const gusOnly = (await call(admin, '?scope=all&userId=6')).body;
   assert.deepStrictEqual(gusOnly.map((x) => x.action), ['name_change', 'login', 'syllabus_delete', 'submit'], 'one person: read with the account in the query');
   assert.deepStrictEqual((await call(admin)).body.map((x) => x.action), ['logout', 'approve', 'revision'], 'without scope: still the administrator\'s own');
+}));
+
+test('personal Recent Activity starts fresh on a new academic year and restores when switching back, while Audit Log (?scope=all) stays complete', () => withServer({
+  years: [
+    { label: '2026–2027', start_year: 2026, is_current: 0 },
+    { label: '2027–2028', start_year: 2027, is_current: 1 },
+  ],
+  syllabusYears: { 10: '2026–2027', 11: '2026–2027' },
+  account: [
+    { activity_id: 1, user_id: 6, action: 'draft_create', syllabus_id: 11, created_at: '2026-03-20T08:00:00Z' },
+    { activity_id: 2, user_id: 6, action: 'login', notes: 'password', created_at: '2026-03-20T08:05:00Z' },
+  ],
+}, async ({ call, db }) => {
+  // New active year (2027–2028) has no syllabi yet: Recent Activity is completely fresh
+  assert.deepStrictEqual((await call(gus)).body, []);
+  assert.deepStrictEqual((await call(admin)).body, []);
+  // Selecting or reactivating the previous year (2026–2027) immediately restores its syllabus activity
+  const prev = (await call(gus, '?year=' + encodeURIComponent('2026–2027'))).body;
+  assert.deepStrictEqual(prev.map((x) => x.action), ['draft_create', 'submit']);
+  // Admin Audit Log (?scope=all) remains unfiltered across all academic years
+  db.state.everyone = true;
+  const audit = (await call(admin, '?scope=all')).body;
+  assert.ok(audit.some((x) => x.action === 'login') && audit.some((x) => x.action === 'approve'));
 }));

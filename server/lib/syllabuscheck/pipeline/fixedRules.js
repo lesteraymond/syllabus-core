@@ -93,7 +93,8 @@ function duplicateIloRules(map, out) {
 // "Choose only one observable verb/behavior in a statement of outcome; choose the behavior that is of a higher dimension of complexity").
 // A CLO or ILO that OPENS with two or more joined verbs ("Define and explain ...") is a finding on its own text; the plan drafts a one-verb rewrite
 // (judge.js FIXED_TEXT_RULES). Like every rule of the new checker that needs no AI, it costs no points in official mode.
-const BLOOM_RANK = Object.fromEntries(R.BLOOM_ORDER.flatMap((b, i) => b.verbs.split(/,\s*/).map(v => [v, i])));
+// English and Filipino verbs (a syllabus written in Filipino: rules.BLOOM_ORDER_FIL), by the same level index
+const BLOOM_RANK = Object.fromEntries([R.BLOOM_ORDER, R.BLOOM_ORDER_FIL].flatMap(order => order.flatMap((b, i) => b.verbs.split(/,\s*/).map(v => [v, i]))));
 const higherOf = verbs => [...verbs].sort((a, b) => (BLOOM_RANK[b] ?? -1) - (BLOOM_RANK[a] ?? -1))[0];
 const verbAdvice = verbs => {
   const list = verbs.map(v => `"${v}"`).join(verbs.length === 2 ? ' and ' : ', ');
@@ -140,4 +141,9 @@ function check(map, ctx = {}) {
   return { version: R.VERSION, findings, summary: { finding: count('finding'), review: count('review') } };
 }
 
-module.exports = { check, higherOf };
+// Every rule check() runs, in the order a syllabus is read. The check coverage list (ruleCoverage.js) shows each one, with no finding as checked and
+// passed; coverage.test.js fails when a rule above is missing here.
+const RULE_IDS = ['CLO-COUNT', 'CLO-STATEMENT', 'CLO-LEVEL-LABEL', 'CLO-PO-TAG', 'CLO-EGA-TAG', 'CLO-UNKNOWN-TAG', 'CLO-COVERAGE', 'WEEK1-ORIENTATION', 'WEEK2-FIRST-TOPIC',
+  'CONTENT-MISSING', 'ILO-MISSING', 'ILO-CLO-TAG', 'ACTIVITY-OPTIONS', 'TASKS-MISSING', 'VALUES-WEEKLY', 'ILO-DUPLICATE', 'OUTCOME-ONE-VERB', 'REF-NONE', 'REF-APA', 'REF-RECENCY'];
+
+module.exports = { check, higherOf, RULE_IDS };

@@ -29,6 +29,8 @@ export const KINDS = {
   generate: { icon: 'pencilRuler', tone: 'info', verb: 'generated an AI draft of' },
   // a sign-in that was refused, recorded on the account it was for
   login_failed: { icon: 'warning', tone: 'bad', verb: 'failed to sign in', account: true },
+  // a student's agreement to the registration Terms and Conditions, with the version agreed to (src/lib/corTerms.js)
+  terms_accept: { icon: 'shieldCheck', tone: 'info', verb: 'agreed to the registration Terms and Conditions', account: true },
   // the administrator's management of accounts: the subject is the account acted on
   user_create: { icon: 'usersThree', tone: 'info', verb: 'registered the account of', manages: true },
   user_credentials: { icon: 'envelope', tone: 'info', verb: 'sent new sign-in details to', manages: true },
@@ -50,7 +52,20 @@ const ON_DRAFT = { draft_create: 'started a new draft of', content_edit: 'edited
 const ON_SYLLABUS = { content_edit: 'edited', syllabus_delete: 'deleted' };
 // What a person did with a recommendation, from the first word of the note the server wrote ("Accepted recommendation: plan[3].tasks").
 const RECOMMEND_VERBS = { Accepted: 'accepted a recommendation on', Edited: 'edited and applied a recommendation on', Rejected: 'rejected a recommendation on', Undid: 'undid a recommendation on' };
+// Stage-clear and review-without-AI rows share action = 'check' in submission_logs (server/routes/reviewChain.js); distinguish them from AI checks by their note.
+const STAGE_CLEAR_VERBS = {
+  dean: 'cleared the dean review of',
+  'asst. vpaa': 'cleared the Asst. VPAA review of',
+  'lic director': 'cleared the LIC Director review of',
+};
 const FALLBACK = { icon: 'notePencil', tone: 'quiet', verb: 'made a change to' };
+
+// Security, auth, and administrative oversight actions belong in the Admin Audit Log, not in a user's personal Recent Activity feed.
+export const AUDIT_ONLY_ACTIONS = new Set([
+  'login', 'logout', 'login_failed', 'password_change', 'terms_accept',
+  'user_create', 'user_credentials', 'user_disable', 'user_enable', 'user_delete', 'user_assignments',
+]);
+export const isRecentActivity = (log) => !(log && AUDIT_ONLY_ACTIONS.has(log.action));
 
 // -> { key, icon, tone, who, verb, subject, detail, time, iso, when }. `viewerId` is the signed-in user: their own actions read "You".
 export function describeActivity(log, index = 0, viewerId = null) {
@@ -63,13 +78,28 @@ export function describeActivity(log, index = 0, viewerId = null) {
   const action = log && log.action;
   const notes = String((log && log.notes) || '').trim();
   let verb = (action === 'recommend' && RECOMMEND_VERBS[notes.split(' ')[0]]) || kind.verb;
+  let icon = kind.icon;
+  let tone = kind.tone;
   let subject = code || title || 'a syllabus';
   let detail = code && title ? title : ''; // the course title under the code, when there is both
   let note = '';
+  if (action === 'check') {
+    const stageMatch = /^Cleared the (.+?) review(?::|$)/i.exec(notes);
+    if (stageMatch) {
+      verb = STAGE_CLEAR_VERBS[stageMatch[1].trim().toLowerCase()] || 'cleared the review of';
+      icon = 'checkCircle';
+      tone = 'good';
+    } else if (/^Chose to review\b[\s\S]*\bwithout an AI check\b/i.test(notes)) {
+      verb = 'chose to review without an AI check';
+      icon = 'notePencil';
+      tone = 'quiet';
+    }
+  }
   if (kind.account) {
     subject = ''; detail = '';
     note = (NOTES[action] && NOTES[action][notes]) || '';
     if (action === 'name_change') detail = notes; // "Old Name → New Name": names, not translated
+    if (action === 'terms_accept') detail = notes.split(' at ')[0]; // the version agreed to ("2026-11-24")
     if (action === 'photo_change') { verb = PHOTO_VERBS[notes] || verb; if (notes === 'remove_other') subject = String((log && log.courseCode) || '').trim() || 'another account'; }
   } else if (kind.manages) {
     subject = code || 'an account'; detail = ''; // the account's name, recorded at the time
@@ -82,8 +112,8 @@ export function describeActivity(log, index = 0, viewerId = null) {
   }
   return {
     key: (log && log.id) || 'row-' + index,
-    icon: kind.icon,
-    tone: kind.tone,
+    icon,
+    tone,
     who: viewerId !== null && log && log.userId === viewerId ? 'You' : String((log && log.user) || '').trim() || 'Someone',
     verb,
     subject,

@@ -52,9 +52,11 @@ async function request(path, options = {}) {
 
 // Student registration: scan the COR (multipart), then register with only a password; the server keeps the scan.
 export const students = {
-  scan: async (file, consent = false) => {
+  // termsVersion: the version of the Terms and Conditions the student agreed to (src/lib/corTerms.js); the server records it with the account
+  scan: async (file, consent = false, termsVersion = '') => {
     const fd = new FormData();
     fd.append('consent', consent ? 'yes' : 'no'); // text fields go before the file so the server sees them first
+    fd.append('terms', consent ? String(termsVersion || '') : '');
     fd.append('cor', file);
     let res;
     try { res = await fetch(`${API}/students/scan`, { method: 'POST', credentials: 'include', body: fd }); }
@@ -68,6 +70,8 @@ export const students = {
   // Read-only: the approved syllabi of the student's enrolled subjects, and one of them with its content.
   syllabi: () => request('/students/syllabi'),
   syllabus: (id) => request(`/students/syllabi/${id}`),
+  // the uploaded PDF of an approved syllabus, on the API's origin (the page may be served from another one, as Vite is in development)
+  fileUrl: (id) => `${API}/students/syllabi/${id}/file`,
 };
 
 export const auth = {
@@ -100,7 +104,8 @@ const yearQuery = (year, joiner = '?') => (year ? `${joiner}year=${encodeURIComp
 async function postPdf(path, file) {
   const body = new FormData(); body.append('file', file);
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 150000);
+  // A scanned syllabus is OCR'd page by page on the server (up to 9 minutes, server/lib/pdfImport.js MAX_MS); wait a little longer than that.
+  const timeout = setTimeout(() => controller.abort(), 10 * 60 * 1000);
   try {
     const res = await fetch(`${API}${path}`, { method: 'POST', credentials: 'include', headers: authHeaders(), body, signal: controller.signal });
     const data = await res.json().catch(() => ({}));
@@ -114,9 +119,19 @@ async function postPdf(path, file) {
 }
 export const syllabi = {
   pdfImportConfig: ({ signal } = {}) => request('/syllabi/pdf-import/config', { signal }),
-  importPdf: (id, file) => postPdf(`/syllabi/${id}/import-pdf`, file),
+  // `job` names the scan so the server keeps it (server/lib/pdfImportJobs.js) and a refresh can pick it up with pdfImportJob(job).
+  importPdf: (id, file, { job } = {}) => postPdf(`/syllabi/${id}/import-pdf` + (job ? `?job=${encodeURIComponent(job)}` : ''), file),
   // No subject chosen yet: the server scans the PDF and returns the assigned subject its course code names (preview.subject).
-  extractPdf: (file) => postPdf('/syllabi/pdf-import/extract', file),
+  extractPdf: (file, { job } = {}) => postPdf('/syllabi/pdf-import/extract' + (job ? `?job=${encodeURIComponent(job)}` : ''), file),
+  // { state: 'running' | 'done' | 'failed', kind, file: { name, size }, result? , status?, error? } for a scan started with { job }.
+  pdfImportJob: (job, { signal } = {}) => request(`/syllabi/pdf-import/job/${encodeURIComponent(job)}`, { signal }),
+  // The PDF of that scan, as a File (the preview pane and "read again" after a refresh).
+  pdfImportJobFile: async (job, { name = 'syllabus.pdf', signal } = {}) => {
+    const res = await fetch(`${API}/syllabi/pdf-import/job/${encodeURIComponent(job)}/file`, { credentials: 'include', headers: authHeaders(), signal });
+    if (!res.ok) throw Object.assign(new Error('pdfImport.interrupted'), { status: res.status });
+    const blob = await res.blob();
+    return new File([blob], name, { type: 'application/pdf' });
+  },
   // `year` is the academic year (a label, or 'all'); without it the server answers for the current academic year (lib/academicYear.js)
   list: (year) => request('/syllabi' + yearQuery(year)),
   repository: (year) => request('/syllabi?scope=repository' + yearQuery(year, '&')),
@@ -155,6 +170,7 @@ export const syllabi = {
   poReview: (id) => request(`/syllabi/${id}/po-review`),
   adoptPoReview: (id, reviewedSha256) => request(`/syllabi/${id}/po-review/adopt`, { method: 'POST', body: JSON.stringify({ reviewedSha256, confirm: true }) }),
   // Structured builder content: a draft is created lazily, then saved section by section.
+  formatReference: (url) => request('/syllabi/format-reference', { method: 'POST', body: JSON.stringify({ url }) }),
   createDraft: () => request('/syllabi/drafts', { method: 'POST' }),
   getContent: async (id) => {
     const res = await request(`/syllabi/${id}/content`);
@@ -201,8 +217,12 @@ export const compliance = {
 
 export const outcomes = {
   institution: () => request('/institution/outcomes'),
-  // `year`: the academic year of the catalog (the catalog is per year); without it the server answers for the current one
-  programs: (year) => request('/programs' + yearQuery(year)),
+  // `year`: the academic year of the catalog (the catalog is per year); without it the server answers for the current one.
+  // `{ assigned: true }` filters to the signed-in author's assigned programs (used by the builder for both faculty and admins).
+  programs: (year, { assigned = false } = {}) => {
+    const q = [year ? `year=${encodeURIComponent(year)}` : '', assigned ? 'assigned=1' : ''].filter(Boolean).join('&');
+    return request('/programs' + (q ? '?' + q : ''));
+  },
   createProgram: (body) => request('/programs', { method: 'POST', body: JSON.stringify(body) }),
   renameProgram: (id, name, expectedName, code, expectedCode) => request(`/programs/${id}`, { method: 'PATCH', body: JSON.stringify({ name, expectedName, code, expectedCode }) }),
   previewProgramDeletion: (id) => request(`/programs/${id}/deletion-preview`),
@@ -214,13 +234,15 @@ export const outcomes = {
   saveProgram: (code, pos, version) => request(`/programs/${encodeURIComponent(code)}/outcomes`, { method: 'PUT', body: JSON.stringify({ pos, version }) }),
   syncSubjects: (id) => request(`/programs/${id}/sync-subjects`, { method: 'POST' }),
   saveProgramEgas: (code, egas, version) => request(`/programs/${encodeURIComponent(code)}/egas`, { method: 'PUT', body: JSON.stringify({ egas, version }) }),
+  // EGAs and POs together, in one transaction (the outcomes dialog's one Save). `versions` is { egas, pos } as the screen loaded them.
+  saveProgramSetup: (code, egas, pos, versions) => request(`/programs/${encodeURIComponent(code)}/setup`, { method: 'PUT', body: JSON.stringify({ egas, pos, versions }) }),
 };
 
 // Course catalog: course code, title, program and the course learning outcomes (CLOs). Only admins write.
 export const courses = {
   saveStandards: (id, section, value, version) => request(`/courses/${id}/standards`, { method: 'PUT', body: JSON.stringify({ section, value, version }) }),
-  // forSyllabus: { except } asks the server to mark the subjects that already have a syllabus (`taken`); except is the one being edited.
-  list: (program, forSyllabus, year) => request(`/courses?${[program ? `program=${encodeURIComponent(program)}` : '', forSyllabus ? `taken=1&except=${Number(forSyllabus.except) || 0}` : '', year ? `year=${encodeURIComponent(year)}` : ''].filter(Boolean).join('&')}`),
+  // forSyllabus: { except, assigned } asks the server to mark the subjects that already have a syllabus (`taken`) and/or filter to the caller's own assigned subjects (`assigned=1`).
+  list: (program, forSyllabus, year) => request(`/courses?${[program ? `program=${encodeURIComponent(program)}` : '', forSyllabus ? `taken=1&except=${Number(forSyllabus.except) || 0}` : '', forSyllabus && forSyllabus.assigned ? 'assigned=1' : '', year ? `year=${encodeURIComponent(year)}` : ''].filter(Boolean).join('&')}`),
   get: (id) => request(`/courses/${id}`),
   create: (data) => request('/courses', { method: 'POST', body: JSON.stringify(data) }),
   update: (id, data) => request(`/courses/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
@@ -246,8 +268,6 @@ export const curriculum = {
 
 export const syllabusCheck = {
   status: () => request('/syllabus-check/status'),
-  // The approved curriculum references (administrator only): [{ id, program, curriculumYear, status, source, courses }]
-  references: () => request('/syllabus-check/references'),
   decisions: (runId) => request(`/syllabus-check/runs/${runId}/decisions`),
   // Check one AI recommendation against every relationship its text touches, and get the text to use (nothing is saved or applied).
   refine: (runId, suggestionId, editedText) => request(`/syllabus-check/runs/${runId}/suggestions/${encodeURIComponent(suggestionId)}/refine`, {
@@ -262,8 +282,8 @@ export const syllabusCheck = {
 };
 
 export const logs = {
-  // no options: the signed-in account's own activity. The administrator may pass { scope: 'all' } for everyone's, with { userId } for one person's.
-  list: ({ scope, userId } = {}) => { const q = new URLSearchParams(); if (scope) q.set('scope', scope); if (userId) q.set('userId', String(userId)); const text = q.toString(); return request('/logs' + (text ? '?' + text : '')); },
+  // no options: the signed-in account's own activity for the active (or requested) academic year. The administrator may pass { scope: 'all' } for everyone's, with { userId } for one person's.
+  list: ({ scope, userId, year } = {}) => { const q = new URLSearchParams(); if (scope) q.set('scope', scope); if (userId) q.set('userId', String(userId)); if (year) q.set('year', year); const text = q.toString(); return request('/logs' + (text ? '?' + text : '')); },
 };
 
 export const messages = {

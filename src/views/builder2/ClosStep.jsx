@@ -7,6 +7,7 @@ import { Icon } from '../../components/ui';
 import StableButton from '../../components/StableButton';
 import ReadOnlyOutcomes from './ReadOnlyOutcomes';
 import PoReviewNotice from './PoReviewNotice';
+import { linkedEgas, missingPoEgas, tickPo } from '../../lib/outcomesSetup';
 
 // Step 2 edits the same draft as the other builder steps; it never writes the subject catalog.
 export default function ClosStep({ d, model, apply, editable = !!apply, lockStandards = false, poReview = null }) {
@@ -20,14 +21,17 @@ export default function ClosStep({ d, model, apply, editable = !!apply, lockStan
   });
   const toggle = (values, no) => values.includes(no) ? values.filter(n => n !== no) : [...values, no].sort((a, b) => a - b);
   const usesTag = tag => d.plan.some(row => row.ilos.some(il => il.tags.includes(tag)));
-  const egaUsed = no => o.pos.some(p => p.egas.includes(no)) || d.clos.some(c => c.egas.includes(no)) || usesTag('ega:' + no);
-  const poUsed = no => d.clos.some(c => c.pos.includes(no)) || usesTag('po:' + no);
+  // A PO or EGA is in use only through a CLO: an ILO aligns to a CLO, never to a PO or EGA directly.
+  const egaUsed = no => o.pos.some(p => p.egas.includes(no)) || d.clos.some(c => c.egas.includes(no));
+  const poUsed = no => d.clos.some(c => c.pos.includes(no));
   const nextNo = rows => Math.max(0, ...rows.map(row => row.no)) + 1;
-  const mapChoices = (rows, values, onChange, label) => <div className="ie-egas" role="group" aria-label={label}>
+  // `extra(row)`: more text on a chip (a CLO's PO chips show the EGAs the PO is linked to)
+  const mapChoices = (rows, values, onChange, label, extra = null) => <div className="ie-egas" role="group" aria-label={label}>
     {rows.map(row => <label className={'ie-chip' + (values.includes(row.no) ? ' on' : '')} key={row.no} title={row.name || row.text}>
-      <input type="checkbox" checked={values.includes(row.no)} onChange={() => onChange(toggle(values, row.no))} />{label + ' ' + row.no}
+      <input type="checkbox" checked={values.includes(row.no)} onChange={() => onChange(toggle(values, row.no), row.no)} />{label + ' ' + row.no}{extra && extra(row)}
     </label>)}
   </div>;
+  const poEgas = row => (row.egas || []).length ? <span className="po-egas">{' · ' + t('ui.ega_4f085b') + row.egas.join(', ')}</span> : null;
   const removeButton = (label, disabled, onClick) => <button type="button" className="ib del" aria-label={label} title={disabled ? t('outcomes.inUse') : label} disabled={disabled} onClick={onClick}><Icon name="bin" size={16} /></button>;
   return <div className="sm-stack learning-outcomes-editor">
     <p className="hint">{lockStandards ? t('outcomes.lockedStandards') : t('outcomes.authoringNote')}</p>
@@ -108,7 +112,12 @@ export default function ClosStep({ d, model, apply, editable = !!apply, lockStan
             <span className="lbl">{t('ui.expected_graduate_attributes_86f980')}</span>
             {mapChoices(o.egas, c.egas, values => edit((x, next) => { next.clos[i].egas = values; }), t('ui.ega_4f085b'))}
             <span className="lbl">{t('ui.program_outcomes_858de9')}</span>
-            {mapChoices(o.pos, c.pos, values => edit((x, next) => { next.clos[i].pos = values; }), t('ui.po_3756d6'))}
+            {/* ticking a PO also ticks the EGAs it is linked to (P-03), and each PO chip shows them */}
+            {mapChoices(o.pos, c.pos, (values, no) => edit((x, next) => { Object.assign(next.clos[i], tickPo(next.clos[i], no, o.pos)); }), t('ui.po_3756d6'), poEgas)}
+            {missingPoEgas(c, o.pos).length > 0 && <p className="clo-ega-hint" role="status">
+              {missingPoEgas(c, o.pos).map(m => t('ui.po_po_serves_egas_tick_it_on_this_clo_too_913279', { po: m.po, egas: m.egas.map(e => t('ui.ega_4f085b') + e).join(', ') })).join(' ')}{' '}
+              <button type="button" className="link" onClick={() => edit((x, next) => { next.clos[i].egas = [...new Set([...next.clos[i].egas, ...linkedEgas(o.pos, next.clos[i].pos)])].sort((a, b) => a - b); })}>{t('ui.add_the_egas_of_its_pos_a0171c')}</button>
+            </p>}
           </div>
         </div>)}
         <StableButton type="button" className="btn outline" disabled={d.clos.length >= 20} onClick={() => edit((x, next) => { next.clos.push({ id: newId(), title: '', level: 'Enabling', statement: '', egas: [], pos: [] }); })}>{t('ui.add_clo_0485ad')}</StableButton>

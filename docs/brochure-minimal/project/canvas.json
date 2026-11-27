@@ -1,0 +1,14 @@
+{
+  "v": 3,
+  "createdOnFiles": { "v": 1, "at": "2026-11-24T13:45:00Z" },
+  "title": "Syllabus system tri-fold brochure",
+  "launch": { "view": "canvas" },
+  "pages": [],
+  "boards": {
+    "Main.dc.html": { "x": 0, "y": 0, "w": 1123, "h": 794, "title": "Outside: inside flap, back cover, front cover", "print": "fixed" },
+    "Inside.dc.html": { "x": 0, "y": 914, "w": 1123, "h": 794, "title": "Inside: overview, features, screens", "print": "fixed" }
+  },
+  "order": ["Main.dc.html", "Inside.dc.html"],
+  "notes": {},
+  "designSystems": []
+}

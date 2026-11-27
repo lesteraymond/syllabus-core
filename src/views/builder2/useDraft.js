@@ -24,7 +24,7 @@ const stamp = () => phTime(new Date()); // "Saved 3:44 PM", in Philippine time
 //  - `editing.syllabusId` opens an existing syllabus (its saved content, upgraded if it is an older schema).
 export function useDraft(editing) {
   const [draft, dispatch] = useReducer(reducer, null);
-  const [load, setLoad] = useState({ loading: true, error: '', editable: true, status: 'draft', version: 'v1.0' });
+  const [load, setLoad] = useState({ loading: true, error: '', editable: true, status: 'draft', version: 'v1' });
   const [save, setSave] = useState({ state: 'saved', time: '' });
   const idRef = useRef(editing && editing.syllabusId ? editing.syllabusId : null);
   const latest = useRef(null);
@@ -43,12 +43,12 @@ export function useDraft(editing) {
       try {
         let content = null;
         let adoptedOutcomes = false;
-        let info = { editable: true, status: 'draft', version: 'v1.0' };
+        let info = { editable: true, status: 'draft', version: 'v1' };
         if (idRef.current) {
           const r = await syllabiApi.getContent(idRef.current);
           content = r.content;
           adoptedOutcomes = r.adoptedOutcomes;
-          info = { editable: r.editable, status: r.status, version: r.version, academicYear: r.academicYear || '', lockedReason: r.lockedReason || '', nextVersion: r.nextVersion || '', reviewerNote: r.reviewerNote || '' };
+          info = { editable: r.editable, status: r.status, version: r.version, academicYear: r.academicYear || '', lockedReason: r.lockedReason || '', lockedCode: r.lockedCode || '', nextVersion: r.nextVersion || '', reviewerNote: r.reviewerNote || '' };
         }
         let d;
         if (content) {
@@ -113,23 +113,31 @@ export function useDraft(editing) {
     return inflight.current;
   }, []);
 
-  // Any change to the draft after loading schedules a save of the changed sections.
+  // Any change to an already-saved draft schedules an auto-save of the changed sections.
+  // A brand-new syllabus (idRef.current === null) stays local until the user explicitly clicks "Save as draft" (or submits/checks).
   useEffect(() => {
     if (!draft) return undefined;
     latest.current = draft;
     if (!touched.current) return undefined;
     pending.current = true;
+    if (!idRef.current) return undefined;
     setSave((s) => (s.state === 'saved' || s.state === 'error' ? { ...s, state: 'pending' } : s));
     clearTimeout(timer.current);
     timer.current = setTimeout(flush, DEBOUNCE_MS);
     return () => clearTimeout(timer.current);
   }, [draft, flush]);
 
-  // Save what is pending when the builder is closed.
-  useEffect(() => () => { clearTimeout(timer.current); if (touched.current) flush(); }, [flush]);
+  // Save what is pending when the builder is closed (only for an already-created draft).
+  useEffect(() => () => { clearTimeout(timer.current); if (touched.current && idRef.current) flush(); }, [flush]);
 
   useEffect(() => {
-    const warn = (e) => { if (pending.current) { flush(); e.preventDefault(); e.returnValue = ''; } };
+    const warn = (e) => {
+      if (pending.current) {
+        if (idRef.current) flush();
+        e.preventDefault();
+        e.returnValue = '';
+      }
+    };
     window.addEventListener('beforeunload', warn);
     return () => window.removeEventListener('beforeunload', warn);
   }, [flush]);
@@ -146,5 +154,39 @@ export function useDraft(editing) {
   }, [flush]);
   const saveNow = useCallback(() => { clearTimeout(timer.current); return flush(); }, [flush]);
 
-  return { draft, apply, set, setAndSave, save, saveNow, reload, load, syllabusId: () => idRef.current };
+  // Attaches this builder session to an existing editable syllabus (e.g. when a PDF uploaded from a fresh builder matches a draft the user already owns).
+  const attachExisting = useCallback(async (id) => {
+    clearTimeout(timer.current);
+    const r = await syllabiApi.getContent(id);
+    const d = r.content ? hydrateContent(r.content, newId) : emptyDraft(newId);
+    const nextSaved = {};
+    if (r.content) {
+      SECTIONS.forEach((k) => {
+        if (r.content[k] !== undefined && !(r.adoptedOutcomes && ['outcomes', 'clos'].includes(k))) nextSaved[k] = JSON.stringify(d[k]);
+      });
+    }
+    idRef.current = id;
+    savedJson.current = nextSaved;
+    touched.current = false;
+    pending.current = false;
+    again.current = false;
+    latest.current = d;
+    dispatch({ type: 'SET', v: d });
+    setSave({ state: 'saved', time: '' });
+    setLoad({
+      loading: false,
+      error: '',
+      editable: !!r.editable,
+      status: r.status || 'draft',
+      version: r.version || 'v1',
+      academicYear: r.academicYear || '',
+      lockedReason: r.lockedReason || '',
+      lockedCode: r.lockedCode || '',
+      nextVersion: r.nextVersion || '',
+      reviewerNote: r.reviewerNote || '',
+    });
+    return d;
+  }, []);
+
+  return { draft, apply, set, setAndSave, save, saveNow, reload, attachExisting, load, syllabusId: () => idRef.current };
 }

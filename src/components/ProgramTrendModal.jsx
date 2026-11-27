@@ -121,7 +121,32 @@ export function TrendChart({ trend }) {
   const x = (i) => M.left + (n > 1 ? (i / (n - 1)) * PLOT_W : PLOT_W);
   const y = (pct) => M.top + PLOT_H - (pct / top) * PLOT_H;
   const step = trend.granularity === 'day';
-  const pathOf = (pts) => pts.map((v, i) => (i === 0 ? `M${x(0)},${y(v)}` : step ? `H${x(i)}V${y(v)}` : `L${x(i)},${y(v)}`)).join('');
+  // Monotone cubic Hermite spline (Fritsch-Carlson) for smooth series lines that never overshoot 0% or the scale ceiling.
+  const monotonePath = (pts) => {
+    const coords = pts.map((v, i) => [x(i), y(v)]);
+    if (coords.length < 2) return coords.length ? `M${coords[0][0]},${coords[0][1]}` : '';
+    if (coords.length === 2) return `M${coords[0][0]},${coords[0][1]}L${coords[1][0]},${coords[1][1]}`;
+    const k = coords.length;
+    const dx = [], dy = [], m = [];
+    for (let i = 0; i < k - 1; i++) { dx[i] = coords[i + 1][0] - coords[i][0]; dy[i] = coords[i + 1][1] - coords[i][1]; m[i] = dx[i] ? dy[i] / dx[i] : 0; }
+    const t = [m[0]];
+    for (let i = 1; i < k - 1; i++) t[i] = m[i - 1] * m[i] <= 0 ? 0 : (m[i - 1] + m[i]) / 2;
+    t[k - 1] = m[k - 2];
+    for (let i = 0; i < k - 1; i++) {
+      if (m[i] === 0) { t[i] = 0; t[i + 1] = 0; continue; }
+      const a = t[i] / m[i], b = t[i + 1] / m[i], s = Math.hypot(a, b);
+      if (s > 3) { t[i] = (3 / s) * a * m[i]; t[i + 1] = (3 / s) * b * m[i]; }
+    }
+    let d = `M${coords[0][0]},${coords[0][1]}`;
+    for (let i = 0; i < k - 1; i++) {
+      const h = dx[i] / 3;
+      d += `C${coords[i][0] + h},${coords[i][1] + t[i] * h} ${coords[i + 1][0] - h},${coords[i + 1][1] - t[i + 1] * h} ${coords[i + 1][0]},${coords[i + 1][1]}`;
+    }
+    return d;
+  };
+  const pathOf = (pts) => (step
+    ? pts.map((v, i) => (i === 0 ? `M${x(0)},${y(v)}` : `H${x(i)}V${y(v)}`)).join('')
+    : monotonePath(pts));
   const areaOf = (pts) => pathOf(pts) + `V${y(0)}H${x(0)}Z`;
   const maxTicks = 7;
   const every = Math.max(1, Math.ceil(n / maxTicks));
@@ -150,25 +175,31 @@ export function TrendChart({ trend }) {
   const tipRows = hover === null ? [] : [...lines].sort((a, b) => b.points[hover] - a.points[hover] || a.program.localeCompare(b.program));
   return <div className="trend-panel">
     {all.length > 1 && <ul className="trend-legend" aria-label={t('trend.legend')}>
-      {all.map((s) => <li key={s.program}><button type="button" aria-pressed={!hidden.has(s.program)} className={hidden.has(s.program) ? 'off' : ''} title={(s.name ? s.name + ' · ' : '') + t('trend.toggle', { program: s.program })}
+      {all.map((s) => <li key={s.program}><button type="button" aria-pressed={!hidden.has(s.program)} className={(hidden.has(s.program) ? 'off' : '') + (focus === s.program ? ' is-focus' : '')} title={(s.name ? s.name + ' · ' : '') + t('trend.toggle', { program: s.program })}
         onClick={() => toggle(s.program)} onMouseEnter={() => setFocus(s.program)} onMouseLeave={() => setFocus(null)} onFocus={() => setFocus(s.program)} onBlur={() => setFocus(null)}>
-        <i style={{ background: hidden.has(s.program) ? 'transparent' : SERIES_COLORS[s.slot], borderColor: SERIES_COLORS[s.slot] }} aria-hidden="true" />{s.program}
+        <i style={{ background: hidden.has(s.program) ? 'transparent' : SERIES_COLORS[s.slot], borderColor: SERIES_COLORS[s.slot] }} aria-hidden="true" /><span>{s.program}</span><small>{s.points[at]}%</small>
       </button></li>)}
     </ul>}
     <div className="trend-chart" ref={box}>
       <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={t('trend.chartLabel')} tabIndex={0} onKeyDown={keys} onBlur={() => setHover(null)}>
         <defs>{lines.map((s) => <linearGradient key={s.program} id={'trend-fill-' + s.slot} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor={SERIES_COLORS[s.slot]} stopOpacity="0.12" /><stop offset="100%" stopColor={SERIES_COLORS[s.slot]} stopOpacity="0" />
+          <stop offset="0%" stopColor={SERIES_COLORS[s.slot]} stopOpacity={focus === s.program ? '0.2' : '0.1'} /><stop offset="100%" stopColor={SERIES_COLORS[s.slot]} stopOpacity="0" />
         </linearGradient>)}</defs>
         {levels.map((v) => <g key={v}>
           <line x1={M.left} x2={M.left + PLOT_W} y1={y(v)} y2={y(v)} className={v === 0 ? 'trend-baseline' : 'trend-grid'} />
           <text x={M.left - 10} y={y(v)} className="trend-axis" textAnchor="end" dominantBaseline="middle">{v}%</text>
         </g>)}
         {ticks.map((i, k) => <text key={i} x={x(i)} y={H - 8} className="trend-axis" textAnchor={i === 0 ? 'start' : i === n - 1 ? 'end' : 'middle'}>{labelOf(trend.dates[i], trend.granularity, k > 0 ? trend.dates[ticks[k - 1]] : null)}</text>)}
-        {(focus !== null || lines.length === 1) && lines.filter((s) => s.program === focus || lines.length === 1).map((s) => <path key={'a' + s.program} d={areaOf(s.points)} fill={`url(#trend-fill-${s.slot})`} className="trend-area" />)}
+        {lines.filter((s) => s.points.some((v) => v > 0) && (focus === null || s.program === focus)).map((s) => <path key={'a' + s.program} d={areaOf(s.points)} fill={`url(#trend-fill-${s.slot})`} className="trend-area" opacity={faded(s.program) ? 0.15 : 1} />)}
         {hover !== null && <line x1={x(hover)} x2={x(hover)} y1={M.top} y2={M.top + PLOT_H} className="trend-crosshair" />}
-        {lines.map((s) => <path key={s.program} className="trend-line" d={pathOf(s.points)} fill="none" stroke={SERIES_COLORS[s.slot]} strokeWidth={focus === s.program ? 3 : 2} strokeLinejoin="round" strokeLinecap="round" opacity={faded(s.program) ? 0.25 : 1} />)}
-        {lines.map((s) => <circle key={s.program} cx={x(at)} cy={y(s.points[at])} r="4.5" fill={SERIES_COLORS[s.slot]} stroke="#ffffff" strokeWidth="2" opacity={faded(s.program) ? 0.25 : 1} />)}
+        {lines.map((s) => <path key={s.program} className="trend-line" d={pathOf(s.points)} fill="none" stroke={SERIES_COLORS[s.slot]} strokeWidth={focus === s.program ? 2.75 : 2} strokeLinejoin="round" strokeLinecap="round" opacity={faded(s.program) ? 0.2 : 1} />)}
+        {n <= 14 && lines.map((s) => s.points.map((v, i) => i === at ? null : (
+          <circle key={`${s.program}-pt-${i}`} cx={x(i)} cy={y(v)} r="2.25" fill={SERIES_COLORS[s.slot]} stroke="var(--card)" strokeWidth="1.25" opacity={faded(s.program) ? 0.15 : 0.7} />
+        )))}
+        {lines.map((s) => <g key={s.program + '-dot'} opacity={faded(s.program) ? 0.2 : 1}>
+          <circle cx={x(at)} cy={y(s.points[at])} r="9" fill={SERIES_COLORS[s.slot]} fillOpacity={hover !== null || focus === s.program ? 0.18 : 0.12} />
+          <circle cx={x(at)} cy={y(s.points[at])} r="4" fill={SERIES_COLORS[s.slot]} stroke="var(--card)" strokeWidth="2" />
+        </g>)}
         {endLabels.map(({ s, y: ly }) => <g key={s.program} opacity={faded(s.program) ? 0.35 : 1}>
           {Math.abs(ly - y(s.points[n - 1])) > 0.5 && <line x1={x(n - 1) + 7} x2={x(n - 1) + 15} y1={y(s.points[n - 1])} y2={ly} className="trend-leader" />}
           <text x={x(n - 1) + 19} y={ly} className="trend-end" dominantBaseline="middle">{s.program} <tspan className="trend-end-value">{s.points[n - 1]}%</tspan></text>

@@ -4,7 +4,6 @@ const repo = require('./repository');
 const svc = require('../compliance/service');
 const { sample } = require('./fixtures');
 const { contentHash } = require('../compliance/hash');
-const { curriculumInput } = require('../../routes/syllabusCheck');
 
 // Run a test under one AI-gate policy and put the environment back afterwards.
 const underGate = (t, mode) => {
@@ -90,14 +89,6 @@ test('the policy reads SYLLABUS_CHECK_AI_GATE: only "required" is strict, anythi
 test('missing checker installation blocks even when a client claims alignment is complete', async () => {
   svc.resetInstalledCache();
   await assert.rejects(svc.requireHybrid({ query: async () => { throw Error('missing tables'); } }, 1, { score: 100, alignment: 'completed' }), e => e.status === 503);
-});
-test('official reference import requires explicit identity fields and rejects synthetic or duplicate courses', () => {
-  const { masters } = sample();
-  const input = { program: 'BSIT', curriculumYear: '2026', source: 'Registrar verified curriculum', courses: masters.curricula[0].courses };
-  assert.equal(curriculumInput(input).program, 'BSIT');
-  assert.throws(() => curriculumInput({ ...input, synthetic: true }), /Synthetic/);
-  assert.throws(() => curriculumInput({ ...input, courses: [...input.courses, ...input.courses] }), /Duplicate/);
-  assert.throws(() => curriculumInput({ ...input, courses: [{ ...input.courses[0], yearLevel: '' }] }), /Every course/);
 });
 test('historical incomplete reports expose the baseline separately and no final score', async t => {
   t.mock.method(repo, 'readReport', async () => ({ score: 97, fingerprint: 'current', findings: [], hybrid: { ready: false, critical: false, baseScore: 97, score: 97, checkedAt: new Date().toISOString(), checkedMeta: {}, alignment: { status: 'not_evaluated' } } }));

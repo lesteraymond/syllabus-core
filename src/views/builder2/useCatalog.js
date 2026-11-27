@@ -4,7 +4,8 @@ import { createModel } from '../../lib/syllabusModel';
 import { CURRENT_SCHOOL_YEAR } from '../../lib/schoolYear';
 
 // Live drafts read only their selected subject's setup; locked syllabi keep their submitted snapshot.
-export function useCatalog(programCode, { snapshot = null, live = false, courseId = null, year = undefined } = {}) {
+// programs: false skips the program list, for a reader that has the syllabus's own snapshot and no use for it (a student cannot read /api/programs).
+export function useCatalog(programCode, { snapshot = null, live = false, courseId = null, year = undefined, programs: listPrograms = true, assigned = false } = {}) {
   const [programList,setProgramList]=useState([]);
   const [subject,setSubject]=useState(null);
   const [loaded,setLoaded]=useState(false);
@@ -12,10 +13,11 @@ export function useCatalog(programCode, { snapshot = null, live = false, courseI
   const [version,setVersion]=useState(0);
   const refresh=useCallback(()=>setVersion(v=>v+1),[]);
   useEffect(()=>{
+    if(!listPrograms){setProgramList([]);setLoaded(true);return;}
     let active=true;
-    outcomes.programs(year).then(rows=>{if(active){setProgramList(rows);setLoaded(true);setError('');}}).catch(e=>{if(active)setError(e.message);});
+    outcomes.programs(year, { assigned }).then(rows=>{if(active){setProgramList(rows);setLoaded(true);setError('');}}).catch(e=>{if(active)setError(e.message);});
     return()=>{active=false;};
-  },[version,year]);
+  },[version,year,listPrograms,assigned]);
   useEffect(()=>{
     if(!courseId || snapshot){setSubject(null);return;}
     let active=true;

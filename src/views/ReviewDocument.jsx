@@ -9,7 +9,7 @@ import FormPaper from './builder2/FormPaper';
 // outcomes come from the copy stored with the version when there is one, so a later admin edit does not change what is reviewed.
 export default function ReviewDocument({ content, facultyName, signoffs = null }) {
   const d = useMemo(() => hydrateContent(content, () => 'rv' + Math.random().toString(36).slice(2, 8)), [content]);
-  const { model, error } = useCatalog(d.meta.program, { snapshot: content && content.catalog ? content.catalog : null, live: false, courseId: d.meta.courseId });
+  const { model, error } = useCatalog(d.meta.program, { snapshot: content && content.catalog ? content.catalog : null, live: false, courseId: d.meta.courseId, programs: !(content && content.catalog) }); // a stored snapshot needs no program list
   if (!model) return <div className="empty">{error ? translateUI("ui.could_not_load_the_program_outcomes_for_this_syllabus_a4ad37") + error : translateUI("ui.loading_the_syllabus_79e1d4")}</div>;
   return <div className="svm-paper"><FormPaper d={d} model={model} preparedBy={facultyName} signoffs={signoffs} /></div>;
 }

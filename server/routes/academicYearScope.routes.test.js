@@ -19,6 +19,8 @@ function makeDb({ years = YEARS, syllabusRows = [] } = {}) {
     if (sql.startsWith('SELECT s.*, u.first_name')) return [syllabusRows];
     if (sql === 'SELECT 1 FROM ai_check_runs LIMIT 1') throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' });
     if (sql.startsWith('SELECT s.syllabus_id, s.user_id, s.course_code')) return [[]];
+    if (sql.startsWith('SELECT program_id FROM faculty_programs')) return [[{ program_id: 1 }]];
+    if (sql.startsWith('SELECT course_id FROM faculty_courses')) return [[{ course_id: 10 }]];
     if (sql.startsWith('INSERT INTO syllabi')) return [{ insertId: 77 }];
     if (sql.startsWith('SELECT 1 FROM syllabus_review_stages')) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' });
     throw new Error('unexpected query: ' + sql);

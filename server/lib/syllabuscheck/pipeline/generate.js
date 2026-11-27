@@ -15,7 +15,7 @@
 const crypto = require('node:crypto');
 const R = require('./rules');
 const P = require('./prompt');
-const { itemsOf, clean, nearCopy, leadingVerbs } = require('./extract');
+const { itemsOf, clean, nearCopy, leadingVerbs, uniqueIds } = require('./extract');
 const { namedValues, VALUE_NAMES } = require('../values');
 const { claudeProvider } = require('./provider');
 const { buildPlan, applyPlan, STATUS } = require('./plan');
@@ -58,10 +58,12 @@ const MIN_WEEKS_PER_CLO = 2;
 // because a stopped generation (the money is spent) is worse than a dense week. Only the structure (JSON, every week there, copies, one verb, values, minimums) can stop a run.
 // (a plan can pass the checker and still be thin): the ILO of a week that builds CLO 2, 3 or 4 is at apply level or above (recall and
 // understanding verbs are for CLO 1 weeks); a week is not packed with topics; the number of activities and tasks follows the content, not a template; and assessment is not mostly quizzes.
-const LOW_VERBS = new Set('define list identify recall state name label recognize describe explain summarize classify discuss outline interpret illustrate paraphrase restate review'.split(' '));
+const LOW_VERBS = new Set(['define list identify recall state name label recognize describe explain summarize classify discuss outline interpret illustrate paraphrase restate review'.split(' '),
+  // the Filipino remember and understand verbs, for a subject written in Filipino
+  ...R.BLOOM_ORDER_FIL.filter(b => b.level === 'remember' || b.level === 'understand').map(b => b.verbs.split(/,\s*/))].flat());
 const MAX_TOPIC_GROUPS = 5, MAX_TOPIC_CHARS = 320, MAX_ACTIVITIES = 4, MAX_TASKS = 3, MAX_QUIZ_SHARE = 0.3; // the first real run had 35%
 const QUIZ = /\b(quiz|quizzes|test|tests|exam|recitation|multiple[- ]choice|identification|true[- ]or[- ]false|fill[- ]in)\b/i;
-const verbOf = text => clean(text).replace(/^students?\s+(?:will|should)\s+(?:be able to\s+)?/i, '').toLowerCase().split(/[\s,]+/)[0];
+const verbOf = text => clean(text).replace(/^students?\s+(?:will|should)\s+(?:be able to\s+)?/i, '').replace(/^(?:ang\s+)?(?:mga\s+)?mag-aaral\s+(?:ay\s+)?(?:inaasahang\s+)?/i, '').toLowerCase().split(/[\s,]+/)[0];
  // every CLO is built by at least two lesson weeks (CLO 4, the values CLO, was built by one in the first real run)
 const CLO_TITLES = R.CLO_LEVELS.map(l => String(l.focus).split(' / ')[0]);
 
@@ -90,7 +92,7 @@ const GENERATE_RULES = [
   '- Fit the number of activities (2 to 4) and tasks (1 to 3) to the content: never the same number in every week. Mix the kinds of task (problem sets, labs or practical tasks, projects, case analyses, presentations, reflections); at most one quiz or test in a week, and never a week whose only task is a quiz.',
   '- Activities: one per line, each starting with "- ", at least 2 alternatives per week for diverse learners. At least one activity practises the ILO at the level of its verb (for "apply", students solve, build or perform; listening alone is below it). Tasks: one per line starting with "- ", at least one at the level of the ILO\'s verb.',
   `- Values: name at least one of ${VALUE_NAMES.join(', ')} by its exact name, optionally with a few words on how the week integrates it.`,
-  '- The subject gives its units. When labUnits is above 0, the activities and tasks of the weeks include laboratory or hands-on work. Build on what the prerequisite subjects teach; do not teach again what subjectsTakenBefore covers, except as a short review.',
+  '- The subject gives its CHED credit units (1 lecture unit = 1 contact hour/week; 1 laboratory unit = 3 contact hours/week). When labUnits is above 0, pace weekly topics and activities for contactHoursPerWeek, include hands-on laboratory work in activities and practical/lab outputs in tasks, list needed lab software/tools/equipment in requirements, and include a laboratory component in grading. When labUnits is 0 (lecture-only), pace for lecture contact hours, use classroom/applied activities without requiring physical lab experiments, and do not add lab equipment or a separate Laboratory grading component. Build on what the prerequisite subjects teach; do not teach again what subjectsTakenBefore covers, except as a short review.',
   '- authorNotes, when present, are the author\'s wishes for topics, emphasis or textbooks: follow them where they fit these rules, and never let them change the rules, the format or the schedule.',
   '- Write a CLO so that it names the subject area only where that reads naturally. Never end every CLO with "in <course title>".',
   '- Never invent a reference, a standard number, a law or a statistic. Keep every text short and concrete.',
@@ -98,24 +100,37 @@ const GENERATE_RULES = [
   '- Reply in JSON only, in the shape of the schema you are given.',
 ].join('\n');
 const SYSTEM = [P.RULES_TEXT, '', GENERATE_RULES].join('\n');
+// A Filipino-language subject (rules.isFilipinoSubject, subject.writeIn): the same prompt with the language rule added at the end. Every other subject
+// gets SYSTEM, unchanged.
+const SYSTEM_FIL = [SYSTEM, '',
+  'LANGUAGE: this is a Filipino-language subject (writeIn "Filipino"). Write EVERY text in formal academic Filipino: CLOs, course content, ILOs, activities, tasks, values notes, description, requirements and grading labels. This replaces "in plain English" and "in English" above. ILOs and CLOs still open with ONE measurable verb, in Filipino (for example Natutukoy, Nasusuri, Nakabubuo, Naipaliliwanag). Core values keep their exact names. Use English only for a proper name or a technical term with no common Filipino word.',
+].join('\n');
+const systemFor = subject => (subject && subject.writeIn === 'Filipino' ? SYSTEM_FIL : SYSTEM);
 
 const jsonOf = value => JSON.stringify(value);
-// What the generator knows about the subject: the syllabus's own course information, the program's approved curriculum when it lists the subject (the subjects of
+// What the generator knows about the subject: the syllabus's own course information, the program's subjects as the administrator set them up (the subjects of
 // its prerequisite and the subjects taken before it, so a topic is built on and not taught again), and the author's own notes. The curriculum lists no course
 // description or topics, so for those the author's notes (up to 1500 characters, sent as data) are the way to steer the content.
+// A Filipino-language subject (taught and written in Filipino): how it is recognized is in rules.js isFilipinoSubject.
+const isFilipinoSubject = (title, code) => R.isFilipinoSubject(clean(title), clean(code));
+const { normCode, sameCode } = require('../../subjectCode'); // "IT 204" and "IT-204" are one code
 const semesterNo = text => Number((/(\d)/.exec(String(text || '')) || [])[1]) || 0;
 function subjectOf(content, masters, guidance) {
   const meta = content?.meta || {};
   const code = clean(meta.code), prerequisite = clean(meta.prereq);
-  const courses = (masters?.curricula || []).flatMap(c => (Array.isArray(c.courses) ? c.courses : []));
-  const same = (a, b) => clean(a).toUpperCase() === clean(b).toUpperCase();
-  const here = code ? courses.find(c => same(c.code, code)) : null;
-  const prerequisiteSubjects = prerequisite ? courses.filter(c => clean(c.code).length >= 3 && prerequisite.toUpperCase().includes(clean(c.code).toUpperCase())).map(c => clean(c.title)).slice(0, 6) : [];
-  const before = here ? [...new Set(courses.filter(c => !same(c.code, code) && (Number(c.yearLevel) < Number(here.yearLevel) || (Number(c.yearLevel) === Number(here.yearLevel) && semesterNo(c.semester) < semesterNo(here.semester)))).map(c => clean(c.title)))].slice(0, 25) : [];
+  // the administrator's subjects of the program (lib/subjectReference.js programSubjectsOf)
+  const courses = masters?.programSubjects || (masters?.curricula || []).flatMap(c => (Array.isArray(c.courses) ? c.courses : []));
+  const here = code ? courses.find(c => sameCode(c.code, code)) : null;
+  const prerequisiteSubjects = prerequisite ? courses.filter(c => normCode(c.code).length >= 3 && normCode(prerequisite).includes(normCode(c.code))).map(c => clean(c.title)).slice(0, 6) : [];
+  const before = here ? [...new Set(courses.filter(c => !sameCode(c.code, code) && (Number(c.yearLevel) < Number(here.yearLevel) || (Number(c.yearLevel) === Number(here.yearLevel) && semesterNo(c.semester) < semesterNo(here.semester)))).map(c => clean(c.title)))].slice(0, 25) : [];
   const notes = clean(guidance).slice(0, 1500);
+  const lecNum = Number.parseFloat(clean(meta.lecture)), labNum = Number.parseFloat(clean(meta.lab));
+  const contactHoursPerWeek = Number.isFinite(lecNum) && lecNum >= 0 && Number.isFinite(labNum) && labNum >= 0 && lecNum + labNum > 0 ? lecNum + labNum * 3 : null;
   return {
     title: clean(meta.title), code, program: clean(meta.program), yearLevel: clean(meta.yearLevel), semester: clean(meta.semester), prerequisite,
     lectureUnits: clean(meta.lecture), labUnits: clean(meta.lab),
+    ...(contactHoursPerWeek !== null ? { contactHoursPerWeek } : {}),
+    ...(isFilipinoSubject(meta.title, code) ? { writeIn: 'Filipino' } : {}),
     ...(prerequisiteSubjects.length ? { prerequisiteSubjects } : {}), ...(before.length ? { subjectsTakenBefore: before } : {}), ...(notes ? { authorNotes: notes } : {}),
   };
 }
@@ -129,7 +144,7 @@ const cloFacts = () => R.CLO_LEVELS.map(l => ({ no: l.no, classification: l.leve
 
 // ---- the messages ----
 function closMessage({ subject, standards }, problems = []) {
-  return { system: SYSTEM, schema: SCHEMAS.clos, user: jsonOf({
+  return { system: systemFor(subject), schema: SCHEMAS.clos, user: jsonOf({
     task: 'Write the 4 course learning outcomes (CLOs) for the subject. The course description is written later, from the finished plan.',
     subject, classifications: cloFacts(), programOutcomes: standards.pos, graduateAttributes: standards.egas,
     format: { clos: 'Exactly 4, in order CLO 1 to CLO 4. Each: "statement" (one sentence, one observable verb at its classification\'s levels, on the subject but not ending with the course title), "pos" (the numbers of the program outcomes it supports, at least one), "egas" (the numbers of the graduate attributes it supports, at least one; use the attributes those program outcomes belong to).' },
@@ -137,7 +152,7 @@ function closMessage({ subject, standards }, problems = []) {
   }) };
 }
 function outlineMessage({ subject, clos }, problems = []) {
-  return { system: SYSTEM, schema: SCHEMAS.outline, user: jsonOf({
+  return { system: systemFor(subject), schema: SCHEMAS.outline, user: jsonOf({
     task: 'Write the course content of every lesson week and say which CLO each week builds. Content comes first: topics only, no outcomes and no activities.',
     subject, clos: clos.map((c, i) => ({ no: i + 1, classification: c.level, statement: c.statement })),
     weeks: LESSON_WEEKS, notLessonWeeks: { 1: 'orientation (fixed)', ...Object.fromEntries(EXAMS.map(e => [e.week, e.name.toLowerCase() + ' (fixed)'])) },
@@ -147,7 +162,7 @@ function outlineMessage({ subject, clos }, problems = []) {
   }) };
 }
 function weeksMessage({ subject, clos, outline, weeks, before }, problems = []) {
-  return { system: SYSTEM, schema: SCHEMAS.weeks, user: jsonOf({
+  return { system: systemFor(subject), schema: SCHEMAS.weeks, user: jsonOf({
     task: 'For each listed week write the ILO, learning activities, assessment tasks and values, from that week\'s content.',
     subject, clos: clos.map((c, i) => ({ no: i + 1, classification: c.level, statement: c.statement })),
     weeks: weeks.map(w => ({ week: w, clo: outline.get(w).clo, ...(outline.get(w).alsoClo ? { alsoClo: outline.get(w).alsoClo } : {}), contents: outline.get(w).contents })),
@@ -157,10 +172,10 @@ function weeksMessage({ subject, clos, outline, weeks, before }, problems = []) 
   }) };
 }
 function adminMessage({ subject, tasks, clos = [], topics = [] }, problems = []) {
-  return { system: SYSTEM, schema: SCHEMAS.admin, user: jsonOf({
+  return { system: systemFor(subject), schema: SCHEMAS.admin, user: jsonOf({
     task: 'Write the course requirements, the grading components and the course description. The description comes last on purpose: it describes the finished plan below.',
     subject, clos: clos.map((c, i) => ({ no: i + 1, statement: c.statement })), weeklyTopics: topics, assessmentTasksInThePlan: tasks,
-    format: { description: '1 to 3 short paragraphs (60 to 180 words in all) written from the finished plan above: what the course is about, the topics it covers in order, how students learn (the kinds of activities) and are assessed, and how it fits the program. Say only what the plan contains: never a topic, activity or assessment it does not have. Do not list the outcomes.', requirements: '4 to 10 short requirements students must complete (attendance, quizzes, projects, examinations ...), drawn from the assessment tasks', grading: '3 to 6 components: "label", "abbr" (up to 8 characters), "pct" (whole number). They must total exactly 100. The course has a Prelim, a Midterm and a Final examination: include them either as one component called "Periodic Examinations" or as three, each named (Prelim, Midterm, Final). Never name only some of them.' },
+    format: { description: '1 to 3 short paragraphs (60 to 180 words in all) written from the finished plan above: what the course is about, the topics it covers in order, how students learn (the kinds of activities) and are assessed, and how it fits the program. Say only what the plan contains: never a topic, activity or assessment it does not have. Do not list the outcomes.', requirements: '4 to 10 short requirements students must complete (attendance, quizzes, projects, examinations ...), drawn from the assessment tasks; when labUnits > 0, include required laboratory tools, software or equipment (omit lab equipment when labUnits is 0)', grading: '3 to 6 components: "label", "abbr" (up to 8 characters), "pct" (whole number). They must total exactly 100. The course has a Prelim, a Midterm and a Final examination: include them either as one component called "Periodic Examinations" or as three, each named (Prelim, Midterm, Final). Never name only some of them. When labUnits > 0, include a Laboratory component (e.g., Laboratory Exercises / Practical Outputs); when labUnits is 0, do not include a separate Laboratory component.' },
     ...(problems.length ? { fixThese: problems } : {}),
   }) };
 }
@@ -187,7 +202,9 @@ function readClos(raw, standards, subjectTitle = '') {
     const pos = [...new Set((c && Array.isArray(c.pos) ? c.pos : []).map(Number))].filter(n => poNos.has(n));
     let egas = [...new Set((c && Array.isArray(c.egas) ? c.egas : []).map(Number))].filter(n => egaNos.has(n));
     if (!pos.length) problems.push(`${label} must support at least one of the program outcomes ${[...poNos].join(', ')}`);
-    if (!egas.length) egas = [...new Set(pos.flatMap(n => standards.pos.find(p => p.no === n)?.egas || []))].filter(n => egaNos.has(n)); // the EGAs of its POs
+    // the EGAs its POs are linked to are always added to the model's own (as the builder ticks them, ClosStep): P-03 asks a CLO to carry every one of them.
+    // Before 2026-11-20 they were added only when the model gave none, so a CLO could miss one and lose points once the POs were linked.
+    egas = [...new Set([...egas, ...pos.flatMap(n => standards.pos.find(p => p.no === n)?.egas || [])])].filter(n => egaNos.has(n));
     if (!egas.length) problems.push(`${label} must support at least one graduate attribute ${[...egaNos].join(', ')}`);
     clos.push({ id: newId('c'), title: CLO_TITLES[i], level: R.CLO_LEVELS[i].level, statement, pos: pos.sort((a, b) => a - b), egas: egas.sort((a, b) => a - b) });
   });
@@ -339,7 +356,30 @@ async function generateSyllabus(args = {}) {
   const ctx = {};
   try { return await generateInner(args, ctx); } catch (error) { if (ctx.provider && error && typeof error === 'object') error.usage = ctx.provider.usage(); throw error; } // what a stopped run spent is known to the caller
 }
-async function generateInner({ content, masters, env = process.env, transport, provider, store, year, guidance = '', onProgress, fetchImpl } = {}, ctx = {}) {
+// The score the AI Checker would give a draft, made the way the official check makes it (official.js scoreFrom): the old engine's no-AI rules (required
+// sections, format, curriculum, week structure, reference links, core values, base score) and the new checker's alignment points. The alignment is read
+// from the answer store ONLY (no `ask`: no AI request, no cost): the generation's own check and repair plan stored those answers. A question it has no
+// answer for (a field the plan changed but did not apply) is left unanswered, and then the score is a provisional one. Advisory: the generator's
+// check never becomes the official record; the author still runs the AI Checker (owner 2026-11-21).
+async function expectedScore({ content, masters = {}, store, model = '', year, env = process.env, linkChecker } = {}) {
+  const engine = require('../engine');
+  const official = require('./official');
+  content = uniqueIds(content);
+  const noAi = await engine.run(content, masters, { useAi: false, env, ...(linkChecker ? { linkChecker } : {}) });
+  const result = await check(content, masters, { store, model, ...(Number.isFinite(year) ? { year } : {}) });
+  const parts = official.officialParts(content, result, null);
+  const s = official.scoreFrom({ noAi, result, parts, masters });
+  const blocking = s.failed.filter(f => f.ruleId !== 'AI-REQUIRED');
+  return {
+    status: s.score !== null ? 'scored' : 'provisional',
+    score: s.score, provisionalScore: s.provisionalScore, passed: s.passed, band: s.band, passMark: official.PASS_THRESHOLD,
+    baseScore: s.base, rulesPoints: s.codedPoints, alignmentPoints: s.alignmentPoints,
+    complete: s.complete, unanswered: result.judged.results.filter(r => r.reason).length,
+    blocking: blocking.length, blockingMessages: blocking.slice(0, 5).map(f => String(f.message || '').slice(0, 200)),
+  };
+}
+
+async function generateInner({ content, masters, env = process.env, transport, provider, store, year, guidance = '', onProgress, fetchImpl, linkChecker } = {}, ctx = {}) {
   const tick = (step, stage) => { if (typeof onProgress === 'function') { try { onProgress({ step, steps: STEPS, stage }); } catch { /* progress is only for the screen */ } } };
   if (!content || !content.meta || !clean(content.meta.title)) throw fail('Choose a subject for this syllabus first. The generator writes from the subject.', 409);
   const standards = standardsOf(content, masters);
@@ -388,7 +428,7 @@ async function generateInner({ content, masters, env = process.env, transport, p
   const hasRefs = Object.values(content.refs || {}).some(g => g && Array.isArray(g.items) && g.items.some(i => clean(i && i.t)));
   let found = { items: [], articles: [], tooOld: 0 };
   if (!hasRefs && String(env.SYLLABUS_CHECK_GENERATE_REFERENCES ?? 'on').trim().toLowerCase() !== 'off') {
-    found = await suggestReferences({ ask, system: SYSTEM, subject, topics: LESSON_WEEKS.map(w => clean(outline.get(w).contents).slice(0, 90)), year: year || new Date().getFullYear(), ...(fetchImpl ? { fetchImpl } : {}), newId });
+    found = await suggestReferences({ ask, system: systemFor(subject), subject, topics: LESSON_WEEKS.map(w => clean(outline.get(w).contents).slice(0, 90)), year: year || new Date().getFullYear(), ...(fetchImpl ? { fetchImpl } : {}), newId });
   }
 
   // the content as the checker will read it
@@ -424,6 +464,11 @@ async function generateInner({ content, masters, env = process.env, transport, p
   } catch (error) {
     report = { status: 'not_checked', reason: String(error && error.message || error).slice(0, 240) };
   }
+  // 6. the score the AI Checker would give this draft (expectedScore): its no-AI rules and the answers this run already has, no new request
+  if (report.status !== 'not_checked') {
+    try { report.expected = await expectedScore({ content: draft, masters, store, model: provider.model, year, env, linkChecker }); }
+    catch (error) { report.expected = { status: 'not_scored', reason: String(error && error.message || error).slice(0, 240) }; }
+  }
   if (report.status === 'clean' && !draft.refs?.books?.items?.length && !Object.values(draft.refs || {}).some(g => g && g.items && g.items.length)) report.status = 'needs_review';
   if (foundCount) {
     warnings.push(`${foundCount} reference(s) confirmed in the Open Library and Crossref catalogues were added (books to Books, journal articles to Internet References; the other groups were marked not applicable). Check that each is the edition or article you use.`);
@@ -439,4 +484,4 @@ async function generateInner({ content, masters, env = process.env, transport, p
   return { status: 'generated', version: VERSION, sections, keptClos: !!kept, check: report, warnings, usage: provider.usage() };
 }
 
-module.exports = { LOW_VERBS, QUIZ, MAX_TOPIC_GROUPS, MAX_TOPIC_CHARS, generateSyllabus, subjectOf, generateLimits, isOn, VERSION, LESSON_WEEKS, CHUNKS, EXAMS, SCHEMAS, readClos, readOutline, readWeeks, readAdmin, planRows, keptClos, closMessage, outlineMessage, weeksMessage, adminMessage, SYSTEM };
+module.exports = { LOW_VERBS, QUIZ, MAX_TOPIC_GROUPS, MAX_TOPIC_CHARS, generateSyllabus, expectedScore, subjectOf, isFilipinoSubject, generateLimits, isOn, VERSION, LESSON_WEEKS, CHUNKS, EXAMS, SCHEMAS, readClos, readOutline, readWeeks, readAdmin, planRows, keptClos, closMessage, outlineMessage, weeksMessage, adminMessage, SYSTEM, SYSTEM_FIL, systemFor };

@@ -15,12 +15,25 @@ export const SCHEMA_VERSION = 3;
 
 export const LEVELS = ['Introductory', 'Enabling', 'Demonstrating', 'Integration of Values'];
 export const GROUPS = [['books', 'Books'], ['program', 'Internet Programming'], ['online', 'Internet References'], ['electronics', 'Electronics']];
+// Section IX as the approved syllabi print it: "SUGGESTED REFERENCES", then only the groups the syllabus uses, lettered A, B, C... in
+// order (a group marked not applicable is left out, as on the paper form). A draft with no references yet shows the headings to fill.
+export const REFS_TITLE = 'SUGGESTED REFERENCES';
+export function printedRefGroups(refs) {
+  const all = GROUPS.map(([key, title]) => {
+    const grp = (refs && refs[key]) || { na: false, items: [] };
+    return { key, title, na: !!grp.na, items: (grp.items || []).map((x) => (typeof x === 'string' ? x : (x && x.t) || '').trim()).filter(Boolean) };
+  });
+  const used = all.filter((g) => !g.na && g.items.length);
+  return (used.length ? used : all.filter((g) => !g.na)).map((g, i) => ({ ...g, letter: String.fromCharCode(65 + i) }));
+}
+// The blank Modifications checklist under the sign-off block of the institutional form.
+export const MODIFICATIONS = ['Learning Outcomes', 'Course Contents', 'Suggested Learning Activities', 'Suggested Assessment', 'Expected Values to be Integrated', 'Course Requirements', 'References', 'Grading System'];
 // The column headings of the learning plan (form section VII) in the wording of the institutional form. The printed form shows them in
 // capitals (views/builder2/FormPaper.jsx); the builder's Learning Plan step shows them as written, in the user's language, from the
 // plan.heading.* keys in src/i18n/extra.js, whose English must say exactly this (a test checks it). The first column is the Schedule
 // on the form and the week number in the builder, so it is not listed here.
 export const PLAN_HEADINGS = {
-  ilo: 'Intended Learning Outcomes (ILO)',
+  ilo: 'Intended Learning Outcomes',
   contents: 'Course Contents',
   activities: 'Suggested Learning Activities',
   tasks: 'Suggested Assessment Tasks',
@@ -63,6 +76,10 @@ export function parseTag(t) {
   return { kind: String(t).slice(0, i), id: String(t).slice(i + 1) };
 }
 export const iloClos = (il) => il.tags.filter((t) => t.indexOf('clo:') === 0).map((t) => parseTag(t).id);
+// An ILO aligns to a CLO only; the CLO carries the PO and EGA. Older drafts may still hold po:/ega: tags on an ILO:
+// they stay in the stored content but are not shown, printed, checked or counted as PO mappings.
+export const isCloTag = (t) => String(t).indexOf('clo:') === 0;
+const isIloPoEgaTag = (t) => /^(po|ega):/.test(String(t));
 
 // ---- light markup: "- " bullets and **bold**, HTML escaped first ----
 export function lines(t) { return String(t || '').split(/\n/).map((x) => x.trim()).filter(Boolean); }
@@ -96,6 +113,17 @@ export function examName(row) {
   return t ? t.charAt(0) + t.slice(1).toLowerCase() : 'Exam';
 }
 export const gradeTotal = (d) => d.grading.rows.reduce((s, g) => s + (Number(g.pct) || 0), 0);
+// What a grading component includes ("Quizzes/Recitation", "Seat Work"), typed one per line; the form lists them under its label.
+export const gradeSubItems = (row) => String((row && row.items) || '').split('\n').map((s) => s.trim()).filter(Boolean);
+// The Final Rating as the printed form writes it: the exam terms over their number, as a fraction
+// (Prelim Grade + Midterm Grade + Final Grade over 3). Null when the faculty member wrote the formulas or there are fewer than 2 exams.
+export function finalRatingFraction(d) {
+  if (d.grading.override.on) return null;
+  const ex = d.plan.filter((r) => r.kind === 'exam').map(examName);
+  return ex.length > 1 ? { num: ex.join(' + '), den: ex.length } : null;
+}
+// A formula without its own name in front ("Term Grade = CS (60%) + TE (40%)" -> "CS (60%) + TE (40%)"), as the form's value column shows it.
+export const formulaBody = (text, name) => String(text || '').replace(new RegExp('^\\s*' + name + '\\s*[=:]\\s*', 'i'), '');
 export const examRows = (d) => d.plan.filter((r) => r.kind === 'exam');
 
 // ---- stored content: new drafts and upgrades ----
@@ -129,10 +157,14 @@ export function applyCourse(d, course) {
   // the administrator's year level, pre-requisite, academic year and semester for this subject (the server forces them on every save; a subject without them leaves Step 1 as typed)
   const term = course.term || {};
   if (term.prerequisite) n.meta.prereq = term.prerequisite;
-  else if (term.semester || term.yearLevel != null) n.meta.prereq = 'None'; // set up without a pre-requisite: it has none (as the server does); the academic year alone is not a set-up
+  else if (term.semester || term.yearLevel != null) n.meta.prereq = ''; // set up without a pre-requisite: it has none, shown blank (as the server does); the academic year alone is not a set-up
   if (term.yearLevel != null) n.meta.yearLevel = String(term.yearLevel);
   if (term.academicYear) n.meta.academicYear = term.academicYear;
   if (term.semester) n.meta.semester = term.semester;
+  // the administrator's units and curriculum year, the same way; another subject without units starts with none
+  if (course.units) { n.meta.lecture = String(course.units.lecture); n.meta.lab = String(course.units.lab); }
+  else if (d.meta.courseId !== course.id) { n.meta.lecture = ''; n.meta.lab = ''; }
+  if (course.curriculumYear) n.meta.curriculumYear = course.curriculumYear;
   if (d.meta.courseId === course.id && d.outcomes) return n;
   delete n.catalog;
   n.clos = clone(course.clos);
@@ -163,7 +195,7 @@ const hasText = (v) => !!String(v == null ? '' : v).trim();
 export const standardsSet = (s) => !!s && (hasText(s.vision) || hasText(s.mission && s.mission.lead) || ((s.mission && s.mission.items) || []).some(hasText) || (s.egas || []).length > 0 || (s.pos || []).length > 0);
 const standardsOf = (s) => ({ vision: s.vision || '', mission: { lead: (s.mission && s.mission.lead) || '', items: (s.mission && s.mission.items) || [] }, egas: s.egas || [], pos: s.pos || [] });
 const poBasis = (rows) => JSON.stringify((rows || []).map((p) => [Number(p.no), String(p.text || '').replace(/\s+/g, ' ').trim()]).sort((a, b) => a[0] - b[0]));
-const hasPoMappings = (d) => (d.clos || []).some((c) => (c.pos || []).length) || (d.plan || []).some((row) => (row.ilos || []).some((il) => (il.tags || []).some((tag) => /^po:\d+$/.test(tag))));
+const hasPoMappings = (d) => (d.clos || []).some((c) => (c.pos || []).length);
 // A syllabus with CLO-PO mappings keeps its PO statements until its author reviews and adopts the changed ones (Step 2); the server holds the same line on every save. A draft with no mappings fills in as usual.
 export function poReviewPending(d, standards) {
   const stored = d && d.outcomes && d.outcomes.pos, next = standards && standards.pos;
@@ -351,8 +383,8 @@ export function createModel({ institution, programs, year }) {
     if (key === 'info') {
       if (!d.meta.program) form('Choose a program.');
       else if (!d.meta.courseId) form('Choose a subject.');
-      if (blank(d.meta.prereq)) form('Pre-requisite is empty.');
-      if (isNaN(parseFloat(d.meta.lecture)) || isNaN(parseFloat(d.meta.lab))) form('Enter lecture and laboratory units.');
+      // Pre-requisite is optional: a subject with none leaves it blank (shown as "None").
+      if (isNaN(parseFloat(d.meta.lecture)) || isNaN(parseFloat(d.meta.lab))) form('The lecture and laboratory units are missing. The administrator sets them on the subject.');
       if (!d.description.some((p) => p.t.trim())) form('Add at least one description paragraph.');
     }
     if (key === 'clos') {
@@ -390,8 +422,8 @@ export function createModel({ institution, programs, year }) {
         r.ilos.forEach((il, j) => {
           const w = 'Week ' + (r.week || '?') + ', ILO' + (j + 1);
           if (il.text.trim() && !iloClos(il).length) form(w + ' has no CLO tag.', { row: r.id });
-          if (!il.text.trim() && il.tags.length) form(w + ' is tagged but has no text.', { row: r.id });
-          il.tags.forEach((t) => { const i = tagInfo(d, t); if (!i.ok) form(w + ' has a tag that no longer resolves: ' + i.label + '.', { row: r.id }); });
+          if (!il.text.trim() && il.tags.some(isCloTag)) form(w + ' is tagged but has no text.', { row: r.id });
+          il.tags.filter((t) => !isIloPoEgaTag(t)).forEach((t) => { const i = tagInfo(d, t); if (!i.ok) form(w + ' has a tag that no longer resolves: ' + i.label + '.', { row: r.id }); });
         });
       });
       coverage(d).forEach((c) => { if (!c.rows.length) advice('CLO ' + c.n + ' is not covered by any ILO yet.', { clo: c.id }); });

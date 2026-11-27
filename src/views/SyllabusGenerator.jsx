@@ -1,11 +1,13 @@
 import { useEffect, useId, useMemo, useState } from 'react';
 import { t as translateUI, tr } from '../i18n/index.js';
 import { PageHead } from '../components/ui';
+import { useYearScope } from '../components/AcademicYearScope';
 import Select from '../components/Select';
 import StableButton from '../components/StableButton';
-import { courses as coursesApi, syllabi as syllabiApi, isRevisionConflict } from '../lib/api';
+import GeistSkeleton from '../components/GeistSkeleton';
+import { courses as coursesApi, syllabi as syllabiApi, syllabusCheck as checkApi, users as usersApi, isRevisionConflict } from '../lib/api';
 import { SECTION_KEYS, saveOnce } from '../lib/draftSave';
-import { EDITABLE_STATUSES } from '../lib/syllabusRules';
+import { EDITABLE_STATUSES, courseLockReason } from '../lib/syllabusRules';
 import { SCHEMA_VERSION, applyCourse, emptyDraft } from '../lib/syllabusModel';
 import { newId } from './builder2/useDraft';
 import GeneratePanel from './builder2/GeneratePanel';
@@ -16,7 +18,15 @@ import GeneratePanel from './builder2/GeneratePanel';
 // Choices are 's:<syllabus id>' (a draft) or 'c:<course id>' (an assigned subject with no draft).
 export default function SyllabusGenerator({ user, syllabi = [], editing, setEditing, setPage, onChanged }) {
   const uid = useId();
-  const mine = useMemo(() => syllabi.filter((s) => s.userId === user.id && !s.archived && EDITABLE_STATUSES.includes(s.status)), [syllabi, user.id]);
+  // Whether the server can generate at all (the same answer GeneratePanel reads): when it cannot, say so instead of an empty page (E2E report 2026-11-23, BUG-013).
+  const [genAvailable, setGenAvailable] = useState(null);
+  useEffect(() => { let live = true; checkApi.status().then((s) => { if (live) setGenAvailable(!!(s && s.generator && s.generator.available)); }).catch(() => { if (live) setGenAvailable(false); }); return () => { live = false; }; }, []);
+  // A past academic year's draft is view only (server lib/activeYearGate.js), so it is not offered for generation.
+  const yearScope = useYearScope();
+  const activeYear = yearScope && yearScope.current ? yearScope.current.label : null;
+  const [myAssignments, setMyAssignments] = useState(null);
+  useEffect(() => { let live = true; usersApi.myAssignments().then((a) => { if (live) setMyAssignments(a); }).catch(() => {}); return () => { live = false; }; }, [user.id, syllabi.length]);
+  const mine = useMemo(() => syllabi.filter((s) => s.userId === user.id && !s.archived && EDITABLE_STATUSES.includes(s.status) && !(activeYear && s.academicYear && s.academicYear !== activeYear) && (!myAssignments || !courseLockReason(user, myAssignments, s))), [syllabi, user, activeYear, myAssignments]);
   const [fresh, setFresh] = useState([]); // drafts created on this page that the app's list does not hold yet: [{ id, courseId, courseCode, title }]
   const [subjects, setSubjects] = useState(null); // the subjects assigned to this person (all subjects for an administrator), each with `taken` when a syllabus exists on it
   const drafts = useMemo(() => [...mine.map((s) => ({ id: s.id, courseCode: s.courseCode, title: s.title })), ...fresh.filter((f) => !mine.some((s) => s.id === f.id))], [mine, fresh]);
@@ -24,22 +34,22 @@ export default function SyllabusGenerator({ user, syllabi = [], editing, setEdit
   const hasDraft = (id) => !!id && drafts.some((d) => d.id === id);
   const [choice, setChoice] = useState(() => (editing && hasDraft(editing.syllabusId) ? 's:' + editing.syllabusId : ''));
   const [doc, setDoc] = useState({ loading: false, error: '', content: null, editable: false, status: 'draft' });
-  const selectedId = choice.startsWith('s:') ? Number(choice.slice(2)) : null;
-  const subject = choice.startsWith('c:') ? unstarted.find((c) => c.id === Number(choice.slice(2))) || null : null;
+  const explicitValid = (choice.startsWith('s:') && hasDraft(Number(choice.slice(2)))) || (choice.startsWith('c:') && unstarted.some((c) => c.id === Number(choice.slice(2))));
+  const effectiveChoice = explicitValid ? choice : subjects === null ? '' : (drafts[0] ? 's:' + drafts[0].id : unstarted[0] ? 'c:' + unstarted[0].id : '');
+  const selectedId = effectiveChoice.startsWith('s:') ? Number(effectiveChoice.slice(2)) : null;
+  const subject = effectiveChoice.startsWith('c:') ? unstarted.find((c) => c.id === Number(effectiveChoice.slice(2))) || null : null;
 
   // The subjects assigned to this person; read again when the list of syllabi changes (a draft was started somewhere else).
   useEffect(() => {
     let live = true;
-    coursesApi.list('', { except: 0 }).then((list) => { if (live) setSubjects(Array.isArray(list) ? list : []); }).catch(() => { if (live) setSubjects([]); });
+    coursesApi.list('', { except: 0, assigned: true }).then((list) => { if (live) setSubjects(Array.isArray(list) ? list : []); }).catch(() => { if (live) setSubjects([]); });
     return () => { live = false; };
   }, [syllabi.length, fresh.length]);
 
-  // Always one valid choice: a draft, else a subject with no draft, else nothing.
+  // Keep controlled choice in sync with the derived default once subjects load.
   useEffect(() => {
-    if (subjects === null) return;
-    const valid = (choice.startsWith('s:') && hasDraft(selectedId)) || (choice.startsWith('c:') && !!subject);
-    if (!valid) setChoice(drafts[0] ? 's:' + drafts[0].id : unstarted[0] ? 'c:' + unstarted[0].id : '');
-  }, [subjects, drafts, unstarted, choice]); // eslint-disable-line react-hooks/exhaustive-deps
+    if (subjects !== null && choice !== effectiveChoice) setChoice(effectiveChoice);
+  }, [subjects, choice, effectiveChoice]);
 
   useEffect(() => {
     if (!selectedId) { setDoc({ loading: false, error: '', content: null, editable: false, status: 'draft' }); return undefined; }
@@ -86,7 +96,14 @@ export default function SyllabusGenerator({ user, syllabi = [], editing, setEdit
   return (
     <>
       <PageHead title={translateUI('generate.title')} subtitle={translateUI('generate.pageSubtitle')} />
-      {subjects !== null && drafts.length === 0 && unstarted.length === 0 ? (
+      {subjects === null ? (
+        <div className="card geist-skel-stack" role="status" aria-busy="true" style={{ padding: 20 }}>
+          <span className="sr-only">{tr('Loading…')}</span>
+          <GeistSkeleton width="28%" height={14} />
+          <GeistSkeleton width="100%" height={40} />
+          <GeistSkeleton width="100%" height={140} />
+        </div>
+      ) : drafts.length === 0 && unstarted.length === 0 ? (
         <div className="empty">
           <div>{translateUI('generate.noSubjects')}</div>
         </div>
@@ -95,7 +112,7 @@ export default function SyllabusGenerator({ user, syllabi = [], editing, setEdit
           <section className="card pick-card pick-compact" aria-label={translateUI('ui.choose_a_syllabus_to_check_b6f6d2')}>
             <div className="pick-field">
               <label htmlFor={uid + '-s'}>{translateUI('ui.subject_8d183d')}</label>
-              <Select id={uid + '-s'} value={choice} onChange={(e) => setChoice(e.target.value)}>
+              <Select id={uid + '-s'} value={effectiveChoice} onChange={(e) => setChoice(e.target.value)}>
                 <option value="">{translateUI('ui.choose_a_subject_554b9c')}</option>
                 {drafts.map((s) => <option key={'s' + s.id} value={'s:' + s.id}>{label(s.courseCode, s.title)}</option>)}
                 {unstarted.map((c) => <option key={'c' + c.id} value={'c:' + c.id}>{label(c.code, c.title) + ' · ' + translateUI('generate.noDraftYet')}</option>)}
@@ -104,12 +121,14 @@ export default function SyllabusGenerator({ user, syllabi = [], editing, setEdit
             <StableButton type="button" className="btn outline" disabled={!selectedId} onClick={openBuilder}>{translateUI('generate.openBuilder')}</StableButton>
           </section>
           {doc.error && <div className="info-banner warning" role="alert">{tr(doc.error)}</div>}
+          {genAvailable === false && <div className="info-banner warning" role="note" data-testid="generator-unavailable">{translateUI('generate.unavailable')}</div>}
           <GeneratePanel
             draft={selectedId ? doc.content : placeholder}
             editable={selectedId ? doc.editable : !!placeholder}
             syllabusId={selectedId}
             beforeRun={selectedId ? undefined : startDraft}
             onSections={saveGenerated}
+            onOpenBuilder={openBuilder}
             showCost={user.role === 'admin'}
           />
         </>

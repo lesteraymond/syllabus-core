@@ -6,12 +6,7 @@ const mysql = require('mysql2/promise');
 const { tables } = require('./usage-ddl');
 
 async function migrate() {
-  const conn = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-  });
+  const conn = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   for (const sql of tables) await conn.query(sql);
   await conn.end();
   console.log('Migration complete.');

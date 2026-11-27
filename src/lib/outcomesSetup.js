@@ -5,6 +5,10 @@
 // A program "needs setup" when it has no EGAs or no Program Outcomes of its own. A specialization (it inherits both from another program) is set up there instead.
 export const needsSetup = (program) => !!program && !program.inheritedFrom && !(Number(program.egaCount) > 0 && Number(program.outcomeCount) > 0);
 export const programsNeedingSetup = (programs) => (programs || []).filter(needsSetup);
+// A program whose EGAs and POs exist but some PO is not linked to any EGA (unlinkedPoCount from GET /programs). The link is required (2026-11-20): the
+// AI Checker's P-03 checks CLO tags against it, and a PO without one can no longer be saved.
+export const needsEgaLinks = (program) => !!program && !program.inheritedFrom && !needsSetup(program) && Number(program.unlinkedPoCount) > 0;
+export const programsNeedingEgaLinks = (programs) => (programs || []).filter(needsEgaLinks);
 
 export const LIMITS = { egas: 20, pos: 50, egaName: 255, short: 120, poText: 2000 };
 
@@ -43,7 +47,7 @@ export function checkEgas(rows) {
   }
   return null;
 }
-// `egas` are the program's SAVED EGAs (a PO can only map to those)
+// `egas` are the EGAs a PO may map to: the EGA list as it will be saved (the outcomes dialog saves both lists together; a new program's form, the typed EGAs)
 export function checkPos(rows, egas) {
   if (rows.length > LIMITS.pos) return { key: 'outcomes.err.tooManyPos', params: { max: LIMITS.pos } };
   const number = badNumber(rows);
@@ -53,9 +57,22 @@ export function checkPos(rows, egas) {
     if (!r.short.trim() || !r.text.trim()) return { key: 'outcomes.err.poText', params: { no: r.no } };
     if (r.short.length > LIMITS.short || r.text.length > LIMITS.poText) return { key: 'outcomes.err.poLong', params: { no: r.no } };
     if (r.egas.some((n) => !known.has(Number(n)))) return { key: 'outcomes.err.poEga', params: { no: r.no } };
+    if (!r.egas.length) return { key: 'outcomes.err.poNoEga', params: { no: r.no } };
   }
   return null;
 }
+
+// ---- a CLO's PO and EGA tags (Step 2 of the builder) ----
+// The EGAs the given POs are linked to (the program's PO-to-EGA links, required since 2026-11-20). P-03 asks a CLO to carry every one of them.
+const sorted = (list) => [...new Set(list.map(Number))].sort((a, b) => a - b);
+export const linkedEgas = (pos, poNos) => sorted((pos || []).filter((p) => (poNos || []).map(Number).includes(Number(p.no))).flatMap((p) => p.egas || []));
+// Ticking PO `no` on a CLO also ticks the EGAs it is linked to. Unticking a PO leaves the EGAs as they are: another PO may need them, or the author chose them.
+export const tickPo = (clo, no, pos) => {
+  const on = !(clo.pos || []).includes(no);
+  return { pos: on ? sorted([...(clo.pos || []), no]) : (clo.pos || []).filter((n) => n !== no), egas: on ? sorted([...(clo.egas || []), ...linkedEgas(pos, [no])]) : (clo.egas || []) };
+};
+// For each PO of the CLO, the linked EGAs the CLO does not carry: [{ po, egas }] (empty when P-03 would pass).
+export const missingPoEgas = (clo, pos) => (clo.pos || []).map((no) => ({ po: no, egas: linkedEgas(pos, [no]).filter((e) => !(clo.egas || []).includes(e)) })).filter((m) => m.egas.length);
 
 // The same rows with and without edits, so Save is offered only for a real change.
 export const sameRows = (a, b) => JSON.stringify(a) === JSON.stringify(b);

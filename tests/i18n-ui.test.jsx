@@ -22,6 +22,7 @@ import Sidebar from '../src/components/Sidebar';
 import { Icon, Avatar, QualityMini } from '../src/components/ui';
 import CheckHistory from '../src/components/CheckHistory';
 import Compliance from '../src/views/Compliance';
+import AuditLog from '../src/views/AuditLog';
 import Select, { readOptions } from '../src/components/Select';
 import { SubjectDialog, SubjectRowActions } from '../src/components/SubjectActions';
 import { DeadlineChip, DeadlineDialog, DeadlineProgress } from '../src/components/DeadlineDialog';
@@ -50,7 +51,11 @@ test('faculty settings include profile and language, with no administrative card
   const html = renderToStaticMarkup(<Settings {...props} />);
   assert.match(html, /My Profile/); assert.match(html, /Display language/);
   assert.doesNotMatch(html, /Institutional Standard|AI &amp; Notifications|Save Settings|Loading administrator/);
-  assert.match(html, /<span class="select-current" lang="en">English<\/span>/);
+  // the language is a two-button toggle (a radio group), each choice named in its own language
+  assert.match(html, /role="radiogroup" aria-label="Display language"/);
+  assert.match(html, /role="radio" lang="en" aria-checked="true"[^>]*>English<\/button>/);
+  assert.match(html, /role="radio" lang="tl" aria-checked="false"[^>]*>Filipino<\/button>/);
+  assert.doesNotMatch(html, /<button[^>]*role="radio"[^>]*disabled/);
 });
 test('administrator settings load only in the administrator branch and keep real setting values', () => {
   const parent = renderToStaticMarkup(<Settings {...props} user={{ ...user, role: 'admin' }} />);
@@ -64,8 +69,10 @@ test('Tagalog settings translate labels, keep account names and setting values, 
   const html = renderToStaticMarkup(<Settings {...props} language="tl" languageBusy />);
   assert.match(html, /Mga Setting/); assert.match(html, /Aking Profile/); assert.match(html, /Baguhin ang Profile/);
   assert.match(html, /value="Approved"/); assert.match(html, /value="Settings"/);
-  assert.match(html, /<span class="select-current" lang="tl">Tagalog<\/span>/); assert.match(html, /Isine-save ang napiling wika/);
-  assert.match(html, /aria-live="polite"/);
+  // the chosen language is checked, and while it is being saved the section says it is busy and both choices are off
+  assert.match(html, /role="radio" lang="tl" aria-checked="true"[^>]*disabled=""[^>]*>Filipino<\/button>/);
+  assert.match(html, /role="radio" lang="en" aria-checked="false"[^>]*disabled=""[^>]*>English<\/button>/);
+  assert.match(html, /<section class="settings-card language-settings" aria-busy="true">/);
   const cards = renderToStaticMarkup(<AdministrativeSettings administration={admin} adminBusy={false} updateAdmin={noop} />);
   assert.match(cards, /Pamantayan ng Institusyon/); assert.match(cards, /AI at mga Abiso/);
   assert.match(cards, /<span data-value="Undergraduate Syllabus v4">Silabus ng Undergraduate v4<\/span>/); assert.match(cards, /<span class="select-current">Silabus ng Undergraduate v4<\/span>/);
@@ -76,7 +83,7 @@ test('navigation, dashboard summaries and roles switch language while account na
   const nav = renderToStaticMarkup(<Sidebar page="settings" setPage={noop} nav={navItems} collapsed={false} onToggle={noop} />);
   assert.match(nav, /Pangkalahatang Tanaw/); assert.match(nav, /Mga Setting/); assert.match(nav, /Tagabuo ng Silabus/);
   const dashboard = renderToStaticMarkup(<Dashboard user={user} syllabi={[]} logs={[]} setPage={noop} clearLogs={noop} setConfirm={noop} />);
-  assert.match(dashboard, /Aking mga Naipasa/); assert.match(dashboard, /Kabuuang na-upload/);
+  assert.match(dashboard, /<span>Naipasa<\/span>/); assert.match(dashboard, /Kabuuang naipasa/);
   const topbar = renderToStaticMarkup(<Topbar user={user} page="settings" unread={0} threads={[]} msgDrop={false} onLogout={noop} setMsgDrop={noop} notifications={{ unreadCount: 0, items: [] }} />);
   assert.match(topbar, /Approved Settings/); assert.match(topbar, /Guro/); assert.match(topbar, /Mag-sign out/);
 });
@@ -105,15 +112,21 @@ test('dashboard typewriter greetings use the current saved account name for both
   }
 });
 
-test('the admin dashboard shows its own five summary cards; faculty keeps theirs', () => {
+test('the admin dashboard shows its own five summary cards plus My Submissions (the dean writes syllabi too); a reviewer who does not write keeps five; faculty keeps theirs', () => {
   setLanguage('en');
   const render = role => renderToStaticMarkup(<Dashboard user={{ ...user, role }} syllabi={[{ id: 1, userId: 9, status: 'submitted' }, { id: 2, userId: 9, status: 'approved' }]} logs={[]} setPage={noop} clearLogs={noop} setConfirm={noop} />);
   const admin = render('admin');
-  assert.equal((admin.match(/class="stat-card"/g) || []).length, 5);
+  assert.equal((admin.match(/class="stat-card"/g) || []).length, 6);
+  assert.match(admin, /<span>Submitted<\/span><strong>0<\/strong>/, "the dean's own syllabi (none in this list)");
+  // Submitted counts what was submitted: a draft is not counted, for faculty and for the dean alike
+  const mine = (role) => renderToStaticMarkup(<Dashboard user={{ ...user, role }} syllabi={[{ id: 4, userId: 1, status: 'submitted' }, { id: 5, userId: 1, status: 'approved' }, { id: 6, userId: 1, status: 'draft' }]} logs={[]} setPage={noop} clearLogs={noop} setConfirm={noop} />);
+  for (const role of ['faculty', 'admin']) assert.match(mine(role), /<span>Submitted<\/span><strong>2<\/strong>/, role + ': the draft is not counted');
+  const asst = render('asst_vpaa');
+  assert.equal((asst.match(/class="stat-card"/g) || []).length, 5); assert.doesNotMatch(asst, /<span>Submitted<\/span>/);
   for (const label of ['Programs', 'Subjects', 'Under Review', 'Approved', 'For Revision']) // labels keep their capitals assert.match(admin, new RegExp('<span>' + label + '</span>'));
   assert.doesNotMatch(admin, /AI compliance score|Total courses|Submitted syllabi/i);
   const faculty = render('faculty');
-  assert.match(faculty, /My Submissions/); assert.match(faculty, /AI Compliance Score/);
+  assert.match(faculty, /<span>Submitted<\/span>/); assert.match(faculty, /Compliance Score/);
 });
 test('the brand dashboard icons draw in the theme colour at the requested size and are hidden from screen readers by default', () => {
   for (const name of ['program', 'subject', 'underReview', 'approved', 'revise']) {
@@ -339,14 +352,7 @@ test('the progress list has one Remind all button (no bell on each person), and 
   assert.doesNotMatch(tl, /Paalalahanan si Fay Cruz/, 'no per-person button in Tagalog either'); assert.match(tl, /Napaalalahanan noong/); assert.match(tl, /Paalala</);
   setLanguage('en');
 });
-test('translated repository filters retain canonical option values and original syllabus titles', () => {
-  setLanguage('tl');
-  const html = renderToStaticMarkup(<Repository user={{ ...user, role: 'admin' }} syllabi={[{ id: 5, userId: 2, status: 'approved', title: 'Settings', courseCode: 'IT 204', faculty: 'Approved', program: 'BSIT', uploadedAt: '2026-01-01' }]} notify={noop} setChatCode={noop} setHistCode={noop} />);
-  assert.doesNotMatch(html, /value="approved"|value="submitted"/); assert.match(html, /Aprubado/);
-  assert.match(html, /<small>Settings<\/small>/); assert.match(html, /Approved/);
-});
-
-
+// The Repository's rows come from the server now (GET /syllabi?scope=repository): its row, filter and export tests render with effects in tests/repository-ui.test.jsx.
 test('collapsed navigation keeps every destination accessible in English and Tagalog for both roles', () => {
   for (const language of ['en', 'tl']) {
     setLanguage(language);
@@ -463,25 +469,6 @@ test('program editor exposes editable code and name fields with bilingual labels
   }
 });
 
-test('repository uses current catalog programs for admin cells and dynamic filters in both languages', () => {
-  for (const language of ['en', 'tl']) {
-    setLanguage(language);
-    const html = renderToStaticMarkup(<Repository user={{...user,role:'admin'}} syllabi={[
-      {id:1, status:'approved', programCode:'BSNEW', program:'Obsolete curriculum', faculty:'Fay',title:'Original title',courseCode:'NEW101'},
-      {id:2, status:'approved', program:'Legacy program',faculty:'Gus',title:'Upload',courseCode:'OLD101'},
-      {id:3, status:'approved', programCode:'  ',program:' ',faculty:'Gus',title:'Unlinked upload',courseCode:'OLD102'},
-    ]} notify={noop} setChatCode={noop} setHistCode={noop} />);
-    assert.match(html, /<td>BSNEW<\/td>/);
-    assert.match(html, /<span data-value="BSNEW">BSNEW<\/span>/);
-    assert.match(html, /<td>Legacy program<\/td>/);
-    assert.match(html, /<span data-value="Legacy program">Legacy program<\/span>/);
-    assert.doesNotMatch(html, /Obsolete curriculum|value="Information Technology"|value="Computer Engineering"/);
-    assert.ok(html.includes('<td>' + t('ui.no_program_d8600a') + '</td>'));
-    assert.ok(html.includes('<span data-value="No program">' + t('ui.no_program_d8600a') + '</span>'));
-    assert.match(html, /filter-card repository-filters/);
-    assert.doesNotMatch(html, /value="submitted"/);
-  }
-});
 test('repository program lookup prefers the catalog and preserves legacy uploads and missing associations', () => {
   assert.equal(repositoryProgram({programCode:' BSNEW ',programName:'New program',program:'Old curriculum'}),'BSNEW');
   assert.equal(repositoryProgram({programCode:' ',programName:' New program ',program:'Old curriculum'}),'New program');
@@ -496,21 +483,6 @@ test('faculty and admin repository share table and filters without a status sele
     assert.equal((html.match(/scope="col"/g)||[]).length,6);
     assert.doesNotMatch(html,/value="submitted"|value="approved"|repository-filters-admin/);
     assert.equal((html.match(/role="combobox"/g)||[]).length,1);
-  }
-});
-
-test('administrator repository excludes every unapproved status from rows, filters and totals', () => {
-  for (const language of ['en','tl']) {
-    setLanguage(language);
-    const syllabi=['draft','submitted','under_review','for_revision','rejected','approved'].map((status,id)=>({id,status,programCode:'PROGRAM-'+status,courseCode:'SUBJECT-'+status,title:'Title-'+status,faculty:'Faculty'}));
-    const html=renderToStaticMarkup(<Repository user={{...user,role:'admin'}} syllabi={syllabi} notify={noop} setChatCode={noop} setHistCode={noop} />);
-    assert.match(html, /SUBJECT-approved/);
-    for (const status of ['draft','submitted','under_review','for_revision','rejected']) {
-      assert.ok(!html.includes('SUBJECT-'+status));
-      assert.ok(!html.includes('PROGRAM-'+status));
-    }
-    assert.match(html, /class="repo-stats"><span>[^<]+<b>1<\/b>/);
-    assert.doesNotMatch(html,/value="submitted"|value="approved"/);
   }
 });
 
@@ -599,14 +571,15 @@ test('builder review omits the embedded AI section by default and places AI Chec
   }
 });
 
-test('My Syllabi keeps faculty communication and hides it for administrators while preserving history',()=>{
+test('My Syllabi keeps faculty communication, gives administrators their comments but no messages, and preserves history',()=>{
   for(const language of ['en','tl']) {
     setLanguage(language);
     for(const role of ['admin','faculty']) {
       const html=renderToStaticMarkup(<MySyllabi user={{...user,role}} syllabi={[{id:45,userId:user.id,status:'under_review',courseCode:'TEST',title:'Original title',adminComment:'Reviewer feedback sentinel'}]} messages={[{syllabusId:45,receiverId:user.id,isRead:false}]} commentCounts={{45:2}} setPage={noop} setEditing={noop} setHistCode={noop} setChatCode={noop} setCommentCode={noop} setConfirm={noop} handleDelete={noop}/>);
       assert.ok(html.includes(t('ui.history_fefbcc')));
       if(role==='admin') {
-        assert.doesNotMatch(html,/syl-comments|feedback-banner|syl-unread|Reviewer feedback sentinel/);
+        // Since the review chain the dean's own syllabi get reviewer comments, so the administrator reads them too (E2E report 2026-11-23, BUG-021); still no messages.
+        assert.match(html,/syl-comments/);assert.doesNotMatch(html,/feedback-banner|syl-unread|Reviewer feedback sentinel/);
         assert.ok(!html.includes(t('ui.message_890761')));
       } else {
         assert.match(html,/syl-comments/);assert.doesNotMatch(html,/feedback-banner/);assert.match(html,/syl-unread/);
@@ -619,24 +592,6 @@ test('My Syllabi keeps faculty communication and hides it for administrators whi
 });
 
 // An approved syllabus is final: the Repository offers no message button to anyone (owner or not, any reviewer role), and keeps the history button.
-test('the repository has no message button for any approved syllabus, for every reviewer role, and keeps the history',()=>{
-  for(const language of ['en','tl']) {
-    setLanguage(language);
-    for(const role of ['admin','asst_vpaa','lic_director','vpaa']) {
-      const html=renderToStaticMarkup(<Repository user={{...user,role}} syllabi={[
-        {id:91,userId:user.id,status:'approved',courseCode:'OWN101',title:'Own syllabus'},
-        {id:92,userId:999,status:'approved',courseCode:'FAC101',title:'Faculty syllabus'}
-      ]} notify={noop} setHistCode={noop}/>);
-      assert.ok(html.includes('FAC101') && html.includes('OWN101'), role + ': both approved syllabi are listed');
-      for(const code of ['OWN101','FAC101']) {
-        assert.ok(!html.includes(t('ui.open_chat_for_p0_633dd9',{p0:code})), role + ' ' + code + ': no message button');
-        assert.ok(html.includes(t('ui.view_history_for_p0_46396f',{p0:code})), role + ' ' + code + ': history kept');
-      }
-      assert.ok(!html.includes('✉'), role + ': no message icon anywhere in the list');
-    }
-  }
-});
-
 test('CO–PO Mapping has no navigation, dashboard shortcut or login feature for either role and language',()=>{
   assert.ok(navItems.every(([page])=>page!=='mapping'));
   for(const language of ['en','tl']) {
@@ -714,25 +669,25 @@ test('the dashboard offers New syllabus to faculty and the administrator, not to
   }
 });
 
-// Recent Activity is the account's audit trail, kept for transparency: no role can clear or hide it from the dashboard.
+// Recent Activity is the account's personal activity feed, kept for transparency: no role can clear or hide it from the dashboard.
 test('the Recent Activity card has no Clear Logs button, for any role or language', () => {
   for (const language of ['en', 'tl']) {
     setLanguage(language);
     for (const role of ['faculty', 'admin', 'asst_vpaa', 'lic_director', 'vpaa']) {
       const html = renderToStaticMarkup(<Dashboard user={{ ...user, role }} syllabi={[]} logs={[]} setPage={noop} />);
-      assert.ok(html.includes(language === 'en' ? '<h3>Audit Log</h3>' : '<h3>Talaan ng Audit</h3>'), language + ': ' + role + ': the card is still there, titled Audit Log');
-      assert.ok(!html.includes('Recent Activity') && !html.includes('Kamakailang aktibidad'), language + ': ' + role + ': the old title is gone');
+      assert.ok(html.includes(language === 'en' ? '<h3>Recent Activity</h3>' : '<h3>Mga Kamakailang Aktibidad</h3>'), language + ': ' + role + ': the card is still there, titled Recent Activity');
+      assert.ok(!html.includes('<h3>Audit Log</h3>') && !html.includes('<h3>Talaan ng Audit</h3>'), language + ': ' + role + ': the card title is Recent Activity, not Audit Log');
       assert.doesNotMatch(html, /Clear Logs|I-clear ang talaan/, language + ': ' + role);
     }
   }
   setLanguage('en');
 });
 
-// The account's own activity on the dashboard (server/lib/accountActivity.js), in both languages: how the person signed in, a name change, a deleted draft.
+// Recent Activity shows the user's own workflow & profile actions in English and Tagalog, while hiding audit-only security/auth events (which live in Audit Log).
 test('Recent Activity shows the account activity in English and Tagalog', () => {
   const now = new Date().toISOString();
   const logs = [
-    { id: 'a1', userId: 1, action: 'login', notes: 'google', actionDate: now },
+    { id: 'a1', userId: 1, action: 'login', notes: 'google', actionDate: now }, // audit-only: hidden from Recent Activity
     { id: 'a2', userId: 1, action: 'name_change', notes: 'Ann A → Ann Approved', actionDate: now },
     { id: 'a3', userId: 1, action: 'syllabus_delete', notes: 'draft', courseCode: 'FM 202', title: 'Fundamentals of Mathematics', actionDate: now },
     { id: 'a4', userId: 9, action: 'logout', actionDate: now }, // someone else's: never shown
@@ -740,23 +695,25 @@ test('Recent Activity shows the account activity in English and Tagalog', () => 
   const render = () => renderToStaticMarkup(<Dashboard user={user} syllabi={[]} logs={logs} setPage={noop} />);
   setLanguage('en');
   const en = render();
-  for (const text of ['signed in', 'with Google', 'changed the name', 'Ann A → Ann Approved', 'deleted the draft of', 'FM 202']) assert.ok(en.includes(text), 'en: ' + text);
-  assert.ok(!en.includes('signed out'), 'only the signed-in account\'s own activity');
+  for (const text of ['changed the name', 'Ann A → Ann Approved', 'deleted the draft of', 'FM 202']) assert.ok(en.includes(text), 'en: ' + text);
+  assert.ok(!en.includes('signed in') && !en.includes('signed out'), 'auth/security events stay in Audit Log, not Recent Activity');
   setLanguage('tl');
   const tl = render();
-  for (const text of ['nag-sign in', 'gamit ang Google', 'pinalitan ang pangalan', 'Ann A → Ann Approved', 'binura ang draft ng']) assert.ok(tl.includes(text), 'tl: ' + text);
+  for (const text of ['pinalitan ang pangalan', 'Ann A → Ann Approved', 'binura ang draft ng']) assert.ok(tl.includes(text), 'tl: ' + text);
+  assert.ok(!tl.includes('nag-sign in') && !tl.includes('nag-sign out'), 'tl: auth/security events stay in Audit Log');
   setLanguage('en');
 });
 
-// Only the administrator gets the choice of whose Recent Activity to read (everyone's, or one person's); the server refuses anyone else (routes/logs.js).
-test('the Recent Activity card offers the administrator My activity / Everyone, and nobody else', () => {
+// Only the administrator gets the Audit Log shortcut from Recent Activity, and the dedicated Audit Log page renders in English and Tagalog.
+test('the Recent Activity card links to Audit Log for the administrator only, and Audit Log renders in both languages', () => {
   for (const language of ['en', 'tl']) {
     setLanguage(language);
     const render = (role) => renderToStaticMarkup(<Dashboard user={{ ...user, role }} syllabi={[]} logs={[]} setPage={noop} />);
-    const [mine, everyone] = language === 'en' ? ['My activity', 'Everyone'] : ['Aking aktibidad', 'Lahat'];
-    const admin = render('admin');
-    assert.ok(admin.includes(mine) && admin.includes(everyone), language + ': admin');
-    for (const role of ['faculty', 'asst_vpaa', 'lic_director', 'vpaa']) assert.ok(!render(role).includes(mine), language + ': ' + role);
+    assert.ok(render('admin').includes('>Audit Log<'), language + ': admin sees Audit Log link');
+    for (const role of ['faculty', 'asst_vpaa', 'lic_director', 'vpaa']) assert.ok(!render(role).includes('>Audit Log<'), language + ': ' + role);
+    const auditHtml = renderToStaticMarkup(<AuditLog user={{ ...user, role: 'admin' }} notify={noop} />);
+    assert.ok(auditHtml.includes(language === 'en' ? 'All users' : 'Lahat ng user'), language + ': AuditLog user filter');
+    assert.ok(auditHtml.includes(language === 'en' ? 'Export CSV' : 'I-export ang CSV'), language + ': AuditLog export');
   }
   setLanguage('en');
 });

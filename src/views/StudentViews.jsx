@@ -1,10 +1,13 @@
 import StableButton from '../components/StableButton';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { students } from '../lib/api';
 import { phShortDate } from '../lib/phTime';
-import { Card, Field, PageHead } from '../components/ui';
+import { usePeriodicRefresh } from '../lib/usePolling';
+import { Card, Field, Icon, PageHead } from '../components/ui';
+import GeistAvatar from '../components/GeistAvatar';
+import GeistSkeleton from '../components/GeistSkeleton';
 import Select from '../components/Select';
 import ReviewDocument from './ReviewDocument';
 
@@ -118,12 +121,17 @@ function useStudentData() {
   const [data, setData] = useState(null);
   const [list, setList] = useState(null);
   const [error, setError] = useState('');
-  useEffect(() => {
-    let live = true;
-    students.me().then((d) => { if (live) setData(d); }).catch((e) => { if (live) setError(e.message); });
-    students.syllabi().then((r) => { if (live) setList(r.syllabi || []); }).catch(() => { if (live) setList([]); });
-    return () => { live = false; };
+  const liveRef = useRef(true);
+  const loadSyllabi = useCallback(() => {
+    students.syllabi().then((r) => { if (liveRef.current) setList(r.syllabi || []); }).catch(() => { if (liveRef.current) setList((prev) => prev || []); });
   }, []);
+  useEffect(() => {
+    liveRef.current = true;
+    students.me().then((d) => { if (liveRef.current) setData(d); }).catch((e) => { if (liveRef.current) setError(e.message); });
+    loadSyllabi();
+    return () => { liveRef.current = false; };
+  }, [loadSyllabi]);
+  usePeriodicRefresh(true, loadSyllabi, 60000);
   // Each enrolled subject with its approved syllabus, when there is one.
   const rows = useMemo(() => {
     const byCourse = new Map((list || []).map((s) => [s.courseId, s]));
@@ -142,12 +150,47 @@ export function StudentDashboard({ user, setPage }) {
     <>
       <PageHead title={translateUI("ui.welcome_a2513b") + user.firstName} subtitle={translateUI('studentView.dashSubtitle')} />
       {error && <div className="info-banner warning" role="alert">{tr(error)}</div>}
-      {!data && !error && <div className="empty">{translateUI("ui.loading_your_profile_f1468e")}</div>}
+      {!data && !error && (
+        <div className="student-grid" role="status" aria-busy="true">
+          <span className="sr-only">{translateUI("ui.loading_your_profile_f1468e")}</span>
+          <Card title={translateUI('studentView.profile')}>
+            <div className="student-id-head">
+              <GeistSkeleton width={48} height={48} shape="pill" />
+              <div style={{ display: 'grid', gap: 6, flex: 1 }}>
+                <GeistSkeleton width="58%" height={16} />
+                <GeistSkeleton width="34%" height={12} />
+              </div>
+            </div>
+            <div className="student-facts">
+              <div className="wide"><GeistSkeleton width="28%" height={10} /><GeistSkeleton width="64%" height={15} /></div>
+              <div><GeistSkeleton width="45%" height={10} /><GeistSkeleton width="70%" height={15} /></div>
+              <div><GeistSkeleton width="40%" height={10} /><GeistSkeleton width="60%" height={15} /></div>
+              <div className="wide"><GeistSkeleton width="26%" height={10} /><GeistSkeleton width="56%" height={15} /></div>
+            </div>
+          </Card>
+          <Card title={translateUI("ui.enrolled_subjects_0ea329")}>
+            <div className="geist-skel-stack">
+              <GeistSkeleton width="46%" height={13} />
+              <GeistSkeleton width="100%" height={42} />
+              <GeistSkeleton width="100%" height={42} />
+              <GeistSkeleton width="100%" height={42} />
+            </div>
+          </Card>
+        </div>
+      )}
       {p && (
         <div className="student-grid">
           <Card title={translateUI('studentView.profile')}>
             <div className="student-id-head">
-              <span className="student-initials" aria-hidden="true">{initialsOf(p.student_name || (user.firstName + ' ' + user.lastName))}</span>
+              <GeistAvatar
+                size={48}
+                userId={user.id}
+                src={user.avatarUrl}
+                name={p.student_name || [user.firstName, user.lastName].filter(Boolean).join(' ')}
+                initials={user.initials || initialsOf(p.student_name || (user.firstName + ' ' + user.lastName))}
+                icon={<Icon name="graduationCap" size={12} />}
+                ariaHidden
+              />
               <div>
                 <strong>{p.student_name || [user.firstName, user.lastName].filter(Boolean).join(' ')}</strong>
                 <small>{p.student_id}</small>
@@ -207,7 +250,7 @@ export function StudentSyllabi() {
     .filter((x) => (program === 'All' || x.program === program) && (year === 'All' || x.academicYear === year) && [x.courseCode, x.title, x.faculty].join(' ').toLowerCase().includes(q.trim().toLowerCase()))
     .sort((a, b) => Number(b.enrolled) - Number(a.enrolled) || String(a.courseCode).localeCompare(String(b.courseCode))), [list, program, year, q]);
   const open = doc.value;
-  const pdfUrl = open && open.file && open.file.path ? `/api/students/syllabi/${openId}/file` : null; // served by the API: /uploads is private
+  const pdfUrl = open && open.file && open.file.path ? students.fileUrl(openId) : null; // served by the API: /uploads is private
 
   if (openId !== null) {
     return (
@@ -217,9 +260,17 @@ export function StudentSyllabi() {
           {open && open.content && <StableButton className="btn primary" type="button" onClick={() => savePaperPdf(open.syllabus.courseCode)}>{translateUI('studentView.downloadPdf')}</StableButton>}
           <StableButton className="btn ghost" type="button" onClick={() => setOpenId(null)}>{translateUI('studentView.back')}</StableButton>
         </>} />
-        {doc.loading && <div className="empty">{translateUI('studentView.loadingSyllabus')}</div>}
+        {doc.loading && (
+          <div className="card geist-skel-doc" role="status" aria-busy="true">
+            <span className="sr-only">{translateUI('studentView.loadingSyllabus')}</span>
+            <GeistSkeleton width="38%" height={20} />
+            <GeistSkeleton width="62%" height={14} />
+            <GeistSkeleton width="100%" height={180} shape="squared" />
+            <GeistSkeleton width="100%" height={120} shape="squared" />
+          </div>
+        )}
         {doc.error && <div className="info-banner warning" role="alert">{tr(doc.error)}</div>}
-        {open && open.content && <FitPaper><ReviewDocument content={open.content} facultyName={open.syllabus.faculty} /></FitPaper>}
+        {open && open.content && <FitPaper><ReviewDocument content={open.content} facultyName={open.syllabus.faculty} signoffs={open.signoffs || null} /></FitPaper>}
         {open && !open.content && pdfUrl && <iframe title={open.syllabus.courseCode} src={pdfUrl} style={{ width: '100%', height: '80vh', border: 0 }} />}
         {open && !open.content && !pdfUrl && <div className="empty">{translateUI('studentView.empty')}</div>}
       </>
@@ -231,7 +282,7 @@ export function StudentSyllabi() {
       <div className={'filter-card repository-filters' + (years.length > 0 ? ' student-filters-ay' : '')}>
         <Field label={translateUI("ui.program_9d6800")}><Select value={program} onChange={(e) => setProgram(e.target.value)}><option value="All">{translateUI("ui.all_6a7208")}</option>{programs.map((x) => <option key={x} value={x}>{x}</option>)}</Select></Field>
         {years.length > 0 && <Field label={translateUI('studentView.ay')}><Select value={year} onChange={(e) => setYear(e.target.value)}><option value="All">{translateUI('studentView.allYears')}</option>{years.map((y) => <option key={y} value={y}>{y}</option>)}</Select></Field>}
-        <label className="field"><span>{translateUI("ui.search_bce064")}</span><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={translateUI('studentView.searchHint')} /></label>
+        <Field label={translateUI("ui.search_bce064")}><div className="repo-search"><Icon name="magnifyingGlass" size={18} /><input value={q} onChange={(e) => setQ(e.target.value)} placeholder={translateUI('studentView.searchHint')} /></div></Field>
         <StableButton className="btn ghost reset" onClick={() => { setProgram('All'); setYear('All'); setQ(''); }}>{translateUI("ui.reset_44c57a")}</StableButton>
       </div>
       {error && <div className="info-banner warning" role="alert">{tr(error)}</div>}

@@ -4,7 +4,7 @@
 const express = require('express');
 const { requireAuth, requireAdmin, requireAuthor } = require('../middleware/auth'); // requireAuthor: faculty and the administrator write syllabi (lib/roles.js)
 const { inTransaction, httpError, sendError } = require('../lib/http');
-const { notifyAdmins, notifyRoles } = require('../lib/notify');
+const { notifyRoles } = require('../lib/notify'); // the reviewers are told in chain order through lib/reviewStages.js notifyTurn
 const reviewStages = require('../lib/reviewStages');
 const rules = require('../lib/syllabusRules');
 const { loadCourse } = require('../lib/courses');
@@ -20,6 +20,8 @@ const { LABEL_SQL, labelsOf } = require('../lib/syllabusLabels');
 const { findAiInstructions } = require('../lib/aiInstructions'); // the reviewer's warning about text addressed to the AI (advisory only)
 const { currentLabel } = require('../lib/academicYear');
 const accountActivity = require('../lib/accountActivity'); // a new draft and each editing session in the author's Recent Activity (best effort)
+const { formatUrlAsApa7 } = require('../lib/apaReference');
+const { createLimiter } = require('../lib/rateLimit');
 const router = express.Router();
 
 const MAX_CONTENT_BYTES = 512 * 1024;
@@ -28,7 +30,7 @@ const SECTIONS = { meta: 'object', outcomes: 'object', description: 'array', clo
 const TAG = /^(clo|ega|po):[A-Za-z0-9_-]{1,40}$/;
 
 const { assertValidSubject } = require('../lib/subjectValidation');
-const { assertActiveYear } = require('../lib/activeYearGate');
+const { assertActiveYear, assertEditableYear, pastYearOf, PAST_MESSAGE, PAST_CODE } = require('../lib/activeYearGate');
 const parseJson = (text) => { try { return text ? JSON.parse(text) : null; } catch { return null; } };
 const isObject = (v) => v !== null && typeof v === 'object' && !Array.isArray(v);
 
@@ -74,7 +76,7 @@ async function applyCatalog(db, content, user = null, stored = null) {
   const course = courseId ? await loadCourse(db, courseId, { lock: true }) : null;
   if (courseId && !course) throw httpError(400, 'That course does not exist');
   if(course?.standards?.poReference && !content.outcomes && require('../lib/programPoReferences').hasPoMappings(content)) throw httpError(409,'This legacy draft must explicitly adopt its authored PO context before saving. Existing mappings were not replaced.',{code:'legacy_po_adoption_required'});
-  if (course) { content.meta.code = course.code; content.meta.title = course.title; content.meta.program = course.program.code; require('../lib/subjectTerm').applyTerm(content.meta, course.term); } // the administrator's year level, pre-requisite, academic year and semester: faculty cannot change them
+  if (course) { content.meta.code = course.code; content.meta.title = course.title; content.meta.program = course.program.code; require('../lib/subjectTerm').applyTerm(content.meta, course.term); require('../lib/subjectUnits').applyUnits(content.meta, course.units); if (!course.units && user && user.role !== 'admin') require('../lib/subjectUnits').keepUnits(content.meta, stored?.meta?.courseId === course.id ? stored.meta : null); if (course.curriculumYear) content.meta.curriculumYear = course.curriculumYear; } // the administrator's year level, pre-requisite, semester, units and curriculum year: faculty cannot change them
   if (!content.outcomes) content.clos = course ? course.clos : [];
   else {
     if (course && user && user.role !== 'admin' && standardsAreSet(course.standards)) forceStandards(content.outcomes, course.standards, stored?.meta?.courseId === course.id ? stored : null);
@@ -101,6 +103,23 @@ function snapshotFrom(content, course) {
   };
 }
 
+// A pasted link as an APA 7 citation (Builder, References). It makes this server fetch a page, so each person has a limit; over it the builder writes
+// the citation from the link alone (RefsStep.jsx).
+const referenceLimiter = createLimiter({ max: 30, windowMs: 60 * 1000 });
+router.post('/format-reference', requireAuthor, async (req, res) => {
+  try {
+    const raw = typeof req.body?.url === 'string' ? req.body.url.trim() : '';
+    if (!raw || raw.length > 2048) return res.status(400).json({ error: 'A valid reference link is required' });
+    const slot = referenceLimiter.take(String(req.session.user.id));
+    if (!slot.ok) return res.set('Retry-After', String(slot.retryAfterSec)).status(429).json({ error: 'Too many reference links at once. Wait a moment, then try again.' });
+    const result = await formatUrlAsApa7(raw);
+    if (!result) return res.status(400).json({ error: 'A valid http(s) or DOI link is required' });
+    res.json(result);
+  } catch (err) {
+    sendError(res, err, 'Could not format reference');
+  }
+});
+
 // A new, empty draft. It is the owner's alone: admins never see drafts and no one is notified.
 router.post('/drafts', requireAuthor, async (req, res) => {
   try {
@@ -111,11 +130,11 @@ router.post('/drafts', requireAuthor, async (req, res) => {
     let result;
     try {
       [result] = year
-        ? await db.query("INSERT INTO syllabi (user_id, title, course_code, status, version, academic_year) VALUES (?, '', '', 'draft', 'v1.0', ?)", [req.session.user.id, year])
-        : await db.query("INSERT INTO syllabi (user_id, title, course_code, status, version) VALUES (?, '', '', 'draft', 'v1.0')", [req.session.user.id]);
+        ? await db.query("INSERT INTO syllabi (user_id, title, course_code, status, version, academic_year) VALUES (?, '', '', 'draft', 'v1', ?)", [req.session.user.id, year])
+        : await db.query("INSERT INTO syllabi (user_id, title, course_code, status, version) VALUES (?, '', '', 'draft', 'v1')", [req.session.user.id]);
     } catch (error) {
       if (!(year && error && error.code === 'ER_BAD_FIELD_ERROR')) throw error;
-      [result] = await db.query("INSERT INTO syllabi (user_id, title, course_code, status, version) VALUES (?, '', '', 'draft', 'v1.0')", [req.session.user.id]);
+      [result] = await db.query("INSERT INTO syllabi (user_id, title, course_code, status, version) VALUES (?, '', '', 'draft', 'v1')", [req.session.user.id]);
     }
     await accountActivity.record(db, { userId: req.session.user.id, action: 'draft_create', syllabusId: result.insertId });
     res.json({ id: result.insertId });
@@ -131,14 +150,16 @@ router.get('/:id/content', requireAuth, async (req, res) => {
     try { [rows] = await read(true); } catch (error) { if (!(error && error.code === 'ER_BAD_FIELD_ERROR')) throw error; [rows] = await read(false); }
     const syl = rows[0];
     if (!syl || !rules.canView(req.session.user, syl)) throw httpError(404, 'Syllabus not found');
+    await reviewStages.assertReviewerMayOpen(req.app.locals.db, syl, req.session.user); // what the lists hide from this reviewer stays closed here too
     let content = null;
     if (syl.content) { try { content = JSON.parse(syl.content); } catch { content = null; } }
     const revisions = contentRevision.revisionsOf(content); // of the STORED sections, before any in-memory adoption below
-    // The owner may edit only while the course is assigned to them (an admin can assign it again).
+    // The owner (faculty or administrator) may edit only while the course is assigned to them.
     let editable = rules.canEdit(req.session.user, syl);
     let lockedReason = null;
+    let lockedCode = null; // 'past_academic_year' when the lock is the academic year (the builder words it differently from an assignment lock)
     let adoptedOutcomes = false;
-    if (editable && !rules.isAdmin(req.session.user)) {
+    if (editable) {
       lockedReason = assignments.writeBlockedReason(req.session.user, await assignments.loadAssignments(req.app.locals.db, req.session.user.id), syl.course_id);
       if (lockedReason) editable = false;
     }
@@ -149,9 +170,14 @@ router.get('/:id/content', requireAuth, async (req, res) => {
       content.schemaVersion = 3;
       adoptedOutcomes = true;
     }
+    // A past academic year's syllabus is a record: view only, for everyone, the administrator included (lib/activeYearGate.js).
+    if (editable) {
+      const past = await pastYearOf(req.app.locals.db, syl);
+      if (past) { editable = false; lockedReason = PAST_MESSAGE(past.year, past.active); lockedCode = PAST_CODE; }
+    }
     // Back from "For revision": the next submission becomes the next version, and the reviewer's note says what to change.
     const revising = rules.isReturned(syl.status);
-    res.json({ id, status: syl.status, version: syl.version, academicYear: syl.academic_year || null, content, revisions, adoptedOutcomes, schemaVersion: syl.content_schema_version, updatedAt: syl.content_updated_at, editable, lockedReason,
+    res.json({ id, status: syl.status, version: syl.version, academicYear: syl.academic_year || null, content, revisions, adoptedOutcomes, schemaVersion: syl.content_schema_version, updatedAt: syl.content_updated_at, editable, lockedReason, lockedCode,
       ...(revising ? { nextVersion: rules.nextVersionLabel(syl.version), reviewerNote: syl.admin_comment || '' } : {}) });
   } catch (err) { sendError(res, err); }
 });
@@ -174,6 +200,7 @@ router.put('/:id/content', requireAuthor, async (req, res) => {
       if (!syl || !rules.canView(me, syl)) throw httpError(404, 'Syllabus not found'); // never reveal it to non-participants
       if (!rules.isOwner(me, syl)) throw httpError(403, 'Only the owner can edit syllabus content');
       if (!rules.canEdit(me, syl)) throw httpError(409, rules.lockedMessage(syl));
+      await assertEditableYear(conn, syl, { lock: true }); // a past academic year's syllabus is view only
 
       await assignments.requireCourseAccess(conn, me, syl.course_id); // the syllabus's current course must be assigned
 
@@ -218,7 +245,7 @@ function poReviewOf(content, course) {
   if (!course || !poReviewPending(content, course.standards)) return { pending: false };
   const current = content.outcomes.pos, updated = course.standards.pos, nos = [...new Set([...current, ...updated].map((p) => p.no))].sort((a, b) => a - b);
   const text = (rows, no) => { const row = rows.find((p) => p.no === no); return row ? row.text : null; };
-  const mapped = new Set([...(content.clos || []).flatMap((c) => c.pos || []), ...(content.plan || []).flatMap((row) => (row.ilos || []).flatMap((il) => (il.tags || []).filter((tag) => /^po:\d+$/.test(tag)).map((tag) => Number(tag.slice(3)))))]);
+  const mapped = new Set((content.clos || []).flatMap((c) => c.pos || [])); // only a CLO maps to a PO
   const closOf = (no) => (content.clos || []).map((c, i) => ({ c, label: 'CLO ' + (i + 1) })).filter(({ c }) => (c.pos || []).includes(no)).map(({ label }) => label);
   const side = (r) => (r ? { id: r.id, version: r.version } : null);
   return { pending: true, reviewedSha256: hashOutcomes(updated), references: { current: side(content.outcomes.poReference), updated: side(course.standards.poReference) }, changes: nos.map((no) => ({ no, before: text(current, no), after: text(updated, no), clos: closOf(no) })).filter((c) => String(c.before ?? '').replace(/\s+/g, ' ').trim() !== String(c.after ?? '').replace(/\s+/g, ' ').trim()), missingMappings: [...mapped].filter((no) => !updated.some((p) => p.no === no)).sort((a, b) => a - b) };
@@ -231,6 +258,7 @@ router.get('/:id/po-review', requireAuth, async (req, res) => {
     const [rows] = await db.query('SELECT syllabus_id, user_id, status, content, course_id, archived_at FROM syllabi WHERE syllabus_id = ?', [id]);
     const syl = rows[0];
     if (!syl || !rules.canView(req.session.user, syl)) throw httpError(404, 'Syllabus not found');
+    await reviewStages.assertReviewerMayOpen(db, syl, req.session.user);
     const content = contentOf(syl);
     res.json(poReviewOf(content, content?.meta?.courseId ? await loadCourse(db, content.meta.courseId) : null));
   } catch (err) { sendError(res, err); }
@@ -250,6 +278,7 @@ router.post('/:id/po-review/adopt', requireAuthor, async (req, res) => {
       if (!syl || !rules.canView(me, syl)) throw httpError(404, 'Syllabus not found');
       if (!rules.isOwner(me, syl)) throw httpError(403, 'Only the owner can edit syllabus content');
       if (!rules.canEdit(me, syl)) throw httpError(409, rules.lockedMessage(syl));
+      await assertEditableYear(conn, syl, { lock: true });
       await assignments.requireCourseAccess(conn, me, syl.course_id);
       const content = contentOf(syl);
       const course = content?.meta?.courseId ? await loadCourse(conn, content.meta.courseId, { lock: true }) : null;
@@ -281,7 +310,8 @@ router.get('/:id/review', requireAuth, async (req, res) => {
     const [rows] = await db.query(
       'SELECT s.syllabus_id, s.user_id, s.status, s.version, s.title, s.course_code, s.file_path, s.content, ' + LABEL_SQL + ' WHERE s.syllabus_id = ?', [id]);
     const syl = rows[0];
-    if (!syl || !rules.canView(me, syl)) throw httpError(404, 'Syllabus not found');
+    if (!syl || !rules.canReadApproved(me, syl)) throw httpError(404, 'Syllabus not found');
+    await reviewStages.assertReviewerMayOpen(db, syl, me); // what the lists hide from this reviewer stays closed here too
 
     const [vrows] = await db.query(
       'SELECT version_id, version_label, status_at_save, note, created_at, file_path, (content IS NOT NULL) AS has_form FROM syllabus_versions WHERE syllabus_id = ? ORDER BY version_id DESC', [id]);
@@ -328,7 +358,7 @@ router.get('/:id/review', requireAuth, async (req, res) => {
 
 // Submit a draft for review, or save a new version of a syllabus that is already in the system.
 // Either way the form content as it is now is stored with the version, so the history can show what changed.
-//  - draft           -> first version (v1.0), status submitted, admins notified;
+//  - draft           -> first version (v1), status submitted, admins notified;
 //  - submitted / under review / for revision -> next version label; for revision becomes submitted again.
 // Approved and rejected syllabi are locked (409). Body: { note? }.
 // Completed administrator revisions are immutable. Review cycles and snapshot timestamps
@@ -343,7 +373,7 @@ async function saveAdminRevision(conn, syl, content, me) {
   if (previous && JSON.stringify(adminRevisionContent(parseJson(previous.content))) === JSON.stringify(adminRevisionContent(content))) {
     return previous.version_label;
   }
-  const label = previous ? rules.nextVersionLabel(previous.version_label) : 'v1.0';
+  const label = previous ? rules.nextVersionLabel(previous.version_label) : rules.FIRST_VERSION;
   await conn.query(
     `INSERT INTO syllabus_versions (syllabus_id, version_label, title, course_code, curriculum_id, file_path, status_at_save, note, content, created_by)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -351,6 +381,21 @@ async function saveAdminRevision(conn, syl, content, me) {
       previous ? 'Administrator revision prepared for AI check' : 'Administrator syllabus prepared for AI check', JSON.stringify(content), me.id]
   );
   return label;
+}
+
+// Has the dean (the author) already sent this syllabus for review? The dean stage is cleared on its newest version (publish below clears it).
+const { aiGate } = require('../lib/syllabuscheck/policy');
+const ALREADY_SENT = 'This syllabus was already sent for review. The Asst. VPAA, the LIC Director and the VPAA have it now.';
+const ALREADY_SENT_LOCKED = 'This syllabus was already sent for review, so it cannot return to draft. A reviewer can return it to you for revision.';
+async function sentForReview(conn, id) {
+  const summary = (await reviewStages.stagesOf(conn, [id])).get(id);
+  return !!(summary && summary.dean && summary.dean.cleared);
+}
+
+// The VPAA returned or rejected it and the three stages were kept: the resubmission is with the VPAA again, so the VPAA hears about it.
+async function notifyResubmittedToApprover(db, me, id, outcome) {
+  if (!(outcome.carried && outcome.carried.kept && outcome.carried.kept.length === 3)) return;
+  await notifyRoles(db, ['vpaa'], { exceptUserId: me.id, type: 'chain', syllabusId: id, title: `Resubmitted for your decision: ${outcome.courseCode || outcome.title}`, body: `${me.firstName} ${me.lastName} revised it after your decision. The dean, the Asst. VPAA and the LIC Director had already cleared it.` });
 }
 
 async function finalizeSyllabus(req, res, publishing = false, preparing = false) {
@@ -370,6 +415,8 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
       if (!syl || !rules.canView(me, syl)) throw httpError(404, 'Syllabus not found');
       if (!rules.isOwner(me, syl)) throw httpError(403, 'Only the owner can submit a syllabus');
       if (publishing && syl.status !== 'under_review') throw httpError(409, 'Complete the form and send it to AI Checker before sending it for review.');
+      // Sent once is enough: the dean stage is cleared on this version and the other reviewers already have it (lib/reviewStages.js).
+      if (publishing && await sentForReview(conn, id)) throw httpError(409, ALREADY_SENT, { code: 'already_sent' });
       if (!rules.canEdit(me, syl) && !(publishing && rules.isAdmin(me) && syl.status === 'under_review')) throw httpError(409, rules.lockedMessage(syl));
       // Submitting stores a new check run: only for a syllabus of the active academic year, read locked in this transaction (lib/activeYearGate.js).
       await assertActiveYear(conn, syl, { lock: true });
@@ -384,9 +431,17 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
       await assignments.requireCourseAccess(conn, me, meta.courseId);
       // The checker uses institutional/program masters, never the author's own snapshot.
       // Validate raw saved identity before applyCatalog can overwrite it.
+      const aiOff = !(await require('../lib/adminSettings').policy(conn)).aiChecking; // AI checking off in Settings: no AI check can be required
+      const preCatalogHash = complianceReady ? compliance.hashOf(content) : null;
       const verifiedResult = await compliance.requireHybrid(conn, id,
         publishing ? compliance.publicationContent(content, await catalogSnapshot(conn, content)) : content,
-        { hardOnly: preparing, aiOff: !(await require('../lib/adminSettings').policy(conn)).aiChecking }); // AI checking off in Settings: no AI check can be required
+        { hardOnly: preparing, aiOff });
+      // When aiGate is 'advisory', requireHybrid returns undefined even if the author already ran a hybrid AI check on this exact draft.
+      // Preserve that hybrid run instead of shadowing it with a legacy deterministic-only (lc-v1) run on submit.
+      const existingHybrid = !verifiedResult && !publishing && !preparing && preCatalogHash
+        ? await compliance.cachedRun(conn, id, preCatalogHash)
+        : null;
+      const keepExistingHybrid = !!(existingHybrid && existingHybrid.created_by === me.id && existingHybrid.conformant && /^hybrid-\d+$/.test(existingHybrid.standard_version));
       // Validate authored outcomes and snapshot the exact values being submitted.
       await applyCatalog(conn, content, me, JSON.parse(JSON.stringify(content)));
       if (content.outcomes) validateOutcomes(content.outcomes, content.clos || [], content.plan || [], { complete: true });
@@ -407,6 +462,11 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
         throw httpError(409, g.message, { failed: g.failed });
       }
       if (preparing) {
+        // Back from "For revision" or "Rejected" only with a change, as for faculty: an unchanged form would reuse the version the dean already sent.
+        if (rules.isReturned(syl.status)) {
+          const previous = await compliance.latestVersion(conn, id);
+          if (previous && JSON.stringify(adminRevisionContent(parseJson(previous.content))) === JSON.stringify(adminRevisionContent(content))) throw httpError(409, rules.UNCHANGED, { code: 'unchanged' });
+        }
         content.reviewCycle=(Number(content.reviewCycle)||0)+1;
         const json=JSON.stringify(content);
         if (Buffer.byteLength(json,'utf8')>MAX_CONTENT_BYTES) throw httpError(413,'This syllabus is too large to save.');
@@ -422,7 +482,11 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
         const checkContent=compliance.publicationContent(content,content.catalog);
         const checked=await compliance.cachedRun(conn,id,compliance.hashOf(checkContent));
         if (reviewedRunId !== undefined && checked?.run_id !== reviewedRunId) throw httpError(409,'The AI check changed. Open the current result before approving.');
-        if (!checked || checked.created_by !== me.id || !checked.conformant || checked.status !== 'scored' || checked.ai_status !== 'ok') throw httpError(409,'Check the current saved form in the AI Checker and wait for its AI alignment check to finish before sending it for review.');
+        if (!checked || checked.created_by !== me.id) throw httpError(409,'Check the current saved form in the AI Checker before sending it for review.');
+        // A finished AI check is needed only when the policy requires one and AI checking is on, the same rule as requireHybrid above. Otherwise (advisory, or AI
+        // checking off in Settings, where no AI check can ever finish) the dean decides after reading this check; the coded hard gates were enforced above.
+        const aiRequired = !aiOff && aiGate() === 'required';
+        if (aiRequired && (!checked.conformant || checked.status !== 'scored' || checked.ai_status !== 'ok')) throw httpError(409,'Check the current saved form in the AI Checker and wait for its AI alignment check to finish before sending it for review.');
       }
       if (publishing) {
         // The dean's own syllabus is not approved here: only the VPAA approves. Sending it for review records the checked revision and clears
@@ -432,14 +496,18 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
         const revision = await compliance.latestVersion(conn, id);
         if (!revision) throw httpError(409, 'This syllabus has no saved version to send for review.');
         await reviewStages.clear(conn, { syllabusId: id, versionId: revision.version_id, stage: 'dean', reviewerId: me.id, note: 'Author' });
+        // Sent again after a return: it goes back to the reviewer who returned it, keeping the stages cleared before them (lib/reviewStages.js carryForward).
+        const carried = await reviewStages.carryForward(conn, { syllabusId: id, fromVersionId: await reviewStages.lastSentVersion(conn, id, revision.version_id), toVersionId: revision.version_id });
         await conn.query('UPDATE syllabi SET status = ?, version = ? WHERE syllabus_id = ?', ['under_review', label, id]);
         await conn.query('INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',
           [id, me.id, 'submit', 'Administrator sent syllabus for review after AI check']);
-        return { label, status: 'under_review', sentForReview: true, courseCode: syl.course_code, title: syl.title };
+        return { label, status: 'under_review', sentForReview: true, courseCode: syl.course_code, title: syl.title, carried };
       }
       // A resubmission after "For revision" is a new version only if the faculty member changed something, and says what.
+      let returnedFrom = null; // the version that was returned, when this is a resubmission
       if (rules.isReturned(syl.status)) {
         const previous = await compliance.latestVersion(conn, id);
+        returnedFrom = previous ? previous.version_id : null;
         const before = previous ? parseJson(previous.content) : null;
         if (before && changedSections(before, content).length === 0) throw httpError(409, rules.UNCHANGED, { code: 'unchanged' });
         if (note.length < rules.MIN_NOTE) throw httpError(400, rules.NEED_NOTE, { code: 'need_note' });
@@ -449,7 +517,7 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
       await conn.query('UPDATE syllabi SET content = ?, content_updated_at = NOW() WHERE syllabus_id = ?', [snapshot, id]);
 
       const first = syl.status === 'draft' || (publishing && !(await compliance.latestVersion(conn,id)));
-      const label = first ? 'v1.0' : rules.nextVersionLabel(syl.version);
+      const label = first ? rules.FIRST_VERSION : rules.nextVersionLabel(syl.version);
       const newStatus = publishing ? 'approved' : rules.statusAfterOwnerEdit(syl.status);
       const versionNote = publishing ? 'Published by administrator after AI check' : first ? 'Initial version' : (note || 'Updated by author');
       await conn.query('UPDATE syllabi SET status = ?, version = ? WHERE syllabus_id = ?', [newStatus, label, id]);
@@ -459,42 +527,53 @@ async function finalizeSyllabus(req, res, publishing = false, preparing = false)
         [id, label, content.meta.title, content.meta.code, syl.curriculum_id, syl.file_path, newStatus, versionNote, snapshot, me.id]
       );
       // The compliance run is stored with the version, in the same transaction, once the tables exist: it is the authoritative one.
-      let runId = null;
-      if (complianceReady) runId = await compliance.storeRun(conn, { syllabusId: id, versionId: versionRow && versionRow.insertId ? versionRow.insertId : null, content, result, createdBy: me.id });
+      // If the author already ran a hybrid AI check on this exact saved content, keep that run rather than overwriting it with a legacy deterministic run.
+      let runId = keepExistingHybrid ? existingHybrid.run_id : null;
+      if (complianceReady && !keepExistingHybrid) runId = await compliance.storeRun(conn, { syllabusId: id, versionId: versionRow && versionRow.insertId ? versionRow.insertId : null, content, result, createdBy: me.id });
+      // A resubmission after a return goes back to the reviewer who returned it: the stages cleared before them are kept on the new version
+      // (lib/reviewStages.js carryForward). Read before the 'submit' below is logged, since the last return in the log names that reviewer.
+      const carried = !publishing && returnedFrom && versionRow && versionRow.insertId
+        ? await reviewStages.carryForward(conn, { syllabusId: id, fromVersionId: returnedFrom, toVersionId: versionRow.insertId })
+        : { returner: null, kept: [] };
+      // Kept stages mean its review has already begun, as when the dean clears it (routes/reviewChain.js): Under Review, which the VPAA can approve.
+      const finalStatus = carried.kept.length ? 'under_review' : newStatus;
+      if (finalStatus !== newStatus) await conn.query('UPDATE syllabi SET status = ? WHERE syllabus_id = ?', [finalStatus, id]);
       await conn.query(
         'INSERT INTO submission_logs (syllabus_id, user_id, action, notes) VALUES (?, ?, ?, ?)',
         [id, me.id, publishing ? 'approve' : first || rules.isReturned(syl.status) ? 'submit' : 'update', (publishing ? 'Administrator published syllabus after AI check' : first ? 'Syllabus submitted from the builder' : `Saved as ${label}: ${versionNote}`).slice(0, 500)]
       );
-      return { previous: syl.status, label, status: newStatus, courseCode: syl.course_code, title: syl.title, runId, content, result };
+      return { previous: syl.status, label, status: finalStatus, courseCode: syl.course_code, title: syl.title, runId, keepExistingHybrid, content, result, carried };
     });
 
     if (outcome.preparing) return res.json({version:outcome.label,status:outcome.status});
     if (outcome.sentForReview) {
-      // After the commit: the other two reviewers hear about it; the VPAA when all three have cleared it. Until now it was hidden from them
-      // (lib/reviewStages.js hiddenFromReviewers): this is when it reaches them.
-      await notifyRoles(db, ['asst_vpaa', 'lic_director'], { exceptUserId: me.id, type: 'submission', syllabusId: id, title: `Syllabus sent for review: ${outcome.courseCode || outcome.title}`, body: `${me.firstName} ${me.lastName} sent ${outcome.title || outcome.courseCode} for review.` });
+      // After the commit: the reviewer whose turn it is hears about it (the Asst. VPAA, or after a return whoever returned it); the others when it
+      // reaches them (routes/reviewChain.js). Until now it was hidden from them (lib/reviewStages.js hiddenFromReviewers): this is when it reaches them.
+      await reviewStages.notifyTurn(db, reviewStages.turnAfter(['dean', ...((outcome.carried && outcome.carried.kept) || [])]), { exceptUserId: me.id, type: 'submission', syllabusId: id, title: `Syllabus sent for review: ${outcome.courseCode || outcome.title}`, body: `${me.firstName} ${me.lastName} sent ${outcome.title || outcome.courseCode} for review.` });
+      await notifyResubmittedToApprover(db, me, id, outcome);
       return res.json({ version: outcome.label, status: outcome.status });
     }
 
     // After the commit, outside the transaction: the AI recommendations are a background job. They never delay or fail a submit.
-    if (outcome.runId && !outcome.result.hybrid && outcome.result.status === 'scored' && outcome.result.findings.length) {
+    if (outcome.runId && !outcome.keepExistingHybrid && !outcome.result.hybrid && outcome.result.status === 'scored' && outcome.result.findings.length) {
       compliance.startAiJob(db, { runId: outcome.runId, content: outcome.content, result: outcome.result, names: compliance.namesFor(me, outcome.content) });
     }
 
     // After the commit: notifications never affect the result.
     const who = `${me.firstName} ${me.lastName}`;
     if (!publishing && outcome.previous === 'draft') {
+      // The dean reviews first, so the dean hears about it; the Asst. VPAA and the LIC Director when it reaches them (routes/reviewChain.js).
       const submitted = { exceptUserId: me.id, type: 'submission', syllabusId: id, title: `New syllabus submitted: ${outcome.courseCode || outcome.title}`, body: `${who} submitted ${outcome.title || outcome.courseCode} for review.` };
-      await notifyAdmins(db, submitted);
-      await notifyRoles(db, ['asst_vpaa', 'lic_director'], submitted);
+      await reviewStages.notifyTurn(db, 'dean', submitted);
     } else if (!publishing && (outcome.previous === 'under_review' || rules.isReturned(outcome.previous))) {
       const edited = {
         exceptUserId: me.id, type: 'edit', syllabusId: id,
         title: outcome.previous === 'under_review' ? `Syllabus updated during review: ${outcome.courseCode} (${outcome.label})` : `Syllabus resubmitted: ${outcome.courseCode} (${outcome.label})`,
         body: `${who} saved a new version.`,
       };
-      await notifyAdmins(db, edited);
-      await notifyRoles(db, ['asst_vpaa', 'lic_director'], edited);
+      // Only the reviewer who has it now: after a return, whoever returned it (the stages before them were kept); after an edit during review, the dean.
+      await reviewStages.notifyTurn(db, reviewStages.turnAfter((outcome.carried && outcome.carried.kept) || []), edited);
+      await notifyResubmittedToApprover(db, me, id, outcome);
     }
     res.json({ version: outcome.label, status: outcome.status, score: outcome.result?.score, deductions: outcome.result?.hybrid?.deductions });
   } catch (err) { sendError(res, err); }
@@ -511,6 +590,9 @@ router.post('/:id/resume-draft', requireAuth, requireAdmin, async (req,res)=>{
       if(!syl || !rules.canView(me,syl)) throw httpError(404,'Syllabus not found');
       if(!rules.isOwner(me,syl)) throw httpError(403,'Only the owner can edit syllabus content');
       if(syl.status!=='under_review') throw httpError(409,'Only a syllabus waiting for an AI decision can return to draft.');
+      await assertEditableYear(conn,syl,{lock:true}); // a past academic year's syllabus is not reopened for editing
+      // Once sent for review it is with the Asst. VPAA, the LIC Director and the VPAA: the dean cannot quietly take it back.
+      if(await sentForReview(conn,id)) throw httpError(409,ALREADY_SENT_LOCKED,{code:'already_sent'});
       // Preserve older completed syllabi before the first editable save overwrites them.
       const content = parseJson(syl.content);
       const label = content?.meta ? await saveAdminRevision(conn, syl, content, me) : syl.version;

@@ -6,12 +6,7 @@ const mysql = require('mysql2/promise');
 const { column, tables } = require('./passwords-ddl');
 
 async function migrate() {
-  const conn = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-  });
+  const conn = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   const [have] = await conn.query('SHOW COLUMNS FROM ' + column.table + ' LIKE ?', [column.name]);
   if (!have.length) await conn.query(column.ddl);
   for (const sql of tables) await conn.query(sql);

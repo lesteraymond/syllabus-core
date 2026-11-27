@@ -75,6 +75,24 @@ export function scoreBands(rows) {
 //             FACULTY_SUBMITTED (Submitted, Under Review, Approved; not a draft, nor one returned for revision or rejected, which must be submitted again).
 // -> [{ program, name, total, approved, percent }] (approved: the subjects that count), in the programs' own order (by code).
 export const FACULTY_SUBMITTED = Object.freeze(['submitted', 'under_review', 'approved']);
+// The "Submitted" stat card (for authors: faculty and the dean): counts each syllabus the author has submitted, staying counted
+// through under_review, for_revision, and approved. Drafts (never submitted) and VPAA-rejected syllabi are excluded.
+// Deduplicated by subject (courseId, falling back to syllabus id) so revisions or resubmissions for the same subject never duplicate the count.
+export const SUBMITTED_STAT_STATUSES = Object.freeze(['submitted', 'under_review', 'for_revision', 'approved']);
+export function submittedStatCount(syllabi) {
+  const seen = new Set();
+  let count = 0;
+  for (const s of syllabi || []) {
+    if (!s || s.archived || !SUBMITTED_STAT_STATUSES.includes(s.status)) continue;
+    const key = s.courseId != null ? `course:${Number(s.courseId)}` : s.id != null ? `syl:${s.id}` : null;
+    if (key !== null) {
+      if (seen.has(key)) continue;
+      seen.add(key);
+    }
+    count += 1;
+  }
+  return count;
+}
 export function programCoverage(programs, subjects, syllabi, { statuses = ['approved'] } = {}) {
   const approvedSubjects = new Set((syllabi || []).filter((s) => s && statuses.includes(s.status) && !s.archived && s.courseId != null).map((s) => Number(s.courseId)));
   const byProgram = new Map();

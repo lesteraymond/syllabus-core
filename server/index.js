@@ -66,7 +66,19 @@ usage.start();
 const deadlineNotices = require('./lib/deadlineNotices').createDeadlineNotifier({ db: pool, notify: require('./lib/notify').createNotification, mail: require('./lib/mailer').sendNotice });
 app.locals.deadlineNotices = deadlineNotices;
 deadlineNotices.start();
-for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => { Promise.all([usage.stop(), deadlineNotices.stop()]).finally(() => process.exit(0)); });
+let httpServer = null;
+let shuttingDown = false;
+async function gracefulShutdown() {
+	if (shuttingDown) return;
+	shuttingDown = true;
+	const forceTimer = setTimeout(() => process.exit(1), 15000);
+	if (typeof forceTimer.unref === "function") forceTimer.unref();
+	if (httpServer) await new Promise((resolve) => httpServer.close(() => resolve()));
+	await Promise.allSettled([usage.stop(), deadlineNotices.stop()]);
+	await pool.end().catch(() => {});
+	process.exit(0);
+}
+for (const signal of ['SIGINT', 'SIGTERM']) process.once(signal, () => { gracefulShutdown(); });
 
 // Public liveness/readiness (database ping only): mounted before the session restore and the student gate so a monitor needs no login.
 app.use("/api/health", require("./routes/health"));
@@ -113,7 +125,7 @@ applyErrorHandling(app);
 require("./lib/dbConfig").assertDatabaseSafe(pool, process.env).then(async (database) => {
 if (sessionStore) await assertSessionTableReady(pool); // the sessions table must be there before anyone signs in
 for (const warning of database.warnings) console.warn("DATABASE: " + warning);
-app.listen(PORT, () => {
+httpServer = app.listen(PORT, () => {
 	console.log(`Server running on http://localhost:${PORT}`);
 	console.log("Auth endpoints:");
 	for (const layer of authRoutes.stack) {

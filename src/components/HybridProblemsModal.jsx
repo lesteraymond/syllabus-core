@@ -18,6 +18,7 @@ export default function HybridProblemsModal({ problems, onClose }) {
         <div className="modal hy-modal" role="dialog" aria-modal="true" aria-labelledby="hy-modal-title" tabIndex={-1} ref={dialog} onClick={(e) => e.stopPropagation()}>
           <div className="modal-head">
             <h3 id="hy-modal-title">{t('hybrid.noDraftTitle', { count: problems.length })}</h3>
+            <button type="button" className="icon-btn" aria-label={t('hybrid.closeProblems')} onClick={onClose}>✕</button>
           </div>
           <div className="modal-body hy hy-modal-body">
             {groupBySeverity(problems).map(g => <div key={g.key} className={'hy-group ' + g.key}>

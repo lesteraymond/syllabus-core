@@ -1,7 +1,7 @@
 // Run: npm test
 import test from 'node:test';
 import assert from 'node:assert';
-import { canApproveAdminDraft, assignmentState, canDeleteSyllabus, courseLockReason, NOT_ASSIGNED, NOTHING_ASSIGNED, NO_SUBJECT_YET } from './syllabusRules.js';
+import { canApproveAdminDraft, sentForReview, assignmentState, canDeleteSyllabus, courseLockReason, NOT_ASSIGNED, NOTHING_ASSIGNED, NO_SUBJECT_YET } from './syllabusRules.js';
 import { createRequire } from 'node:module';
 const serverRules = createRequire(import.meta.url)('../../server/lib/syllabusRules.js');
 
@@ -52,9 +52,10 @@ test('a program without a subject yet says so, instead of claiming nothing is as
   assert.strictEqual(courseLockReason(faculty, programOnly, { courseCode: 'IT 101' }), NO_SUBJECT_YET);
 });
 
-test('nothing is blocked while the assignments load, and admins are never blocked', () => {
+test('nothing is blocked while the assignments load; admins follow their own assignments and unrestricted reviewers are never blocked', () => {
   assert.strictEqual(courseLockReason(faculty, null, { courseId: 99 }), '');
-  assert.strictEqual(courseLockReason({ id: 1, role: 'admin' }, none, { courseId: 99 }), '');
+  assert.strictEqual(courseLockReason({ id: 1, role: 'admin' }, none, { courseId: 99 }), NOT_ASSIGNED);
+  assert.strictEqual(courseLockReason({ id: 1, role: 'admin' }, mine, { courseId: 10 }), '');
   assert.strictEqual(courseLockReason(faculty, { unrestricted: true, programIds: [], courseIds: [], courses: [] }, { courseId: 99 }), '');
 });
 
@@ -107,4 +108,27 @@ test('advisory policy: the administrator can approve their own draft after readi
   assert.strictEqual(canApproveAdminDraft(user, syllabus, incomplete, false, 'advisory'), false);
   assert.strictEqual(canApproveAdminDraft({ id: 1, role: 'faculty' }, syllabus, incomplete, true, 'advisory'), false);
   assert.strictEqual(canApproveAdminDraft(user, syllabus, null, true, 'advisory'), false);
+});
+
+test('AI checking off in Settings: the dean can send their own syllabus after reading a check, even under the required policy, but not past a coded hard gate', () => {
+  const user = { id: 1, role: 'admin' };
+  const syllabus = { syllabusId: 10, userId: 1, status: 'under_review' };
+  const rulesOnly = { id: 5, syllabusId: 10, createdBy: 1, status: 'incomplete', conformant: false, stale: false, aiStatus: 'failed', hybrid: { ready: false, alignment: { status: 'not_evaluated' } }, findings: [] };
+  assert.strictEqual(canApproveAdminDraft(user, syllabus, rulesOnly, true, 'required'), false, 'with AI on, the required policy still needs a finished AI check');
+  assert.strictEqual(canApproveAdminDraft(user, syllabus, rulesOnly, true, 'required', { aiOff: true }), true);
+  assert.strictEqual(canApproveAdminDraft(user, syllabus, { ...rulesOnly, findings: [{ id: 'GRADE-100:x', ruleId: 'GRADE-100', severity: 'blocking' }] }, true, 'required', { aiOff: true }), false);
+  assert.strictEqual(canApproveAdminDraft(user, syllabus, { ...rulesOnly, stale: true }, true, 'required', { aiOff: true }), false);
+});
+
+test('a syllabus the dean already sent for review is not sent again', () => {
+  const user = { id: 1, role: 'admin' };
+  const run = { id: 5, syllabusId: 10, createdBy: 1, status: 'scored', conformant: true, stale: false, aiStatus: 'ok', hybrid: { ready: true, alignment: { status: 'completed' } }, findings: [] };
+  const open = { syllabusId: 10, userId: 1, status: 'under_review', stages: { dean: { cleared: false } } };
+  assert.strictEqual(sentForReview(open), false);
+  assert.strictEqual(canApproveAdminDraft(user, open, run, true, 'advisory'), true);
+  const sent = { ...open, stages: { dean: { cleared: true } } };
+  assert.strictEqual(sentForReview(sent), true);
+  assert.strictEqual(canApproveAdminDraft(user, sent, run, true, 'advisory'), false);
+  assert.strictEqual(canApproveAdminDraft(user, sent, run, true, 'required'), false);
+  assert.strictEqual(sentForReview(null), false);
 });

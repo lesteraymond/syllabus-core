@@ -2868,3 +2868,322 @@ Found 2026-11-17 when CPE 101 re-checks #451 and #452 showed no score and no sug
 - **E2E** (`scripts/e2e/scenarios.cjs`): the scenarios open the report from the score when it is not already open, use the drawer's footer button to check again, close it before using the page behind it, and press "Run AI Checker".
 - **Not in this commit:** the AI Syllabus Generator's redesigned panel (`GeneratePanel.jsx`, `SyllabusGenerator.jsx`, its texts and styles) and the notification links in `App.jsx`, which are separate work in progress.
 - **Tests:** `npm test` passes (1,486 server tests, localization, PDF import 15/15, VPAA screens 28/28); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks. Both ran with the generator and notification work also in the working tree.
+
+---
+
+### v1.98.15 — Builder Opens Again; 404 and Error Pages Translated
+**Date:** November 20, 2026
+
+- **Problem:** the screen-in-the-address feature merged this morning (PR #56, `App.jsx`: `#reports`, `#ai`, so a refresh stays on the screen) turned `#builder` into My Syllabi on every address change, not only on a page load. Opening the builder sets `#builder` itself, so "New syllabus" and "Edit" closed the builder the moment it opened: nobody could create or edit a syllabus. E2E failed 15 of 25 (E02 first: the builder's "Choose a program" never appeared; the rest had no draft to check, submit or review).
+- **Change** (`src/App.jsx` `pageFromHash`): only a page load turns `#builder` into My Syllabi (a refreshed builder would open a blank draft, as the comment says); a hash change to `#builder` keeps the builder open. Every other screen was already in the menu list and was not affected.
+- **Also:** the new 404 page (`NotFound.jsx`) and error page (`ErrorBoundary.jsx`) were English only and stopped `npm test` at the localization audit; their texts now use translation keys in English and Filipino ("Reload" reuses the existing key). E2E E13 expected the dashboard greeting after a reload; a reload now stays on the AI Checker page, so it checks the Filipino text of that page instead.
+- **Tests:** `npm test` passes (1,491 server tests, localization, PDF import 15/15, VPAA screens 30/30); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.
+
+---
+
+### v1.98.16 — AI Checker: Check Coverage Shows the New AI Checker's Rules and AI Questions
+**Date:** November 20, 2026
+
+- **Problem:** the "Check coverage" list in the AI Checker report showed only the 81 fixed checks of `ruleCatalog.js` (the form standard, the institutional rules, the quality notes). 19 of the new AI Checker's 20 fixed rules were missing (only ILO-MISSING shares an id), and its AI questions (152 on the sample syllabus, 14 kinds) were in the report data but counted nowhere a person reads. A code comment said its rules were "already counted"; they were not. The explanation still spoke of "Hybrid-2" and "reference subchecks".
+- **Change:** the new checker records each fixed rule it ran and what it found (`hybrid.replan.fixedRules`; `pipeline/fixedRules.js` `RULE_IDS` names all 20). `ruleCoverage.js` lists them (namespace `new_ai_checker`): no finding is checked and passed, a finding needs revision, a review item needs faculty review, each with where it was found. It also counts the AI questions by kind (`aiQuestions`: asked, aligned, partly aligned, not aligned, not answered). The panel heading counts both ("Check coverage: 89 of 101 rules checked · AI questions: 152 of 152 answered"), the list ends with the AI questions by kind, and the explanation is rewritten, in English and Filipino. A report the new checker did not make shows neither (no invented coverage). The budget notices stay: only a saved report of the old checker carries a budget, and for it they are still accurate.
+- **Not changed:** the score, the findings and submission; check coverage is information only.
+- **Tests:** `pipeline/coverage.test.js` (+5): every rule `fixedRules.js` can report is in `RULE_IDS`; each new-checker row agrees with its findings; the AI questions are each counted once, by kind; unanswered questions are not checked, never passed; a no-AI report has neither. `tests/vpaa-conformance-ui.test.jsx` (+2, English and Filipino): the 20 rules, the heading and every kind of AI question are shown, with no translation key or "Hybrid-2" leaking. `npm test` passes (1,491 server tests, localization, PDF import 15/15, VPAA screens 30/30); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.
+
+---
+
+### v1.98.17 — Every Program Outcome Must Be Linked to an EGA
+**Date:** November 20, 2026
+
+- **Owner decision:** the link from each Program Outcome to the EGAs it serves is required, not optional. The fixed rule P-03 (CLO tagged with a PO must also carry that PO's EGAs, major, weight 2) can only check against it; without it P-03 passes with nothing to compare. In the dev database no PO of BSIT (9) or BSCPE (13) was linked.
+- **Admin saving** (`server/lib/programOutcomesInput.js` `parsePos`, used by the program's Outcomes and by "Add program" with its first subject; `src/lib/outcomesSetup.js` `checkPos`, the same check before the request): a PO without at least one EGA is refused with "PO {n} must be linked to at least one EGA", in English and Filipino.
+- **Programs to fix:** `GET /programs` reports `unlinkedPoCount`; the Curriculum list shows "Link POs to EGAs" on such a program and a banner names them with how many POs are unlinked, and says how to fix it (tick the EGAs each PO serves, save, apply to the subjects). A specialization is linked in the program it inherits from.
+- **AI Checker report:** when the syllabus's POs are not all linked, a notice at the top names them and says to ask the administrator (`ruleCoverage.posWithoutEga`, `RuleCoveragePanel`). Owner choice: it warns and blocks nothing; P-03 stays Not checked until the links exist.
+- **Not changed:** the new AI Checker's AI questions and its own fixed rules do not read the links (stored answers stay valid). The AI Syllabus Generator already uses them to fill a CLO's EGAs from its POs.
+- **Tests:** `parsePos` refuses a PO without an EGA; `checkPos`, `needsEgaLinks` and the program count; coverage lists the unlinked POs ([] when linked, null without POs); the report notice in English and Filipino. `npm test` passes (1,493 server tests, localization, PDF import 15/15, VPAA screens 32/32); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.
+
+---
+
+### v1.98.18 — Builder: Ticking a PO on a CLO Ticks the EGAs It Serves
+**Date:** November 20, 2026
+
+- **Problem:** in Step 2 of the builder the EGA and PO checkboxes of a CLO did not know about each other. The PO-to-EGA links (required since v1.98.17) were shown only in the Program Outcomes card above, so an author had to remember them, and a CLO missing an EGA of its PO was found only after the AI Checker ran (P-03, which takes points).
+- **Change** (`src/views/builder2/ClosStep.jsx`; helpers `linkedEgas`, `tickPo`, `missingPoEgas` in `src/lib/outcomesSetup.js`): ticking a PO on a CLO also ticks the EGAs it is linked to; unticking a PO leaves the EGAs (another PO may need them, or the author chose them). Each PO chip shows its EGAs ("PO 1 · EGA 1, 4"). When a linked EGA is not ticked, a note under the chips names it ("PO 1 serves EGA 4: tick it on this CLO too.") with an "Add the EGAs of its POs" button. English and Filipino.
+- **Not changed:** the author can still tick any EGA and PO; scoring, P-03 and the AI Checker are as before. A PO without links adds nothing (BSIT and BSCPE until an administrator links them).
+- **Tests:** the helpers (ticking, unticking, a PO without links, missing EGAs per PO); the CLO row rendered with a synthetic program in English and Filipino (chip, note, button). `npm test` passes (1,494 server tests, localization, PDF import 15/15, VPAA screens 32/32); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.
+
+---
+
+### v1.98.19 — AI Syllabus Generator: A Generated CLO Carries the EGAs of Its POs
+**Date:** November 20, 2026
+
+- **Problem:** the generator added the EGAs a CLO's POs are linked to only when the model gave that CLO no EGA at all. When the model chose some EGAs, a linked one could be missing, so once the POs are linked (required since v1.98.17) a generated draft could fail P-03 and lose points on its first check, unlike a CLO ticked in the builder (v1.98.18).
+- **Change** (`pipeline/generate.js` `readClos`): the linked EGAs of each CLO's POs are always added to the ones the model chose (none twice; a PO without links adds nothing). The model still writes the statements and picks the POs; the AI Checker still checks that each EGA fits the CLO.
+- **Not changed:** with no links (BSIT and BSCPE today) generation is as before.
+- **Tests:** `generate.test.js` (+1): linked EGAs added to the model's, none twice, nothing for a PO without links. `npm test` passes (1,495 server tests, localization, PDF import 15/15, VPAA screens 32/32); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.
+
+---
+
+### v1.98.20 — AI Checker: Check Coverage Counts the Rules That Apply and Says Why the Others Do Not
+**Date:** November 20, 2026
+
+- **Problem:** the heading counted every catalogued rule, including the 12 that cannot apply to a syllabus (9 not applicable, 3 retired): syllabus 120 read "89 of 101" although every rule that applies had run. Six of those rows (T-09 to T-12, T-25, T-27) gave no reason; the rest gave English-only technical text ("Superseded by link verification…", "Missing-reference branch…"), also in Filipino.
+- **Change:** `ruleCoverage.js` gives every row that does not apply, and every retired one, a reason code (`replaced`, `checked_by_exact`, `no_override`, `signoff_by_system`, `master_present`, `no_reference_urls`, `identity_stopped`, `not_applicable`). `RuleCoveragePanel` words each one in plain English or Filipino, and its heading counts the rules that apply and says how many do not ("89 of 89 rules that apply checked (12 do not apply to this syllabus) · AI questions: 166 of 166 answered"). The old heading keys are removed.
+- **Not changed:** which rules run, the score and the findings.
+- **Tests:** `pipeline/coverage.test.js` (+1): every not-applicable and retired row has a known code, worded in both languages; a rule that ran has none. `tests/vpaa-conformance-ui.test.jsx` (+2, English and Filipino): the heading, a reason on every row that does not apply, and none of the old technical text. `npm test` passes (1,496 server tests, localization, PDF import 15/15, VPAA screens 34/34); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.
+
+---
+
+### v1.98.21 — AI Checker: Check Coverage Lists Only the AI Questions by Kind
+**Date:** November 20, 2026
+
+- **Owner decision:** the Check coverage list at the end of the AI Checker report shows only the AI questions the AI Checker asked, counted by kind (how many were aligned, partly aligned, not aligned or not answered). The 101 rule-by-rule rows (form standard, institutional rules, quality notes and the AI Checker's own rules) are no longer listed.
+- **Change** (`src/components/RuleCoveragePanel.jsx`): the collapsed list reads "AI questions: {answered} of {asked} answered", with a short explanation and one line per kind. A report without AI questions shows no list. The notices at the top stay: Program Outcomes not linked to an EGA, and the budget notices of a saved old-checker report. The rule receipts stay in the saved report (`ruleCoverage.rules`, with their reason codes) for audit; only the screen no longer lists them. The 21 texts that only the rule rows used are removed in both languages.
+- **Not changed:** what is checked, the score, the findings and the AI questions themselves.
+- **Tests:** `tests/vpaa-conformance-ui.test.jsx`: an incomplete report counts its questions as not answered and never as aligned; a scored report lists every kind and no rule rows; a report without AI questions shows no list (English and Filipino). The rule-row screen tests are removed. `npm test` passes (1,496 server tests, localization, PDF import 15/15, VPAA screens 30/30); `npm run test:e2e` passes 25/25 scenarios, 457/457 checks.
+
+---
+
+### v1.98.22 — AI Checker (administrator): clearer page layout
+**Date:** November 20, 2026
+
+- **Change:** the administrator's AI Checker page is laid out in the order it is used. The notices are grouped in one block under the title. Four numbers follow (syllabi waiting for a check, checks in the history, those that meet the standard and those below the pass line). "Choose a syllabus" and "Check my syllabus" now sit side by side (they stack when the right card cannot keep 400 px, so its two buttons always stay on one row), each with its status line and buttons in one row at the foot of the card instead of a blank gap above them. The tiles carry no coloured edge and their numbers are black. The check history's date filter lines its From and To fields up with their labels above and the Apply and Reset buttons on the same row.
+- **Files:** `src/views/AIChecker.jsx`, `src/components/CheckOverview.jsx` (new), `src/components/CheckHistory.jsx`, `src/styles.css` (.chk-notes, .chk-stats, .chk-work, .hist-field), `src/i18n/checkOverview.js` (new, English and Tagalog), `src/lib/complianceView.js` (`historyTone`, `historyTally`).
+- **Not changed:** what is checked, the scores, the buttons' behaviour, the faculty member's AI Checker tab, and the result dialog.
+- **Tests:** `complianceView.test.js` (+2): the tone of a stored check and the tally above the history. Localization audit passes (2,855 bilingual keys).
+
+---
+
+### v1.98.23 — My Syllabi: Late Submit on the Status Tag, Deadline in the Meta Line
+**Date:** November 21, 2026 (commit `1aa5b317`)
+
+- **Change:** a syllabus submitted after its subject's deadline keeps the Submitted tag, in yellow-orange, reading "Submitted late". The deadline status and due date sit on the same line as the program and the update time instead of on a row of their own.
+- **Removed:** the review-chain progress line on the My Syllabi card (and its `.syl-progress` style). The progress is shown in the review panel instead (v1.98.28).
+
+---
+
+### v1.98.24 — PDF Import: Template Completeness Check and Two Apply Paths
+**Date:** November 21, 2026 (commit `e8a4faa5`)
+
+- **Template check:** the upload preview runs an animated check that every section I to X is filled; only IV. Pre-requisite may be empty (`src/lib/pdfTemplateScan.js`). Placeholder text (TBA, N/A, -) counts as empty. Apply is refused while a required section is empty.
+- **Two ways to apply:** "Apply and check with AI" or "Apply and submit directly". Both open the Review step.
+- **Import fixes:**
+  - An empty pre-requisite imports as "None", so submit rule T-05 passes.
+  - Credit units read lecture and laboratory in any order and spelling.
+  - A blank or unreadable page is skipped and reported instead of failing the whole import.
+  - A stray numeral before a heading ("I. V. CREDIT UNITS") no longer hides the section.
+  - A subject that is in the catalog but not assigned to the person gets its own message (`pdfImport.subjectNotAssigned`).
+- **Server:** the upload is received and checked before the rate-limit slot and the server-wide import slot are taken, and receiving is capped at 30 seconds (`408 pdfImport.uploadTimeout`). Worker messages from `node --watch` are ignored (PDF import failed in development).
+- **Screen:** the review area stays inside its card; only the plan table scrolls sideways.
+
+---
+
+### v1.98.25 — Review Workflow Fixes, Translations and a Local Security Review
+**Date:** November 22, 2026 (commit `9b1e3ac9`)
+
+- **Review workflow:**
+  - The Messages tab is hidden from reviewers other than the dean (the server lets only the syllabus owner and the dean message). A refused send now shows a notice instead of vanishing.
+  - The dean can send their own syllabus for review when AI checking is off or advisory. A finished AI check is needed only under the `required` policy; the coded hard gates still apply.
+  - A syllabus cannot be pulled back out of review once sent, and a returned dean syllabus cannot be sent again with no changes.
+  - Repository **Export list** downloads a CSV of the rows shown.
+- **Translations:** the Reports, Settings (notifications, appearance) and PDF-upload texts are translated; `src/i18n/reports.js` is new.
+- **Also included:** desktop notifications, the Reports rewrite with DOCX and CSV export, the appearance and dark-theme work, and more checker tests.
+- **Tests:** server and client tests for the workflow fixes and the CSV export. The Repository screen tests moved to a browser-rendered suite (`tests/repository-ui.test.jsx`).
+- **Docs:** `docs/security-review-local-2026-11-22.md`, a local API security review (about 146 probes, no vulnerabilities found).
+
+---
+
+### v1.98.26 — PDF Import: More Template Variants, Correct Section Splits
+**Date:** November 23, 2026 (commit `0863ed83`)
+
+- Section headings tolerate extra spaces or tabs, a missing space after the numeral, and the spellings CREDIT UNIT, PRE-REQUISITE(S) and SUGGESTED REFERENCES. IT-101's references had been read into Course Requirements, which blocked Apply.
+- The sign-off block after the last section, and lone page-number lines, are no longer read into Course Requirements, References or Grading.
+- "Passing Grade: 50%" is no longer imported as a grading component.
+- References by multi-word surnames (Dela Cruz, Gomes de Sousa) and by organisations start a new citation instead of merging into the one before.
+- A week whose number is printed below a page break keeps the part above the break instead of joining the previous week.
+- A CLO tagged with a PO or EGA number that neither list has stays unresolved and blocks Apply.
+- Tests that read real PDFs are skipped when the local source PDF is absent.
+
+---
+
+### v1.98.27 — PDF Import: Scanned and Rotated Pages, Concurrent Imports, Looser Titles
+**Date:** November 23, 2026 (commit `57de847b`)
+
+- **Time limits:** the worker reports each page it starts. The server stops an import only when one page takes over 2 minutes or the whole import over 9 minutes (was a fixed 2 minutes). The browser waits up to 10 minutes.
+- **OCR:** runs only on a page with almost no text that shows an image, or with no text at all, and replaces the existing text only when it reads clearly more. A sign-off page keeps its real text.
+- **Concurrency:** up to 2 imports run at once (`SYLLABUS_PDF_IMPORT_CONCURRENCY`, at most 8); each person still runs one at a time.
+- **Course titles** match across "&"/"and", "II"/"2" and an optional trailing "(...)" on either side. The subject lookup and Apply share one comparison.
+- **Rotated pages:** text lines use displayed-page positions, so landscape pages with `/Rotate` are read in order.
+- **CLO column:** it ends at the next section heading even when that heading is printed in pieces; without a heading the column is not used.
+- **Plan outcome columns** that list "CLO n:" lines map each line to its CLO, and lines worded unlike that CLO in section VI are flagged.
+- References in the style "Park J. et. Al., (2023)" start a new reference.
+
+---
+
+### v1.98.28 — Review Chain in Order, COR for Three Programs, Resumable PDF Imports, Whole-Number Versions
+**Date:** November 24, 2026 (commit `00ac4f09`)
+
+**Review chain (`server/lib/reviewStages.js`, `server/routes/reviewChain.js`, `server/routes/syllabi.js`, `src/lib/reviewView.js`):**
+- The three stages are now cleared **in order**: the dean, then the Asst. VPAA, then the LIC Director, then the VPAA decides. Only the reviewer whose turn it is can clear their stage or return the syllabus; anyone else gets `409 stage_out_of_order`. The others can open and read it.
+- Each reviewer is notified only when the syllabus reaches them. A reviewer account created later is notified of pending syllabi already on its turn.
+- **A resubmission goes back to whoever returned it.** The stages cleared before that reviewer are copied onto the new version. A version saved while the syllabus is under review (not returned) still starts the chain again.
+- New **review progress** strip (`src/components/ReviewProgress.jsx`): dean, Asst. VPAA, LIC Director and VPAA, each cleared, reviewing now, returned, rejected, approved or waiting. `GET /api/syllabi/:id/stages` now also returns `status`, `decision` and `submitted`.
+- Every route that opens one syllabus for a reviewer (its form, comments, AI check and stages) refuses what the lists hide from that reviewer (`assertReviewerMayOpen`; E2E report 2026-11-23, BUG-001/002/003).
+- Clearing a stage that is already cleared is not logged a second time (BUG-008).
+
+**AI Checker:** each person sees only the checks they ran: faculty, dean, Asst. VPAA, LIC Director and VPAA never see one another's checks or history (owner decision 2026-11-24). The AI Quality Snapshot is per person too. The review chain's own gate is not per person.
+
+**Past academic years are view only:** a syllabus of an academic year that is no longer the active one can be viewed but never edited, by anyone, the administrator included (`server/lib/activeYearGate.js`, `409 past_academic_year`; BUG-010). No new deadline can be set on a past year's subject (BUG-020).
+
+**Student registration with the COR:**
+- BSIT, BSCPE and BSIE students can register (was BSIT only; owner decision 2026-11-24). Both COR readers decide the program through `server/lib/corPrograms.js`.
+- An unclear scan creates no account: there is no administrator review any more, and the student scans a clearer photo. Only a COR of the active academic year registers.
+- **Terms and Conditions** (`src/lib/corTerms.js`, version in `shared/corTerms.cjs`): the student opens and agrees to them on the registration form. The server refuses any other version and records the accepted version on the account (`account_activity` action `terms_accept`) as proof of consent under RA 10173.
+- The COR is read with `COR_SCAN_MODEL` (default `claude-haiku-5-5`), no longer with the AI Checker's `ANTHROPIC_MODEL`.
+- Scan limits: 120 scans per hour per address, 10 per browser session per hour, 240 registrations per hour per address.
+- The password rule is checked on the screen before the paid scan (`src/lib/passwordRule.js`, kept in step with `server/lib/passwords.js`).
+
+**PDF import survives a refresh:** the builder names each scan with a job id kept in the URL (`#builder?id=12&mode=upload&job=…`, `src/lib/builderRoute.js`). After a refresh it waits for the running scan or reads the finished preview without uploading or scanning again (`server/lib/pdfImportJobs.js`, `src/lib/pdfImportResume.js`). New routes: `GET /api/syllabi/pdf-import/job/:job` and `GET /api/syllabi/pdf-import/job/:job/file`. Jobs are kept in memory only, one per person, for 30 minutes after they end.
+
+**Whole-number syllabus versions:** versions are labelled v1, v2, v3 instead of v1.0, v1.1, v1.2. `server/db/migrate-version-labels.js` (`npm run migrate-version-labels` in `server/`, `--dry-run` to preview) renumbers the stored labels and sets the `syllabi.version` default to `v1`. Text already written into activity notes or emails keeps the old label. Take a database backup first: the old labels are not kept, and the change cannot be rolled back except by restoring that backup.
+
+**Printed form and Word download (`src/views/builder2/FormPaper.jsx`, `src/lib/syllabusDocx.js`):** the letterhead as on the approved syllabi; sections VIII to X joined to the Learning Plan; "IX. SUGGESTED REFERENCES" with only the groups in use; the grading system with the Final Rating as a fraction; the sign-off block with the date of each step (submitted, each stage cleared, approved); the blank Revision Date / Modifications box; and the form control number at the bottom of the Word file only.
+
+**Programs:** the outcomes dialog saves the EGAs and the Program Outcomes together in one transaction (`PUT /api/programs/:id/setup`). A PO may link to an EGA added in the same save.
+
+**Other:**
+- The current screen is kept in the URL hash, so a refresh stays on it and Back/Forward move between screens.
+- Dashboard counts: My Submissions counts submitted work only, and the Review & Approval quick action shows the same count as that page (BUG-019, BUG-022).
+- Login page constellation background (`src/components/LoginConstellation.jsx`), and theme and responsive style updates.
+- `server/.env.example` trimmed to the core settings.
+- Docs: `docs/deployment/PREDEPLOY-CHECK-PROMPT.md`, `docs/deployment/PREDEPLOY-READINESS-REPORT-2026-11-24.md` and `docs/agents/antigravity-e2e-prompt.md`.
+- **Tests added:** `migrate-version-labels.test.js`, `corPrograms.test.js`, `corTerms.test.js`, `pdfImportJobs.test.js`, `pdfImport.job.routes.test.js`, `pdfImportResume.test.js`, `builderRoute.test.js`, `passwordRule.test.js`, and `po-not-applied.test.js`, plus additions to the review-stage, review-chain, catalog and COR-scan tests. Not yet covered: `GET /:id/versions` and `GET /:id/file` still lack the reviewer check (pre-deploy report M4).
+
+---
+
+### v1.98.29 — Version History and Uploaded File Follow the Review Chain; Settings Reference
+**Date:** November 24, 2026
+
+- **Problem (pre-deploy report 2026-11-24, M4):** `GET /api/syllabi/:id/versions` and `GET /api/syllabi/:id/file` checked only who may read a syllabus, not what the lists hide from a reviewer. A reviewer calling them directly could read the version history or the uploaded file of a syllabus that had not reached the VPAA yet, or of the dean's own syllabus before the dean sent it for review.
+- **Change:** both routes now call `reviewStages.assertReviewerMayOpen`, like the form, comments, AI check and stages routes: `409 STAGES_PENDING` for the VPAA until the three stages clear, and `409 not_sent_for_review` for the dean's unsent syllabus. The author, and anyone on an approved syllabus, are never refused.
+- **Not changed:** who may read a syllabus otherwise, and the screens (they never offered these syllabi).
+- **Docs:** `HOW-TO-RUN.md` gains a **Server settings reference** with every optional server setting (AI Checker, Generator, Claude request tuning, PDF import, sign-in limits, AI daily ceilings, database, accounts and sessions). The descriptions had been removed from `server/.env.example` when it was trimmed in v1.98.28. `docs/review-chain.md` updated.
+- **Tests:** `syllabusFiles.routes.test.js` (+4) and `stages.routes.test.js` (+1): the VPAA before and after the three stages, an approved syllabus, the dean's syllabus before and after it is sent. They fail without the change. `npm test` passes (1,618 server tests, localization, PDF import, VPAA screens).
+
+---
+
+### v1.98.30 — Database Setup and Migration Scripts Honour `DB_PORT` and `DB_SSL`
+**Date:** November 24, 2026
+
+- **Problem (pre-deploy report 2026-11-24, B4):** `server/db/init.js` and the `migrate-*.js` / seed scripts connected directly with `DB_HOST`, `DB_USER`, `DB_PASS`, and `DB_NAME`, ignoring `DB_PORT`, `DB_SSL`, and `DB_SSL_CA`. Against a cloud database requiring TLS or a non-default port, setup and migrations would fail to connect.
+- **Change:** extracted shared TLS and port validation into `resolveConnectionConfig` in `server/lib/dbConfig.js` and wired all 45 standalone scripts in `server/db/` (`init.js` with `includeDatabase: false`, `create-admin.js`, all `migrate-*.js`, `seed-*.js`, and `verify-subject-standards.js`) to use it. Standalone scripts still allow a separate migration/admin account while enforcing `DB_SSL=required` on non-loopback hosts in `staging` and `production`.
+- **Tests:** `server/lib/dbConfig.test.js` (+2) covers `resolveConnectionConfig` (`DB_PORT`, `DB_SSL`, `DB_SSL_CA`, `includeDatabase: false`, remote TLS enforcement) and asserts that every standalone script in `server/db/` connects through `resolveConnectionConfig`. Full `npm test` passes.
+
+---
+
+### v1.98.31 — Release Fixes: Rebuilt Builder by Default, jspdf 4, Server Start Script
+**Date:** November 25, 2026
+
+- **Rebuilt Syllabus Builder is the default (pre-deploy report 2026-11-24, B7):** it needed `VITE_NEW_BUILDER=true` at build time, which only a developer's private `.env` set, so a production build gave faculty the previous builder. `src/App.jsx` now uses the rebuilt builder unless `VITE_NEW_BUILDER=false`.
+- **jspdf 2.5.2 to 4.2.1 (B3):** clears 1 critical and 1 moderate advisory (`jspdf`, `dompurify`); `npm audit --omit=dev` reports 0 in the root and in `server/`. Only the student's "Download PDF" uses it.
+- **`npm start` in `server/` (part of B6):** runs `node index.js` without the development file watcher. A process manager, staging host, alerts and a backup restore test are still open.
+- **Docs:** `HOW-TO-RUN.md`, `RUNBOOK.md`, both environment templates and the QA release gate prompt.
+- **Tests:** `builderRoute.test.js` (+1) keeps the default. `npm test` (1,760) and `npm run test:vpaa` (37) pass; `npm run test:e2e` passes 25/25 scenarios on an isolated copy and scratch database. A build without the setting is identical to one with it set to `true`. A student's PDF was downloaded in Edge and opened (7 landscape Letter pages); `npm start` in production mode refuses to start without `SESSION_SECRET`.
+
+---
+
+### v1.98.32 — Absolute UPLOAD_DIR and PRIVATE_DIR
+**Date:** November 25, 2026
+
+- **Problem:** six files worked out the storage folders on their own and disagreed. With an absolute `PRIVATE_DIR` (a persistent volume such as `/data/private`), profile photos and COR photos were kept in a folder under `server/` instead, where a redeploy may lose them. With an absolute `UPLOAD_DIR`, files were received in one folder and read from another. Relative folders, the default, were never affected.
+- **Change:** `server/lib/storagePaths.js` is the only place that reads the two settings: relative is under `server/`, absolute is used as it is. The upload route, the file route, the checker, the catalog cleanup, the photos and `migrate-avatars-private` use it. Nothing to move on an installation that uses the defaults.
+- **Docs:** both settings are in the staging and production templates and described in `HOW-TO-RUN.md`; the QA release gate prompt checks them.
+- **Tests:** `storagePaths.test.js` (4; three fail on the previous code). `npm test` (1,764) and `npm run test:vpaa` (37) pass. Checked on a running server with absolute folders and a scratch database: a profile photo was saved in the configured folder and read back.
+
+---
+
+### v1.98.33 — Filipino-Language Subjects Recognized More Narrowly
+**Date:** November 25, 2026
+
+- **Problem:** any code starting with the letters "FIL" and any title with the word "Filipino" counted as a Filipino-language subject, so FILM 101 or "Readings in Filipino History" would have been generated, judged and rewritten in Filipino.
+- **Change (`isFilipinoSubject`, `server/lib/syllabuscheck/pipeline/rules.js`):** the code must be FIL itself (FIL 101, FIL-101, FIL101), or the title must have a Filipino course word, name Filipino in a Filipino phrase ("... sa Filipino", "... ng Filipino"), or be "Filipino" alone ("Filipino 1"). The AI Checker and the AI Syllabus Generator share this one rule.
+- **SOSLIT added (owner decision):** "Sosyedad at Literaturang/ Panitikang Panlipunan" is now a Filipino-language subject. The course word list had only "panitikan", so "Panitikang" was missed.
+- **Not changed:** the Filipino prompts and verb lists, every English prompt, and the two Filipino subjects already recognized in the approved curriculum (KOMFIL, Dalumat sa Filipino).
+- **Tests:** `pipeline/filipino.test.js` (+1; it fails on the previous code). `npm test` passes.
+
+---
+
+### v1.98.34 — A Hyphen or a Space in a Subject Code Is the Same
+**Date:** November 25, 2026
+
+- **Problem:** the school's curriculum prints "IT 203" and "IT-204" on one page, and the checker compared codes letter by letter. A subject entered as "IT 204" was "not in the official curriculum": the AI check did not run and the score was 0. A pre-requisite written "IT 204" blocked submitting in the same way, and the AI Syllabus Generator did not find that pre-requisite subject.
+- **Change:** `server/lib/subjectCode.js` is the one comparison of two subject codes: a hyphen between letters or digits reads as a space. The curriculum check (CUR-CODE, and the pre-requisite of CUR-FIELD), the other-program hint, the administrator's curriculum warning and the generator use it. A code is still stored, shown and sent to the AI as it was written.
+- **Not changed:** scoring, AI questions and prompts, stored answers, and the other curriculum fields. A different code or pre-requisite is still found ("IT 999", "IT204", "IT 205"). Titles are still compared exactly. A code that ends in a hyphen, as eight Cybersecurity codes do ("IT 102-"), keeps that hyphen. Nothing to migrate.
+- **Checked on the dev data:** each of the 243 codes of the four approved curricula still matches only itself, and the generator finds the same pre-requisite subjects as before for every official spelling. IT 204 (draft) is now found in the curriculum; only its title still differs.
+- **Tests:** `server/lib/subjectCode.test.js` (8; six fail on the previous code). `npm test` and `npm run test:vpaa` pass.
+
+---
+
+### v1.98.35 — A Hyphen at the End of a Subject Code Is Ignored
+**Date:** November 25, 2026
+
+- **Problem:** eleven Cybersecurity codes are printed with a hyphen at the end ("IT 102-", "IT-204-", "IS-"). Typed without it the subject was not found and the score was 0; as a pre-requisite it blocked submitting.
+- **Change (owner decision):** `server/lib/subjectCode.js` also drops a hyphen at the end of a code, in a subject code and inside a pre-requisite ("IT-ELEC1-, 3rd Yr"). `hyphenAsSpace` is now `withoutHyphens`. The generator looks for a pre-requisite code of three characters or more without its hyphens, so "IS-" is not found inside the word "prerequisite".
+- **Side effect to know (also of v1.98.34):** six pairs of different BSIT and Cybersecurity subjects now have codes that read the same (for example BSIT IT-204 Computer Programming 2 and Cybersecurity IT-204- Quantitative Methods). A subject is looked for only in the curriculum of its own program, so they are not mixed up; but a BSIT subject entered under the Cybersecurity program is now found by its code, and it is the title that stops it at submit.
+- **Changed test:** `engine.test.js` said that a hyphen in a code is significant; other punctuation ("IT.204", "IT_204", "IT204") still is.
+- **Checked on the dev data:** all 243 subjects of the four curricula, typed without any hyphen: each is found as the right subject, its pre-requisite passes, and the generator gets the same background as with the official spelling.
+- **Tests:** `server/lib/subjectCode.test.js` (+4; three fail on the previous code, the fourth pins the title check). `npm test` and `npm run test:vpaa` pass.
+
+---
+
+### v1.98.36 — Title Spacing, and No More "Applied" for a Field Only the Administrator Can Change
+**Date:** November 25, 2026
+
+- **Problem 1:** IT 204 scored 100 in a real AI check (151 of 151 aligned) but stayed provisional and could not be submitted: its title has a space before the parenthesis and the printed curriculum has none.
+- **Change 1 (owner decision):** spacing and hyphens do not make a different title (`titles.js` `sameTitle`, policy version `title-normalization-2`), under every title policy. A different word, number, letter case or missing part still blocks ("DATA STRUCTURES" is not "DATA STRUCTURE"). The normalized policy (letter case) is still not active. A stored check whose title now passes is shown as out of date; a re-check refreshes it.
+- **Problem 2:** the author could accept the title recommendation, the screen said "Applied", and nothing changed: every save restores the subject's title (and the pre-requisite and year level, when the administrator set them).
+- **Change 2:** the checker no longer recommends such a change; its message gives the official value and says to ask the administrator (`repository.js` `adminMeta`, `engine.js`). A decision on an older check that the save did not keep is refused (409 `admin_field`) instead of being recorded as applied (`routes/syllabusCheck.js`, `src/lib/hybridCheck.js`). Once the subject is corrected, the recommendation works.
+- **Not changed:** scoring, severity, AI questions, prompts and stored answers. Nothing to migrate.
+- **Checked on the dev data:** IT 204 has no blocking rule left; IT 203 keeps its title blocker (a different word). No two different titles of one curriculum become the same (7,306 pairs).
+- **Tests:** `titles.test.js` (5), `syllabusCheck.routes.test.js` (+1), `hybridCheck.test.js` (+1); all seven fail on the previous code. `npm test` and `npm run test:vpaa` pass.
+
+---
+
+### v1.98.37 — The Administrator's Subject Is the Reference; Units on Subjects
+**Date:** November 25, 2026
+
+- **Problem:** the AI Checker compared a syllabus's code, title, pre-requisite, units and year level with a typed copy of the printed curricula. A new program or a new curriculum could not be checked to a final score until someone photographed and retyped it, and an administrator's entry could be "wrong" against a photo (IT 203). That did not follow the policy of 2026-11-06: what the administrator saves is the reference.
+- **Change (owner decision):** the reference is the subject the administrator set up, for any program (`server/lib/subjectReference.js`). It is found by its id, so a hyphen, a new code or another subject in the program never matters. Adding a program and its subjects is enough. What the administrator has not set is not checked. A draft saved before the subject was corrected is told to save, and never gets a critical 0. Only a change of the subject itself makes a stored check out of date.
+- **Units:** a subject has lecture and laboratory units (required on Add subject). They fill in Step 1, with the curriculum year, and faculty cannot change them; the server enforces it. A subject without units leaves Step 1 as typed.
+- **Edit subject** can now change the units, semester, year level and pre-requisite too. Before, only the code, title and curriculum year could be corrected.
+- **The typed copy of the printed curricula is not used any more** (owner decision the same day): not by the AI Checker, the generator, PDF import or the admin page. The warning and the "curriculum on file" hints on the subject form are gone, and so are the administrator endpoints that managed the copy (`/api/syllabus-check/references`). The stored rows (`syllabus_check_curricula`) and the photographs are kept, unused.
+- **AI Syllabus Generator:** its background (the pre-requisite's title and the subjects taken before) is the administrator's subjects of the same curriculum year. Earlier subjects the administrator has not added are unknown to it; it still generates.
+- **PDF import** matches a file with the administrator's subject too, so it works for a new program or curriculum year.
+- **One code, one subject:** a program cannot have "AI 301" and "AI-301". This closes a gap left by v1.98.34.
+- **Not changed:** AI questions, prompts, stored answers, scoring, the 79 threshold, vision, mission, EGAs and POs, and the review chain. A syllabus without a subject is told to choose one (it blocks submitting; it is never a score of 0).
+- **To know:** existing checks are out of date and need a re-check. If the administrator changes a subject while its syllabus is under review, that version no longer matches it and cannot be approved until the author saves and submits again.
+- **Migration:** `npm run migrate-subject-units` (adds two empty columns; safe to run again). Existing subjects have no units until an administrator sets them.
+- **Checked:** the three dev drafts have no blocking rule; a new program with nothing on file passes every subject check (written and rolled back); all 25 browser scenarios pass on an isolated database. No real AI run was made.
+- **Tests:** `subjectReference.test.js` (15), `catalogYear.routes.test.js` (+2), `subjectTerm.test.js` (+1), `pdfImport.fixes.test.js` (+1), browser scenarios E18 and E23 extended; tests of the copy removed. `npm test` and `npm run test:vpaa` pass.
+
+---
+
+### v1.98.38 — Faculty Never Type the Units
+**Date:** November 25, 2026
+
+- **Change (owner decision):** the credit units in Step 1 are locked for faculty even while the administrator has not set them on the subject. The page says who sets them, and the Step 1 reminder too. Before, they were locked only once set.
+- **Server:** a faculty save cannot change them. A draft keeps the units it already had for its subject; choosing another subject without units starts with none. A PDF import by faculty does not set them either, and says so when the PDF prints different ones.
+- **Not changed:** an administrator writing their own syllabus can still type units on a subject without any. Scoring and the AI are not touched.
+- **To know:** a new syllabus on a subject without units cannot complete Step 1 or be submitted until the administrator sets them (**Edit subject**). Run `npm run migrate-subject-units` before starting this version: without the columns no units can be set at all.
+- **Tests:** `catalog.routes.test.js` (+1), `subjectReference.test.js` (+1), `pdfImport.fixes.test.js` (+1), `facultyLock.test.js` and `subjectTerm.test.js` extended; all five fail on the previous code. All 25 browser scenarios pass (E02 and E18 extended). `npm test` and `npm run test:vpaa` pass.
+
+---
+
+### v1.98.39 — CHED Credit Units and Laboratory Alignment
+**Date:** November 25, 2026
+
+- **One rule for both tools:** the AI Checker and the AI Syllabus Generator share the CHED credit-unit rule: 1 lecture unit is 1 contact hour a week, 1 laboratory unit is 3. The contact hours are computed from the syllabus's units (`pipeline/extract.js`).
+- **AI Checker:** a subject with laboratory units gets one more question (LAB-ALIGNMENT): do the weekly activities include hands-on or laboratory work, and do the tasks include practical outputs? It is advice: no points, no block, and the repair plan does not rewrite anything for it. A lecture-only subject is not asked. Drafts of activities and tasks follow the units too.
+- **AI Syllabus Generator:** a laboratory subject is paced for its contact hours, with laboratory work in the activities and tasks, the tools it needs in the requirements and a laboratory part in the grading. A lecture-only subject gets none of these.
+- **Not changed:** scoring, the caps, the 79 threshold and every scored question.
+- **To know:** the prompt is version 7 and the rewrite prompt version 5, so stored answers are not reused: the next AI check of each syllabus asks every question again, at full cost. No migration.
+- **Tests:** `pipeline/ched-units.test.js` (3); the counts and versions in the other pipeline tests follow. `npm test` and `npm run test:vpaa` pass. No real AI run was made.

@@ -30,12 +30,7 @@ const COLUMNS = [
 ];
 
 async function migrate() {
-  const conn = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-  });
+  const conn = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   const db = process.env.DB_NAME;
   const say = (m) => console.log((DRY ? '[dry run] ' : '') + m);
   const run = async (sql, params) => { if (!DRY) await conn.query(sql, params); };

@@ -40,11 +40,11 @@ export function assignmentState(mine) {
 }
 export const ASSIGNMENT_MESSAGES = { none: NOTHING_ASSIGNED, noSubject: NO_SUBJECT_YET };
 
-// Why a faculty member cannot edit this syllabus because of their assignments ('' when they can).
+// Why an author (faculty or administrator) cannot edit this syllabus because of their assignments ('' when they can).
 // `mine` is the result of users.myAssignments(), or null while it is loading (nothing is blocked then; the server
-// has the final say). Admins are never restricted. Mirrors server/lib/assignments.js.
+// has the final say). Non-author reviewers receive `unrestricted: true`. Mirrors server/lib/assignments.js.
 export function courseLockReason(user, mine, syllabus) {
-  if (!mine || mine.unrestricted || (user && user.role === 'admin')) return '';
+  if (!mine || mine.unrestricted) return '';
   const code = String(syllabus.courseCode || '').trim().toLowerCase();
   if (syllabus.courseId) return mine.courseIds.includes(syllabus.courseId) ? '' : NOT_ASSIGNED;
   const none = ASSIGNMENT_MESSAGES[assignmentState(mine)] || '';
@@ -70,10 +70,13 @@ export function toBuilderShape(s) {
 // Approval is a separate administrator decision after reading a completed check of their own draft.
 // `gate` is the server's AI policy. 'required' (the default until it is known) needs a completed AI check; 'advisory' lets the
 // administrator decide after reading a current check of this draft, as long as no coded hard gate fails.
-export function canApproveAdminDraft(user, syllabus, run, isLatest = true, gate = 'required') {
-  const mine = !!(user?.role === 'admin' && syllabus?.userId === user.id && syllabus.status === 'under_review'
+// `aiOff`: the administrator turned AI checking off in Settings, so no AI check can finish and none is required (the server's rule too, routes/syllabusContent.js).
+// A syllabus already sent for review (`sent`: the dean stage is cleared on its newest version) is with the other reviewers and is not sent again.
+export const sentForReview = (syllabus) => !!(syllabus && syllabus.stages && syllabus.stages.dean && syllabus.stages.dean.cleared);
+export function canApproveAdminDraft(user, syllabus, run, isLatest = true, gate = 'required', { aiOff = false } = {}) {
+  const mine = !!(user?.role === 'admin' && syllabus?.userId === user.id && syllabus.status === 'under_review' && !sentForReview(syllabus)
     && isLatest && run?.id && run.syllabusId === syllabus.syllabusId && run.createdBy === user.id);
-  if (gate === 'advisory') return mine && !run.stale && hardGatesOf(run).length === 0;
+  if (gate === 'advisory' || aiOff) return mine && !run.stale && hardGatesOf(run).length === 0;
   return !!(mine && run.status === 'scored' && run.conformant && !run.stale && run.aiStatus === 'ok'
     && run.hybrid?.ready && run.hybrid.alignment?.status === 'completed');
 }

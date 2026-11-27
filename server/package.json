@@ -3,12 +3,16 @@
   "version": "1.0.0",
   "description": "Backend API for Syllabus CMS Plus",
   "main": "index.js",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "seed-local-references": "node db/seed-local-references.js",
     "migrate-course-program-codes": "node db/migrate-course-program-codes.js",
     "migrate-syllabuscheck": "node db/migrate-syllabuscheck.js",
     "migrate-program-outcome-sources": "node db/migrate-program-outcome-sources.js",
     "syllabus-check": "node scripts/syllabus-check.cjs",
+    "start": "node index.js",
     "dev": "node --watch index.js",
     "init-db": "node db/init.js",
     "migrate-google-auth": "node db/migrate-google-auth.js",
@@ -39,6 +43,7 @@
     "migrate-po-reference-publication": "node db/migrate-po-reference-publication.js",
     "migrate-account-status": "node db/migrate-account-status.js",
     "migrate-curriculum-year": "node db/migrate-curriculum-year.js",
+    "migrate-subject-units": "node db/migrate-subject-units.js",
     "migrate-review-ai-choice": "node db/migrate-review-ai-choice.js",
     "migrate-account-activity": "node db/migrate-account-activity.js",
     "migrate-generate-jobs": "node db/migrate-generate-jobs.js",
@@ -46,6 +51,7 @@
     "migrate-password-expiry": "node db/migrate-password-expiry.js",
     "migrate-session-store": "node db/migrate-session-store.js",
     "migrate-replan-answers": "node db/migrate-replan-answers.js",
+    "migrate-version-labels": "node db/migrate-version-labels.js",
     "seed-student-demo": "node db/seed-student-demo.js",
     "seed-student-demo-syllabi": "node db/seed-student-demo-syllabi.js"
   },

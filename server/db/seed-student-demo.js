@@ -8,9 +8,10 @@ const mysql = require('mysql2/promise');
 const HOW_MANY = 6;
 
 async function main() {
+  if (['staging', 'production'].includes(process.env.NODE_ENV)) throw new Error('Refusing to seed student demo data when NODE_ENV=' + process.env.NODE_ENV);
   const studentId = process.argv[2];
   if (!studentId) throw new Error('Give the student ID: npm run seed-student-demo -- 23-3389-455');
-  const db = await mysql.createConnection({ host: process.env.DB_HOST, user: process.env.DB_USER, password: process.env.DB_PASS, database: process.env.DB_NAME, port: process.env.DB_PORT || 3306 });
+  const db = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   try {
     const [[profile]] = await db.query('SELECT user_id, program, section, school_year, term FROM student_profiles WHERE student_id = ?', [studentId]);
     if (!profile) throw new Error(`No registered student has the ID ${studentId}.`);

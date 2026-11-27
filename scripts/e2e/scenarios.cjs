@@ -50,7 +50,7 @@ module.exports = async function run(ctx, h) {
     await setTerm();
     const s = await L.session(browser, stack);
     await s.loginOk('faculty');
-    await s.nav('My Syllabi');
+    await s.nav('Syllabi');
     check(/No syllabi yet/i.test(await s.text()), 'a new faculty account starts with no syllabi');
     await s.page.getByRole('button', { name: /new syllabus/i }).click();
     await s.page.waitForTimeout(2000);
@@ -59,8 +59,8 @@ module.exports = async function run(ctx, h) {
     check(/(To continue|Complete before submitting): Choose a program/.test(text) && /Add at least one description paragraph/.test(text), 'the form lists what is still missing before Step 1 can be completed (form validation)');
     await s.pick(/Choose a program/, /BSIT/);
     await s.pick(/Choose a subject/, /IT 204/);
-    await s.page.locator('[placeholder="Lecture units"],[aria-label="Lecture units"]').first().fill('2');
-    await s.page.locator('[placeholder="Laboratory units"],[aria-label="Laboratory units"]').first().fill('1');
+    const unit = (name) => s.page.getByLabel(name, { exact: true });
+    check(await unit('Lecture units').inputValue() === '2' && await unit('Laboratory units').inputValue() === '1' && !(await unit('Lecture units').isEditable()) && !(await unit('Laboratory units').isEditable()), "the administrator's units are filled in and faculty cannot type them");
     await s.page.locator('[placeholder="For example, 2022-2023"],[aria-label="For example, 2022-2023"]').first().fill('test-2026');
     check(!(await s.page.getByLabel('Year level', { exact: true }).isEditable()) && !(await s.page.getByLabel('Pre-requisite', { exact: true }).isEditable()), 'faculty cannot edit the year level or pre-requisite');
     check(await s.page.getByLabel('Year level', { exact: true }).inputValue() === '2' && await s.page.getByLabel('Pre-requisite', { exact: true }).inputValue() === 'IT 202 - Programming 1', "the administrator's year level and pre-requisite are filled in");
@@ -80,7 +80,7 @@ module.exports = async function run(ctx, h) {
     check(saved.status === 200, `Steps 2–6 saved through PUT /syllabi/:id/content (HTTP ${saved.status} ${saved.status === 200 ? '' : JSON.stringify(saved.body).slice(0, 220)})`);
     note('Steps 2–6 were supplied through the real API (not typed into the form) to keep the run bounded; Step 1 and the review step were driven through the UI.');
     await s.page.reload(); await s.page.waitForTimeout(1500);
-    await s.nav('My Syllabi');
+    await s.nav('Syllabi');
     check(/IT 204/.test(await s.text()) && /Draft/.test(await s.text()), 'after a full page reload the draft is listed in My Syllabi');
     await s.page.getByRole('button', { name: /edit/i }).first().click();
     await s.page.waitForTimeout(2500);
@@ -97,23 +97,34 @@ module.exports = async function run(ctx, h) {
   });
 
   // ---------------------------------------------------------------------------------------------------------------------------------------------
-  // The report slides in from the right. A check that has just finished opens it; a saved one is opened with the score button in the subject row.
-  const openReport = async (s) => { if (!(await s.page.locator('.rd-panel').count())) { await s.page.locator('.pick-score').click(); await s.page.locator('.rd-panel').waitFor(); await s.page.waitForTimeout(600); } };
-  const closeReport = async (s) => { if (await s.page.locator('.rd-panel').count()) { await s.page.locator('.rd-x').click(); await s.page.locator('.rd-panel').waitFor({ state: 'detached' }); } };
+  // The report is part of the page (the check card in the main column); there is no drawer. openReport waits for it.
+  const openReport = async (s) => { await s.page.locator('.chk-report').waitFor(); };
+  const closeReport = async () => {}; // nothing to close: the result is part of the page
+  // Submit is in the Builder's last step only: the author goes there from the AI Checker page (Edit Syllabus). Returns the submit button.
+  const openBuilderSubmit = async (s, name) => {
+    check(await s.page.getByRole('button', { name: /submit( new version)? to admin/i }).count() === 0, 'the AI Checker page has no submit button of its own');
+    await s.page.getByRole('button', { name: /^edit syllabus$/i }).first().click();
+    await s.page.getByRole('button', { name: /7 review syllabus/i }).click();
+    await s.page.waitForTimeout(1200);
+    check(/IT 204/.test(await s.text()) && /7 of 7 complete/.test(await s.text()), 'Edit Syllabus on the AI Checker page opens the same syllabus in the Builder, with every step complete');
+    return s.page.getByRole('button', { name });
+  };
   await scenario('E03', 'Faculty runs the new AI Checker on the draft: official score with the AI points, all seven VPAA relationships evaluated, the scripted gap and its verified draft', async () => {
     const before = stack.providerEvents().filter((e) => e.kind === 'provider').length;
     const s = await L.session(browser, stack);
     await s.loginOk('faculty');
-    await s.nav('AI Checker');
-    await s.page.getByRole('button', { name: /^run ai checker$/i }).first().click();
+    await s.nav('Checker');
+    await s.page.getByRole('button', { name: /^run (ai )?checker$/i }).first().click();
     await s.page.getByText(/AI Recommendations? \(/).first().waitFor({ timeout: 60000 });
     await s.page.waitForTimeout(800);
+    if (await s.page.locator('.hy-fixes summary').count()) { await s.page.locator('.hy-fixes summary').first().click(); await s.page.waitForTimeout(200); }
     const text = await s.text();
     const run = (((await s.api('GET', '/compliance?syllabus=' + state.syllabusId)).body || {}).run) || {};
     const hy = run.hybrid || {}, align = hy.alignment || {};
     check(/Meets the standard \(pass line 79%\)/.test(text), 'the official score is shown against the 79% pass line');
+    const shownScore = ((await s.page.locator('.cmp-ring strong').first().textContent()) || '').trim(); // the score ring draws the number and the percent sign apart
     // the new checker's AI part counts: the no-AI base score minus the scripted gap's point (ACTIVITY-FIT partly aligned: -1)
-    check(run.status === 'scored' && run.passed === true && run.overall === hy.baseScore - 1 && text.includes(run.overall + '%'), `the official score is the no-AI base score minus the scripted gap's 1 point, and the page shows it (${run.overall} = ${hy.baseScore} - 1)`);
+    check(run.status === 'scored' && run.passed === true && run.overall === hy.baseScore - 1 && shownScore === run.overall + '%', `the official score is the no-AI base score minus the scripted gap's 1 point, and the score ring shows it (${run.overall} = ${hy.baseScore} - 1, shown ${shownScore})`);
     check(align.engine === 're-planned' && align.status === 'completed' && align.provider === 'anthropic' && align.model === 'claude-sonnet-5-5' && /^replan-prompt-/.test(align.promptVersion || ''), `the AI part was made by the new AI Checker on the approved provider and model (${align.engine} · ${align.provider} · ${align.model} · ${align.promptVersion})`);
     check(!hy.academicV2 && !hy.improvementPlan && !hy.coordinatedPlan, 'the report has no old-checker part (no Policy V2, no whole-syllabus or coordinated plan)');
     const cov = hy.semanticCoverage || { relationships: [] };
@@ -134,14 +145,15 @@ module.exports = async function run(ctx, h) {
   });
 
   // ---------------------------------------------------------------------------------------------------------------------------------------------
-  await scenario('E04', 'Faculty submits through the UI; the syllabus locks; another faculty member and signed-out callers cannot reach it', async () => {
+  await scenario('E04', 'Faculty submits through the UI (from the AI Checker page to the last step of the Builder); the syllabus locks; another faculty member and signed-out callers cannot reach it', async () => {
     const s = await L.session(browser, stack);
     await s.loginOk('faculty');
-    await s.nav('AI Checker');
-    await s.page.getByRole('button', { name: /submit to admin/i }).click();
+    await s.nav('Checker');
+    await (await openBuilderSubmit(s, /^submit to admin$/i)).click();
     await s.page.waitForTimeout(2500);
     let text = await s.text();
-    check(/Submitted/.test(text) && /Review: Dean/.test(text), 'My Syllabi shows Submitted with the review chain (Dean, Asst. VPAA, LIC Director)');
+    // The card's review-chain progress line was removed on purpose (1aa5b317); the Submitted tag and the locked note remain.
+    check(/Submitted/.test(text), 'My Syllabi shows the syllabus as Submitted');
     check(/submitted and is locked/i.test(text), 'the page explains that the submitted syllabus is locked');
     check(s.issues.apiCalls.some((c) => c === 'POST /api/syllabi/' + state.syllabusId + '/submit 200'), 'the submit call was answered 200');
     const edit = await s.api('PUT', '/syllabi/' + state.syllabusId + '/content', { sections: { reqs: sections.reqs }, schemaVersion: 3 });
@@ -157,7 +169,7 @@ module.exports = async function run(ctx, h) {
     check([403, 404].includes(write.status), "another faculty member cannot write to it (HTTP " + write.status + ')');
     const rec = await other.api('POST', '/syllabus-check/runs/1/refine', {});
     check([401, 403, 404, 400, 409].includes(rec.status), 'a recommendation action by a non-owner is not accepted (HTTP ' + rec.status + ')');
-    await other.nav('My Syllabi');
+    await other.nav('Syllabi');
     check(!/IT 204/.test(await other.text()), "the other member's My Syllabi does not list it");
     await other.close();
     const anon = await L.session(browser, stack);
@@ -175,13 +187,14 @@ module.exports = async function run(ctx, h) {
     check(/Review & Approval/i.test(nav) && /Users & Roles/i.test(nav), 'the administrator sees the administration menus');
     await s.nav('Review & Approval');
     check(/waiting for the AI Checker/i.test(await s.text()), 'Review & Approval holds the submission back until the AI Checker has run');
-    await s.nav('AI Checker');
+    await s.nav('Checker');
     await s.pick(/Choose a faculty member/, /Test Faculty/);
     await s.pick(/Choose a program/, /BSIT/);
     await s.pick(/Choose a subject/, /IT 204/);
     await s.page.getByRole('button', { name: /check compliance/i }).click();
     await s.page.getByText(/AI Recommendations? \(/).first().waitFor({ timeout: 60000 });
     await s.page.waitForTimeout(1000);
+    if (await s.page.locator('.hy-fixes summary').count()) { await s.page.locator('.hy-fixes summary').first().click(); await s.page.waitForTimeout(200); }
     const text = await s.text();
     note('administrator report text: ' + text.slice(text.indexOf('Compliance check'), text.indexOf('Compliance check') + 1500));
     const run = (((await s.api('GET', '/compliance?syllabus=' + state.syllabusId)).body || {}).run) || {};
@@ -233,12 +246,13 @@ module.exports = async function run(ctx, h) {
   await scenario('E07', 'Faculty, after the return: sees For Revision and the note, opens the official report, and reviews the recommendation', async () => {
     const s = await L.session(browser, stack);
     await s.loginOk('faculty');
-    await s.nav('My Syllabi');
+    await s.nav('Syllabi');
     let text = await s.text();
     check(/For Revision/i.test(text), 'My Syllabi shows the returned syllabus as For Revision');
-    await s.nav('AI Checker');
+    await s.nav('Checker');
     await s.page.waitForTimeout(2500);
     await openReport(s);
+    if (await s.page.locator('.hy-fixes summary').count()) { await s.page.locator('.hy-fixes summary').first().click(); await s.page.waitForTimeout(200); }
     text = await s.text();
     check(/AI Recommendations? \(1\)/.test(text), 'the official report offers its recommendations section, with the one draft');
     check(/Suggested alignment revision/.test(text) && /ACTIVITY-FIT/.test(text), "the scripted gap's verified draft is offered to the author");
@@ -253,7 +267,7 @@ module.exports = async function run(ctx, h) {
   await scenario('E08', 'Recommendation actions in the real UI: Check & improve, Accept (the draft changes), Undo (it changes back), Reject', async () => {
     const s = await L.session(browser, stack);
     await s.loginOk('faculty');
-    await s.nav('AI Checker');
+    await s.nav('Checker');
     await s.page.waitForTimeout(2500);
     await openReport(s);
     // the draft is for the Week 2 activities (plan[1]): the stand-in's one deliberate gap
@@ -293,10 +307,10 @@ module.exports = async function run(ctx, h) {
   });
 
   // ---------------------------------------------------------------------------------------------------------------------------------------------
-  await scenario('E09', 'Faculty: Reject a recommendation, then Check & improve + Accept the next one, Re-Check, write what changed and submit the new version', async () => {
+  await scenario('E09', 'Faculty: Reject a recommendation, then Check & improve + Accept the next one, Re-Check, then in the Builder write what changed and submit the new version', async () => {
     const s = await L.session(browser, stack);
     await s.loginOk('faculty');
-    await s.nav('AI Checker');
+    await s.nav('Checker');
     await s.page.waitForTimeout(2000);
     const activities = async () => { const c = await s.api('GET', '/syllabi/' + state.syllabusId + '/content'); return JSON.stringify(c.body.content.plan[1].activities); };
     const original = await activities();
@@ -308,7 +322,7 @@ module.exports = async function run(ctx, h) {
     await s.page.waitForTimeout(2500);
     check(s.issues.apiCalls.some((c) => c.includes('/decisions 201')), 'Reject was recorded by the decisions API');
     check(await activities() === original, 'Reject changed nothing in the saved draft');
-    await s.page.locator('.rd-foot').getByRole('button', { name: /re-check again/i }).click();
+    await s.page.getByRole('button', { name: /re-check again/i }).first().click();
     await s.page.waitForTimeout(6000);
     const again = await s.page.locator('.hy-rec').count();
     note('recommendation cards after Reject + Re-Check: ' + again);
@@ -319,12 +333,12 @@ module.exports = async function run(ctx, h) {
       await s.page.waitForTimeout(3500);
       check(await activities() !== original, 'Check & improve then Accept changed the saved draft');
     } else known('E2E-03', 'after Reject and a Re-Check the same recommendation did not return, so the Accept path could not be exercised on this syllabus');
-    await s.page.locator('.rd-foot').getByRole('button', { name: /re-check again/i }).click();
+    await s.page.getByRole('button', { name: /re-check again/i }).first().click();
     await s.page.waitForTimeout(6000);
     let text = await s.text();
     check(/Meets the standard/.test(text), 'the Re-Check after the correction still meets the standard (official score is not changed by the advisory result)');
-    await closeReport(s); // the page behind the drawer cannot be reached while it is open
-    const submit = s.page.getByRole('button', { name: /submit new version to admin/i });
+    await closeReport(s);
+    const submit = await openBuilderSubmit(s, /^submit new version to admin$/i);
     check(await submit.isDisabled(), 'Submit new version stays disabled until the author says what changed');
     await s.page.getByLabel(/what did you change/i).fill('Synthetic E2E: rewrote the week 2 activities to practise the ILO at its level.');
     await s.page.waitForTimeout(500);
@@ -334,7 +348,7 @@ module.exports = async function run(ctx, h) {
     text = await s.text();
     check(/Submitted/.test(text), 'the corrected syllabus is Submitted again');
     const h = await s.api('GET', '/syllabi/' + state.syllabusId + '/versions');
-    check(h.status === 200 && JSON.stringify(h.body).includes('v1.1'), 'a new version (v1.1) exists in the history');
+    check(h.status === 200 && JSON.stringify(h.body).includes('"v2"'), 'a new version (v2) exists in the history');
     await s.shot(evidence('E09-resubmitted-1440.png'));
     assertClean(s, 'E09');
     await s.close();
@@ -354,7 +368,7 @@ module.exports = async function run(ctx, h) {
 
     const admin = await L.session(browser, stack);
     await admin.loginOk('admin');
-    await admin.nav('AI Checker');
+    await admin.nav('Checker');
     await admin.pick(/Choose a faculty member/, /Test Faculty/);
     await admin.pick(/Choose a program/, /BSIT/);
     await admin.pick(/Choose a subject/, /IT 204/);
@@ -406,7 +420,7 @@ module.exports = async function run(ctx, h) {
     await vpaa.close();
     const faculty = await L.session(browser, stack);
     await faculty.loginOk('faculty');
-    await faculty.nav('My Syllabi');
+    await faculty.nav('Syllabi');
     check(/Approved/.test(await faculty.text()), 'the faculty member sees the syllabus as Approved');
     await faculty.close();
   });
@@ -462,9 +476,9 @@ module.exports = async function run(ctx, h) {
     // the first-ever run happens while the provider is down, through the real page
     stack.setProvider('down');
     await f.page.reload(); await f.page.waitForTimeout(2000); // the syllabus list was loaded before this draft existed
-    await f.nav('AI Checker');
+    await f.nav('Checker');
     if (!/IT 205/.test(await f.page.locator('.select-trigger').first().innerText())) await f.pick(/IT 20[45]/, /IT 205/);
-    await f.page.getByRole('button', { name: /^run ai checker$/i }).first().click();
+    await f.page.getByRole('button', { name: /^run (ai )?checker$/i }).first().click();
     await f.page.getByText(/VPAA relationships checked/).first().waitFor({ timeout: 40000 });
     const text = await f.text();
     note('page text with the AI down: ' + text.slice(text.indexOf('Compliance check'), text.indexOf('Compliance check') + 700));
@@ -513,34 +527,34 @@ module.exports = async function run(ctx, h) {
     let text = await s.text();
     check(/Dashboard/i.test(text) && /Syllabus Builder/i.test(text), 'the interface starts in English');
     await s.nav('Settings');
-    await s.page.locator('.select-trigger').first().click();
-    await s.page.getByRole('option', { name: /tagalog/i }).first().click();
+    await s.page.locator('.lang-toggle button[lang="tl"]').click(); // Settings switches language with two buttons (no longer a select)
     await s.page.waitForTimeout(2000);
     text = await s.text();
     check(/Pangkalahatang Tanaw/i.test(text) && /Mga Setting/i.test(text) && /Tagabuo ng Silabus/i.test(text), 'the navigation is shown in Filipino');
-    await s.page.getByRole('button', { name: /^ai checker$/i }).first().click();
+    await s.page.getByRole('button', { name: /^(tagasuri|checker)$/i }).first().click();
     await s.page.waitForTimeout(2500);
     await openReport(s);
     text = await s.text();
     note('AI Checker page in Filipino: ' + text.slice(0, 1500));
-    check(/Tagasuri ng Silabus gamit ang AI/.test(text) && /Rekomendasyon ng AI|Hindi pa kumpleto ang beripikasyon/.test(text), "the AI Checker and the new checker's report are shown in Filipino");
+    check(/Tagasuri ng Silabus/.test(text) && /Rekomendasyon ng AI|Hindi pa kumpleto ang beripikasyon/.test(text), "the AI Checker and the new checker's report are shown in Filipino");
     check(!/AI Recommendation|Verification incomplete|Meets the standard/.test(text), 'no English report heading is left in the translated page');
     await s.shot(evidence('E13-filipino-checker-1440.png'));
     await s.page.reload();
     await s.page.waitForTimeout(2500);
-    check(/Magandang gabi|Magandang umaga|Magandang hapon/.test(await s.text()), 'the language choice survives a full reload (saved on the account)');
+    // a refresh stays on the screen it was on (#ai, App.jsx), so the AI Checker page is checked, not the dashboard greeting
+    text = await s.text();
+    check(/Tagasuri ng Silabus/.test(text) && /Pangkalahatang Tanaw/i.test(text) && /Mga Setting/i.test(text), 'the language choice survives a full reload (saved on the account), on the same screen');
     await s.nav('Mga Setting');
-    await s.page.locator('.select-trigger').first().click();
-    await s.page.getByRole('option', { name: /english/i }).first().click();
+    await s.page.locator('.lang-toggle button[lang="en"]').click();
     await s.page.waitForTimeout(1500);
-    check(/Dashboard/i.test(await s.text()) && /Display language/i.test(await s.text()), 'switching back restores English');
+    check(/Dashboard/i.test(await s.text()) && /Choose the language used throughout the system/i.test(await s.text()), 'switching back restores English'); // 'Display language' is only the toggle's aria-label, not page text
     assertClean(s, 'E13', { allowStatus: [409] });
     await s.close();
   });
 
   // ---------------------------------------------------------------------------------------------------------------------------------------------
   await scenario('E14', 'Responsive layouts at 375, 768, 1024 and 1440 px: no horizontal overflow, navigation reachable, key pages usable', async () => {
-    const pages = [['Dashboard', /Good (morning|afternoon|evening)/i], ['My Syllabi', /My Syllabi/], ['AI Checker', /AI Syllabus Checker/], ['Repository', /Syllabus Repository/]];
+    const pages = [['Dashboard', /Good (morning|afternoon|evening)/i], ['Syllabi', /Syllabi/], ['Checker', /Syllabus Checker/], ['Repository', /Syllabus Repository/]];
     for (const [name, vp] of Object.entries(L.VIEWPORTS)) {
       const s = await L.session(browser, stack, { viewport: vp });
       await s.loginOk('faculty');
@@ -549,7 +563,7 @@ module.exports = async function run(ctx, h) {
         const metrics = await s.page.evaluate(() => ({ sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth }));
         check(marker.test(await s.text()), name + ' ' + vp.width + 'px: ' + label + ' renders');
         check(metrics.sw <= metrics.cw + 1, name + ' ' + vp.width + 'px: ' + label + ' has no horizontal page overflow (scrollWidth ' + metrics.sw + ' <= ' + metrics.cw + ')');
-        if (label === 'AI Checker') await s.shot(evidence('E14-checker-' + vp.width + '.png'));
+        if (label === 'Checker') await s.shot(evidence('E14-checker-' + vp.width + '.png'));
       }
       assertClean(s, 'E14-' + vp.width, { allowStatus: [409] });
       await s.close();
@@ -625,6 +639,8 @@ module.exports = async function run(ctx, h) {
     await a.page.locator('.ac-form .field.full input').first().fill('Mobile Application Development (synthetic)');
     const pick = async (label, option) => { await a.page.locator('.ac-form').getByRole('combobox', { name: label, exact: true }).click(); await a.page.getByRole('option', { name: option }).first().click(); await a.page.waitForTimeout(300); };
     await pick('Curriculum year', '2022-2023'); // required since the curriculum year column (2026-11-09)
+    await a.page.getByLabel('Lecture units', { exact: true }).fill('2'); // required since the administrator sets the units (2026-11-25)
+    await a.page.getByLabel('Laboratory units', { exact: true }).fill('1');
     await pick('Semester', /2nd Semester/);
     const levels = await (async () => { await a.page.locator('.ac-form').getByRole('combobox', { name: 'Year level', exact: true }).click(); const names = await a.page.getByRole('option').allInnerTexts(); await a.page.keyboard.press('Escape'); return names.map((x) => x.trim()).filter((x) => /^Year [1-9]$/.test(x)); })();
     check(levels.join(',') === 'Year 1,Year 2,Year 3,Year 4', 'the year level dropdown offers Year 1 to Year 4 (' + levels.join(',') + ')');
@@ -637,6 +653,23 @@ module.exports = async function run(ctx, h) {
     const text = await a.text();
     check(/IT 306/.test(text) && /2026–2027 · 2nd Semester · Year 3/.test(text) && /IT 204 - Computer Programming 2/.test(text), 'the subjects table shows the new subject with its term (in the current year) and pre-requisite');
     await a.shot(evidence('E18-admin-subject-term-1440.png'));
+    // the administrator sets the units, and can correct every detail of the subject later (2026-11-25)
+    const subjectRow = () => a.page.locator('table tbody tr[data-catalog-row^="subject-"]', { hasText: 'IT 306' }).first();
+    check(/2 lecture \/ 1 laboratory/.test(await subjectRow().innerText()), 'the subjects table shows the units (lecture / laboratory)');
+    await subjectRow().getByRole('button', { name: /edit/i }).first().click();
+    const dialog = a.page.getByRole('dialog');
+    await dialog.getByLabel('Lecture units', { exact: true }).waitFor({ timeout: 8000 });
+    check(await dialog.getByLabel('Pre-requisite', { exact: true }).inputValue() === 'IT 204 - Computer Programming 2' && await dialog.getByLabel('Laboratory units', { exact: true }).inputValue() === '1', 'the edit dialog shows the subject\'s pre-requisite and units');
+    await dialog.getByLabel('Lecture units', { exact: true }).fill('4 O');
+    check(await dialog.getByRole('button', { name: /^save/i }).isDisabled(), 'units that are not numbers cannot be saved');
+    await dialog.getByLabel('Lecture units', { exact: true }).fill('3');
+    await a.page.waitForTimeout(600);
+    await a.shot(evidence('E18-admin-subject-edit-1440.png'));
+    await dialog.getByRole('button', { name: /^save/i }).click();
+    await a.page.waitForTimeout(2500);
+    check(/3 lecture \/ 1 laboratory/.test(await subjectRow().innerText()), 'the corrected units are in the table');
+    const twin = await a.api('POST', '/courses', { code: 'IT-306', title: 'Twin (synthetic)', program: 'BSIT', semester: '1st Semester', yearLevel: 1, lecture: '2', lab: '1' });
+    check(twin.status === 409 && /IT 306/.test(JSON.stringify(twin.body)), 'a code that differs only in a hyphen is refused in the same program (HTTP ' + twin.status + ')');
     const counted = (await a.api('GET', '/academic-years')).body.find((y) => y.label === '2026–2027');
     check(counted && counted.programs >= 1 && counted.subjects >= 3, 'the administrator\'s academic year list counts the programs and subjects of the year (' + JSON.stringify(counted) + ')');
     // give the faculty member the subject (administrator API, as Users & Roles does)
@@ -648,14 +681,14 @@ module.exports = async function run(ctx, h) {
     const assigned = await a.api('PUT', '/users/' + (fac.id || fac.user_id) + '/assignments', { programs: progs.body.map((p) => p.id), courses: mine });
     check(assigned.status === 200, 'the subject was assigned to the faculty member (HTTP ' + assigned.status + ')');
     state.termCourseId = subjects.body.find((c) => c.code === 'IT 306').id;
-    assertClean(a, 'E18-admin');
+    assertClean(a, 'E18-admin', { allowStatus: [409] }); // the refused twin code
     await a.close();
 
     const f = await L.session(browser, stack);
     await f.loginOk('faculty');
     // open the editable IT 205 draft from E12 and switch its subject to the new one (the app asks to confirm a subject change)
     f.page.on('dialog', (dialog) => dialog.accept());
-    await f.nav('My Syllabi');
+    await f.nav('Syllabi');
     await f.page.getByText('IT 205', { exact: false }).first().locator('xpath=ancestor::*[.//button[contains(., "Edit")]][1]').getByRole('button', { name: /edit/i }).first().click();
     await f.page.waitForTimeout(2500);
     await f.pick(/IT 205/, /IT 306/);
@@ -664,6 +697,7 @@ module.exports = async function run(ctx, h) {
     check(await field('Pre-requisite').inputValue() === 'IT 204 - Computer Programming 2', 'choosing the subject filled the pre-requisite automatically');
     check(await field('Year level').inputValue() === '3', 'choosing the subject filled the year level automatically');
     check(await field('Academic year').inputValue() === '2026–2027' && /2nd Semester/.test(await field('Semester').inputValue()), "the syllabus's own academic year (the current one, 2026–2027) and the subject's semester are shown");
+    check(await field('Lecture units').inputValue() === '3' && await field('Laboratory units').inputValue() === '1' && await field('Lecture units').isEditable() === false, 'the subject\'s units are filled in and cannot be edited by faculty');
     check(await field('Pre-requisite').isEditable() === false && await field('Year level').isEditable() === false, 'the pre-requisite and year level cannot be edited by faculty');
     check(/cannot change it/.test(await f.text()), 'the page says the administrator set them');
     await f.shot(evidence('E18-faculty-locked-1440.png'));
@@ -672,10 +706,26 @@ module.exports = async function run(ctx, h) {
     const row = list.find((x) => x.courseCode === 'IT 306') || list[0];
     const id = row && row.id;
     await f.page.waitForTimeout(2500);
-    const forged = await f.api('PUT', '/syllabi/' + id + '/content', { sections: { meta: { courseId: state.termCourseId, code: 'IT 306', title: 'x', program: 'BSIT', lecture: '2', lab: '1', prereq: 'Forged by faculty', yearLevel: '1', academicYear: '1999–2000', semester: '1st Semester' } }, schemaVersion: 3 });
+    const forged = await f.api('PUT', '/syllabi/' + id + '/content', { sections: { meta: { courseId: state.termCourseId, code: 'IT 306', title: 'x', program: 'BSIT', lecture: '9', lab: '9', prereq: 'Forged by faculty', yearLevel: '1', academicYear: '1999–2000', semester: '1st Semester' } }, schemaVersion: 3 });
     check(forged.status === 200, 'a forged save is accepted (HTTP ' + forged.status + ')');
     const meta = (await f.api('GET', '/syllabi/' + id + '/content')).body.content.meta;
-    check(meta.prereq === 'IT 204 - Computer Programming 2' && String(meta.yearLevel) === '3' && meta.semester === '2nd Semester', "the server stored the administrator's values, not the forged ones (" + [meta.prereq, meta.yearLevel, meta.academicYear, meta.semester].join(' | ') + ')');
+    check(meta.prereq === 'IT 204 - Computer Programming 2' && String(meta.yearLevel) === '3' && meta.semester === '2nd Semester' && meta.lecture === '3' && meta.lab === '1' && meta.curriculumYear === '2022-2023', "the server stored the administrator's values, not the forged ones (" + [meta.prereq, meta.yearLevel, meta.academicYear, meta.semester].join(' | ') + ')');
+    // while the administrator has not set the units, faculty still cannot type them (2026-11-25)
+    const a2 = await L.session(browser, stack);
+    await a2.loginOk('admin');
+    const cleared = await a2.api('PUT', '/courses/' + state.termCourseId, { code: 'IT 306', title: 'Mobile Application Development (synthetic)', lecture: '', lab: '' });
+    check(cleared.status === 200 && cleared.body.units === null, 'the administrator cleared the units (HTTP ' + cleared.status + ')');
+    await f.page.reload(); await f.page.waitForTimeout(3000);
+    await f.nav('Syllabi');
+    await f.page.getByText('IT 306', { exact: false }).first().locator('xpath=ancestor::*[.//button[contains(., "Edit")]][1]').getByRole('button', { name: /edit/i }).first().click();
+    await f.page.waitForTimeout(2500);
+    check(!(await field('Lecture units').isEditable()) && !(await field('Laboratory units').isEditable()) && /Not set by the administrator yet/.test(await f.text()), 'units the administrator has not set are locked for faculty, and the page says who sets them');
+    await f.shot(evidence('E18-faculty-units-not-set-1440.png'));
+    const typed = await f.api('PUT', '/syllabi/' + id + '/content', { sections: { meta: { ...meta, lecture: '9', lab: '9' } }, schemaVersion: 3 });
+    const after = (await f.api('GET', '/syllabi/' + id + '/content')).body.content.meta;
+    check(typed.status === 200 && after.lecture === '3' && after.lab === '1', 'a forged save does not change them (' + after.lecture + ' / ' + after.lab + ', HTTP ' + typed.status + ')');
+    await a2.api('PUT', '/courses/' + state.termCourseId, { code: 'IT 306', title: 'Mobile Application Development (synthetic)', lecture: '3', lab: '1' });
+    await a2.close();
     assertClean(f, 'E18-faculty', { allowStatus: [409] });
     await f.close();
   });
@@ -784,7 +834,7 @@ module.exports = async function run(ctx, h) {
     check((await f2.api('GET', '/syllabi?year=' + encodeURIComponent('2025–2026'))).status === 403, 'the year before the previous one is closed to the faculty member');
     check((await f2.api('GET', '/compliance?syllabus=all')).body.syllabi.length === 0, 'the compliance list (AI Checker, Dashboard, Analytics) also starts empty');
     check((await f2.api('GET', '/compliance?syllabus=all&year=' + encodeURIComponent('2026–2027'))).body.syllabi.length >= 1, 'and still has last year\'s checks under 2026–2027');
-    await f2.nav('My Syllabi');
+    await f2.nav('Syllabi');
     check(/No syllabi yet/.test(await f2.text()), 'My Syllabi is empty in the new year');
     // the closed year filter shows the year alone, not cut off by the width of the control; the open list says which year is current
     const closedFilter = f2.page.locator('.year-filter .select-current').first();
@@ -918,11 +968,11 @@ module.exports = async function run(ctx, h) {
     const dlg = a.page.getByRole('dialog', { name: /EGAs and Program Outcomes of BSIT/ });
     await dlg.waitFor();
     await a.page.waitForTimeout(800);
-    check(await dlg.getByRole('button', { name: 'Add outcome', exact: true }).isDisabled(), 'an outcome cannot be added before an EGA is saved');
+    check(await dlg.getByRole('button', { name: 'Add outcome', exact: true }).isDisabled(), 'an outcome cannot be added before an EGA is added');
     await dlg.getByRole('button', { name: 'Add EGA', exact: true }).click();
     await dlg.getByLabel('Name, EGA 1', { exact: true }).fill('Critical and creative thinking (synthetic)');
     await dlg.getByLabel('Short name, EGA 1', { exact: true }).fill('Critical thinking');
-    await dlg.getByRole('button', { name: 'Save EGAs', exact: true }).click();
+    await dlg.getByRole('button', { name: 'Save EGAs and outcomes', exact: true }).click();
     await a.page.waitForTimeout(1500);
     const afterEga = (await a.api('GET', '/programs/' + bsit.id + '/outcomes')).body;
     check(afterEga.egas.length === 1 && afterEga.egas[0].no === 1 && afterEga.pos.length === 0, 'the EGA is saved for this program only (' + afterEga.egas.length + ' EGA, ' + afterEga.pos.length + ' outcomes)');
@@ -932,7 +982,7 @@ module.exports = async function run(ctx, h) {
     await dlg.getByLabel('Statement, PO 1', { exact: true }).fill('Apply knowledge of computing to solve problems (synthetic)');
     await dlg.locator('.outcomes-maps input[type=checkbox]').first().check();
     await a.shot(evidence('E22-admin-outcomes-editor-1440.png'));
-    await dlg.getByRole('button', { name: 'Save outcomes', exact: true }).click();
+    await dlg.getByRole('button', { name: 'Save EGAs and outcomes', exact: true }).click();
     await a.page.waitForTimeout(1500);
     const afterPo = (await a.api('GET', '/programs/' + bsit.id + '/outcomes')).body;
     check(afterPo.pos.length === 1 && afterPo.pos[0].egas.join() === '1', 'the outcome is saved and mapped to EGA 1');
@@ -952,7 +1002,7 @@ module.exports = async function run(ctx, h) {
     const past = a.page.getByRole('dialog', { name: /EGAs and Program Outcomes of BSIT/ });
     await past.waitFor();
     await a.page.waitForTimeout(800);
-    check(/past academic year/.test(await past.innerText()) && await past.getByRole('button', { name: 'Save EGAs', exact: true }).count() === 0, PREV + ' shows its EGAs and outcomes read-only (no Save)');
+    check(/past academic year/.test(await past.innerText()) && await past.getByRole('button', { name: 'Save EGAs and outcomes', exact: true }).count() === 0, PREV + ' shows its EGAs and outcomes read-only (no Save)');
     await a.shot(evidence('E22-admin-past-year-outcomes-1440.png'));
     await past.getByRole('button', { name: 'Close', exact: true }).click();
     await a.page.waitForTimeout(500);
@@ -1020,6 +1070,8 @@ module.exports = async function run(ctx, h) {
     const pick = async (label, option) => { await a.page.locator('.ac-form').getByRole('combobox', { name: label, exact: true }).click(); await a.page.getByRole('option', { name: option }).first().click(); await a.page.waitForTimeout(300); };
     await pick('Program', /BSEE/);
     await pick('Curriculum year', '2022-2023'); // required since the curriculum year column (2026-11-09)
+    await a.page.getByLabel('Lecture units', { exact: true }).fill('2'); // required since the administrator sets the units (2026-11-25)
+    await a.page.getByLabel('Laboratory units', { exact: true }).fill('1');
     await pick('Semester', /1st Semester/); await pick('Year level', 'Year 1');
     await a.page.getByLabel('Pre-requisite', { exact: true }).fill('None');
     await a.page.getByRole('button', { name: /^add subject$/i }).last().click();
@@ -1040,11 +1092,12 @@ module.exports = async function run(ctx, h) {
     const draft = await f.api('POST', '/syllabi/drafts');
     const saved = await f.api('PUT', '/syllabi/' + draft.body.id + '/content', { sections: { meta: { courseId: subject.id, code: 'EE 101', title: 'x', program: 'BSEE', lecture: '2', lab: '1', prereq: 'None', yearLevel: '1' } }, schemaVersion: 3 });
     check(draft.status === 200 && saved.status === 200, 'the faculty member started a syllabus on it (HTTP ' + saved.status + ')');
-    await f.nav('My Syllabi');
+    await f.nav('Syllabi');
     await f.page.getByText('EE 101', { exact: false }).first().locator('xpath=ancestor::*[.//button[contains(., "Edit")]][1]').getByRole('button', { name: /edit/i }).first().click();
     await f.page.waitForTimeout(2500);
-    // Step 2 opens once Step 1 is complete: the curriculum year and a course description (the subject supplies program, code, title and the administrator's term)
-    await f.page.locator('[placeholder="For example, 2022-2023"],[aria-label="For example, 2022-2023"]').first().fill('test-2026');
+    // Step 2 opens once Step 1 is complete: a course description (the subject supplies program, code, title and the administrator's term, units and curriculum year)
+    const ownYear = f.page.getByLabel('Curriculum year', { exact: true });
+    check(await ownYear.inputValue() === '2022-2023' && await ownYear.isEditable() === false, 'the administrator\'s curriculum year is filled in and locked');
     if (!(await f.page.getByPlaceholder('Describe the course in a few sentences').count())) await f.page.getByRole('button', { name: /add paragraph/i }).click();
     await f.page.getByPlaceholder('Describe the course in a few sentences').first().fill('A synthetic description for the end-to-end test of a new program.');
     await f.page.waitForTimeout(1200);
@@ -1086,11 +1139,11 @@ module.exports = async function run(ctx, h) {
     check(!!refV1.active && /-v1$/.test(refV1.active.version) && refV1.active.appliesTo[0].academicYear === yearNow && new RegExp(refV1.active.version).test(await panel.innerText()), 'the new program has version 1 in force for ' + yearNow + ', and the panel shows it');
     check(!/approv|VPAA|publish/i.test(await panel.innerText()) && (await panel.locator('input, textarea').count()) === 0, 'the panel asks for no approval or document, and a saved version has no edit control');
     await dlg.getByLabel('Statement, PO 1', { exact: true }).fill('Apply engineering knowledge to analyse and design circuits (synthetic, revised).');
-    await dlg.getByRole('button', { name: 'Save outcomes', exact: true }).click();
+    await dlg.getByRole('button', { name: 'Save EGAs and outcomes', exact: true }).click();
     await a.page.waitForTimeout(1500);
     check((await f.api('GET', '/courses/' + subject.id)).body.standards.pos[0].text.includes('analyse circuits'), 'the existing subject keeps its own copy after the program is edited');
     const refV2 = (await a.api('GET', '/programs/' + bsee.id + '/po-reference')).body;
-    check(/-v2$/.test(refV2.active.version) && refV2.history.length === 2 && refV2.history.some((h) => h.status === 'superseded' && h.id === refV1.active.id), 'Save outcomes put version 2 in force and kept version 1');
+    check(/-v2$/.test(refV2.active.version) && refV2.history.length === 2 && refV2.history.some((h) => h.status === 'superseded' && h.id === refV1.active.id), 'Saving the outcomes put version 2 in force and kept version 1');
     check(refV2.changes[0].next.id === refV2.active.id && refV2.changes[0].previous.id === refV1.active.id && /Test Administrator/.test(refV2.changes[0].by), 'the change log says who saved it, the previous version and the new one');
     await panel.getByText(refV2.active.version).first().waitFor();
     check(/Program Outcomes saved/.test(await panel.innerText()), 'the panel shows the new version and the change log without reopening the dialog');
@@ -1112,7 +1165,7 @@ module.exports = async function run(ctx, h) {
     for (const who of ['admin', 'faculty']) {
       const s = await L.session(browser, stack);
       await s.loginOk(who);
-      for (const page of ['Dashboard', 'My Syllabi', 'Repository', 'Compliance', 'Analytics', 'Reports']) {
+      for (const page of ['Dashboard', 'Syllabi', 'Repository', 'Compliance', 'Analytics', 'Reports']) {
         try { await s.nav(page); } catch { continue; }   // a role without this screen has nothing to check
         await s.page.waitForTimeout(1200);
         const trigger = s.page.locator('.page-head .year-filter .select-current');
@@ -1139,7 +1192,7 @@ module.exports = async function run(ctx, h) {
     const pos = [{ no: 1, short: 'RPO 1', text: 'Apply knowledge in a reviewed outcome (synthetic).', egas: [1] }, { no: 2, short: 'RPO 2', text: OLD, egas: [1] }];
     const made = await a.api('POST', '/programs', { code: 'BSRV', name: 'BS Review Flow (synthetic)', outcomes: { egas, pos } });
     check(made.status === 201, 'the administrator added a program with two POs (HTTP ' + made.status + ')');
-    const subject = await a.api('POST', '/courses', { code: 'RV 101', title: 'Review Flow (synthetic)', program: 'BSRV', semester: '1st Semester', yearLevel: 1, prerequisite: 'None' });
+    const subject = await a.api('POST', '/courses', { code: 'RV 101', title: 'Review Flow (synthetic)', program: 'BSRV', semester: '1st Semester', yearLevel: 1, prerequisite: 'None', lecture: '2', lab: '1' });
     check(subject.status === 200, 'and a subject (HTTP ' + subject.status + ')');
     const users = (await a.api('GET', '/users')).body, fac = (users.users || users).find((u) => u.email === 'e2e.faculty@e2e.invalid');
     check((await a.api('PUT', '/users/' + (fac.id || fac.user_id) + '/assignments', { programs: [made.body.id], courses: [subject.body.id] })).status === 200, 'assigned to the faculty member');
@@ -1164,7 +1217,7 @@ module.exports = async function run(ctx, h) {
     check(applied.status === 200 && applied.body.updated === 1, 'Apply to Subjects updated the subject (' + JSON.stringify(applied.body).slice(0, 100) + ')');
 
     // opening the syllabus adopts nothing
-    await f.nav('My Syllabi');
+    await f.nav('Syllabi');
     await f.page.getByText('RV 101', { exact: false }).first().locator('xpath=ancestor::*[.//button[contains(., "Edit")]][1]').getByRole('button', { name: /edit/i }).first().click();
     await f.page.waitForTimeout(2500);
     await f.page.getByRole('button', { name: /2 learning outcomes/i }).click();

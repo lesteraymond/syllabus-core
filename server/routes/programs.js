@@ -11,7 +11,7 @@ const { inTransaction, httpError, sendError } = require('../lib/http');
 const { findProgram, loadResolvedProgram, requireOwnOutcomes, inheritedFrom, createProgram } = require('../lib/programs');
 const { cleanProgram, parseTypedOutcomes, insertOutcomes } = require('../lib/programCreate');
 const { loadProgramEgas, isStale, STALE_MESSAGE } = require('../lib/programEgas');
-const { egasInUse, posInUse, inUseMessages, inUseError, subjectsOf } = require('../lib/catalogUse');
+const { egasInUse, egasUsedByClos, posInUse, inUseMessages, inUseError, subjectsOf } = require('../lib/catalogUse');
 const management = require('../lib/programManagement');
 const { parseEgas, parsePos } = require('../lib/programOutcomesInput');
 const { syncSubjects } = require('../lib/programMasters');
@@ -28,15 +28,16 @@ const managementError = (res, error) => {
 
 router.get('/', requireAuth, async (req, res) => {
   try {
-    // Faculty see only the programs an admin assigned to them; admins see every program.
-    const mine = !isReviewer(req.session.user); // reviewers (dean, Asst. VPAA, LIC Director, VPAA) read every program
+    // Faculty always see only their assigned programs; reviewers see every program for catalog management, or only their own assigned programs when authoring (?assigned=1).
+    const mine = !isReviewer(req.session.user) || req.query.assigned === '1';
     // The catalog belongs to an academic year (the requested one, the current one by default): a new academic year starts with no programs.
     const inYear = programYearClause(await catalogYear(req.app.locals.db, req.session.user, req.query.year));
     const conditions = [], values = [];
     if (inYear.sql) { conditions.push(inYear.sql.replace(/^ AND /, '')); values.push(...inYear.params); }
     if (mine) { conditions.push('p.program_id IN (SELECT program_id FROM faculty_programs WHERE user_id = ?)'); values.push(req.session.user.id); }
     const [rows] = await req.app.locals.db.query(
-      `SELECT p.program_id, p.code, p.name, COUNT(o.po_no) AS outcome_count, (SELECT COUNT(*) FROM program_egas e WHERE e.program_id = p.program_id) AS ega_count
+      `SELECT p.program_id, p.code, p.name, COUNT(o.po_no) AS outcome_count, SUM(o.po_no IS NOT NULL AND COALESCE(o.ega_nos, '') = '') AS unlinked_count,
+              (SELECT COUNT(*) FROM program_egas e WHERE e.program_id = p.program_id) AS ega_count
        FROM programs p LEFT JOIN program_outcomes o ON o.program_id = p.program_id
        ${conditions.length ? 'WHERE ' + conditions.join(' AND ') : ''}
        GROUP BY p.program_id, p.code, p.name ORDER BY p.code`,
@@ -47,8 +48,10 @@ router.get('/', requireAuth, async (req, res) => {
       const source=await inheritedFrom(req.app.locals.db,{program_id:row.program_id});
       const shared=source?await loadResolvedProgram(req.app.locals.db,source):null;
       const count=shared?shared.pos.length:row.code==='BSIT-CYBERSECURITY'?0:Number(row.outcome_count);
-      // egaCount and inheritedFrom tell the admin's screen which programs still need their EGAs and POs set up (a specialization is set up in the program it inherits from)
-      result.push({id:row.program_id,code:row.code,name:row.name,outcomeCount:count,egaCount:shared?shared.egas.length:row.code==='BSIT-CYBERSECURITY'?0:Number(row.ega_count)||0,inheritedFrom:source?source.code:null});
+      // egaCount and inheritedFrom tell the admin's screen which programs still need their EGAs and POs set up (a specialization is set up in the program it inherits from);
+      // unlinkedPoCount, how many POs are not linked to any EGA yet (the link is required, 2026-11-20)
+      const unlinked=shared?shared.pos.filter(p=>!(p.egas||[]).length).length:row.code==='BSIT-CYBERSECURITY'?0:Number(row.unlinked_count)||0;
+      result.push({id:row.program_id,code:row.code,name:row.name,outcomeCount:count,egaCount:shared?shared.egas.length:row.code==='BSIT-CYBERSECURITY'?0:Number(row.ega_count)||0,unlinkedPoCount:unlinked,inheritedFrom:source?source.code:null});
     }
     res.json(result);
   } catch (err) { sendError(res, err); }
@@ -138,6 +141,59 @@ router.put('/:id/outcomes', requireAuth, requireAdmin, async (req, res) => {
       if (rows.length) await conn.query('INSERT INTO program_outcomes (program_id, po_no, short_name, outcome_text, ega_nos) VALUES ?', [rows]);
       await conn.query('UPDATE programs SET pos_version = pos_version + 1 WHERE program_id = ?', [program.program_id]);
       await poReferences.saveVersion(conn, program, parsed, { actorId: req.session.user.id, academicYear: year }); // what the Admin saved is the version in force for this program year
+    });
+    const fresh = await findProgram(db, program.program_id);
+    res.json(await programView(db, fresh));
+  } catch (err) { sendError(res, err); }
+});
+
+// Save the program's EGAs and Program Outcomes together (the outcomes dialog's one Save button). Body: { egas: [{ no, name, short }], pos: [{ no, short, text, egas }],
+// versions: { egas, pos } }. Everything is checked first and written in ONE transaction, so both lists are saved or neither is. A PO may map to any EGA of the new list,
+// so an EGA can be added and linked, or unlinked and removed, in one save. Only a list that changed is written (and gets a new version); a POs change makes the next
+// reference version, as PUT /:id/outcomes does. The two routes above stay for other callers.
+router.put('/:id/setup', requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const db = req.app.locals.db;
+    const program = await findProgram(db, req.params.id);
+    await assertCatalogEditable(db, program.program_id); // a past academic year's catalog is view only
+    await requireOwnOutcomes(db, program);
+    const { egas, pos, versions } = req.body || {};
+    const parsedEgas = parseEgas(egas);
+    const parsedPos = parsePos(pos, new Set(parsedEgas.map((e) => e.no)), program.code); // checked against the EGAs being saved, not the stored ones
+
+    const currentEgas = await loadProgramEgas(db, program.program_id);
+    const [currentPoRows] = await db.query('SELECT po_no, short_name, outcome_text, ega_nos FROM program_outcomes WHERE program_id = ? ORDER BY po_no', [program.program_id]);
+    const currentPos = currentPoRows.map((p) => ({ no: Number(p.po_no), short: p.short_name, text: p.outcome_text, egas: String(p.ega_nos || '').split(',').map(Number).filter((n) => n > 0).sort((a, b) => a - b) }));
+    const egasChanged = JSON.stringify(poReferences.statementsOfEgas(currentEgas)) !== JSON.stringify(poReferences.statementsOfEgas(parsedEgas));
+    const posChanged = JSON.stringify(poReferences.canonicalOutcomes(currentPos)) !== JSON.stringify(poReferences.canonicalOutcomes(parsedPos));
+    if (posChanged) await poReferences.requireMutable(db, program.program_id);
+
+    // Nothing a CLO of the program's subjects still uses may go. The new POs were already checked against the new EGA list.
+    const keptEgas = new Set(parsedEgas.map((e) => e.no)), keptPos = new Set(parsedPos.map((p) => p.no));
+    const removedEgas = currentEgas.map((e) => e.no).filter((n) => !keptEgas.has(n)), removedPos = currentPos.map((p) => p.no).filter((n) => !keptPos.has(n));
+    const blocked = [
+      ...(removedEgas.length ? inUseMessages('EGA', removedEgas, await egasUsedByClos(db, program.program_id)) : []),
+      ...(removedPos.length ? inUseMessages('PO', removedPos, await posInUse(db, program.program_id)) : []),
+    ];
+    if (blocked.length) throw httpError(409, inUseError(blocked));
+
+    const year = await poReferences.academicYearOf(db, program.program_id);
+    await inTransaction(db, async (conn) => {
+      // both versions are checked, whichever list changed: the PO links point at EGA numbers, so a save built on an old copy of either list is refused
+      await lockAndCheck(conn, program.program_id, 'egas_version', versions && versions.egas);
+      await lockAndCheck(conn, program.program_id, 'pos_version', versions && versions.pos);
+      if (egasChanged) {
+        await conn.query('DELETE FROM program_egas WHERE program_id = ?', [program.program_id]);
+        await conn.query('INSERT INTO program_egas (program_id, ega_no, name, short_name) VALUES ?', [parsedEgas.map((e) => [program.program_id, e.no, e.name, e.short])]);
+        await conn.query('UPDATE programs SET egas_version = egas_version + 1 WHERE program_id = ?', [program.program_id]);
+        await poReferences.auditIfReady(conn, { programId: program.program_id, action: 'ega_saved', actorId: req.session.user.id, details: { previous: { version: 'EGA v' + program.egas_version, egas: poReferences.statementsOfEgas(currentEgas) }, next: { version: 'EGA v' + (Number(program.egas_version) + 1), egas: poReferences.statementsOfEgas(parsedEgas) }, academicYear: year } });
+      }
+      if (posChanged) {
+        await conn.query('DELETE FROM program_outcomes WHERE program_id = ?', [program.program_id]);
+        if (parsedPos.length) await conn.query('INSERT INTO program_outcomes (program_id, po_no, short_name, outcome_text, ega_nos) VALUES ?', [parsedPos.map((p) => [program.program_id, p.no, p.short, p.text, p.egas.join(',')])]);
+        await conn.query('UPDATE programs SET pos_version = pos_version + 1 WHERE program_id = ?', [program.program_id]);
+        await poReferences.saveVersion(conn, program, parsedPos, { actorId: req.session.user.id, academicYear: year }); // what the Admin saved is the version in force for this program year
+      }
     });
     const fresh = await findProgram(db, program.program_id);
     res.json(await programView(db, fresh));

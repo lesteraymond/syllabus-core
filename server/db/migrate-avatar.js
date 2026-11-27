@@ -4,12 +4,7 @@ require('dotenv').config();
 const mysql = require('mysql2/promise');
 
 async function migrate() {
-  const conn = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-    database: process.env.DB_NAME,
-  });
+  const conn = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
 
   const [cols] = await conn.query(
     "SELECT 1 FROM information_schema.columns WHERE table_schema = DATABASE() AND table_name = 'users' AND column_name = 'avatar_path'"

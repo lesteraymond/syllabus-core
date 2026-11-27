@@ -5,7 +5,7 @@
 require('dotenv').config();
 const mysql = require('mysql2/promise');
 async function main() {
-  const conn = await mysql.createConnection({ host: process.env.DB_HOST, user: process.env.DB_USER, password: process.env.DB_PASS, database: process.env.DB_NAME });
+  const conn = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig());
   try {
     await conn.query('CREATE TABLE IF NOT EXISTS academic_years (label VARCHAR(9) NOT NULL PRIMARY KEY, start_year INT NOT NULL, UNIQUE KEY academic_years_start (start_year))');
     await conn.query('INSERT IGNORE INTO academic_years (label, start_year) VALUES (?, ?)', ['2026–2027', 2026]);

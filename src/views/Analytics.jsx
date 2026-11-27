@@ -1,11 +1,13 @@
 import { YearFilter, useYearScope } from '../components/AcademicYearScope';
+import { selectionLabel } from '../lib/academicYearScope';
 import StableButton from '../components/StableButton';
 import { tr } from "../i18n/index.js";
 import { t as translateUI } from "../i18n/index.js";
 import { useEffect, useMemo, useState } from 'react';
-import { ChartCard, Insight, PageHead, Progress, ViewSwitch } from '../components/ui';
+import { ChartCard, Icon, Insight, PageHead, Progress, ViewSwitch } from '../components/ui';
 import { compliance as complianceApi } from '../lib/api';
 import { aiAverage, programScores, scoreBands } from '../lib/complianceStats';
+import { fmt } from '../lib/utils';
 import Select from '../components/Select';
 
 // Everything on this page is measured: the AI scores come from the latest stored check of each syllabus (an administrator: every submitted
@@ -17,13 +19,9 @@ const BANDS = [['high', 'var(--green)', 'ui.high_80_100_234a35'], ['medium', 'va
 
 // How the scored syllabi spread over the bands: the average as the one big number, a thin bar split into the three bands, and a legend with each share.
 // The average is the AI-completed average (aiAverage); the shares are of every scored syllabus (scoreBands). Both are computed as before.
-function ScoreSpread({ average, bands, view }) {
+function ScoreSpread({ average, bands }) {
   const parts = BANDS.map(([key, color, label]) => ({ key, color, label: translateUI(label), value: bands[key] }));
   const of = translateUI(bands.count === 1 ? 'analytics.bandsOfOne' : 'analytics.bandsOf', { count: bands.count });
-  if (view === 'table') return <table className="trend-table chart-table" aria-label={of}>
-    <thead><tr><th>{translateUI('analytics.band')}</th><th className="num">{translateUI('analytics.share')}</th></tr></thead>
-    <tbody>{parts.map((p) => <tr key={p.key}><td><span className="trend-key" style={{ background: p.color }} aria-hidden="true" />{p.label}</td><td className="num">{p.value}%</td></tr>)}</tbody>
-  </table>;
   return <div className="spread">
     <div className="spread-hero"><strong>{Number.isFinite(average) ? `${average}%` : '—'}</strong><span>{translateUI('analytics.averageLabel')}</span></div>
     <div className="spread-bar" role="img" aria-label={parts.map((p) => `${p.label}: ${p.value}%`).join(', ')}>
@@ -55,8 +53,9 @@ function Dimensions({ areas }) {
   return <div className="radar-like">{areas.map(a => <Progress key={a.key} label={tr(a.name)} value={a.average} />)}</div>;
 }
 
-export default function Analytics({ syllabi, user }) {
+export default function Analytics({ syllabi, user, notify }) {
   const yearScope = useYearScope(), year = yearScope ? yearScope.param('data') : undefined; // the academic year of this screen (undefined: the current one)
+  const yearName = yearScope ? selectionLabel(yearScope.selection('data'), yearScope.years, (key) => translateUI(key)) : '';
   const isFaculty = user.role === 'faculty';
   const mine = useMemo(() => (isFaculty ? syllabi.filter(s => s.userId === user.id) : syllabi), [syllabi, user, isFaculty]);
 
@@ -77,9 +76,20 @@ export default function Analytics({ syllabi, user }) {
     if (isFaculty) return rows.filter(r => r.run && Number.isFinite(r.run.overall)).map(r => ({ label: r.courseCode, value: r.run.overall }));
     return programScores(rows).filter(p => p.average !== null).map(p => ({ label: p.program, value: p.average, checked: p.checked }));
   }, [rows, isFaculty]);
-  const [spreadView, setSpreadView] = useState('chart');
   const [barsView, setBarsView] = useState('chart');
-  const areas = checks && checks.summary && Array.isArray(checks.summary.areas) ? checks.summary.areas : [];
+  const allAreas = checks && checks.summary && Array.isArray(checks.summary.areas) ? checks.summary.areas : [];
+  // Quality dimensions by program (administrator): the average of each area over the checked syllabi of the chosen program, the same
+  // way the server averages them over all of them. "" is all programs, which uses the server's own summary.
+  const [dimProgram, setDimProgram] = useState('');
+  const programCodes = useMemo(() => (rows ? [...new Set(rows.map(r => String(r.programCode || '').trim()).filter(Boolean))].sort() : []), [rows]);
+  const areas = useMemo(() => {
+    if (isFaculty || !dimProgram || !rows) return allAreas;
+    const scored = rows.filter(r => String(r.programCode || '').trim() === dimProgram && r.run && Number.isFinite(r.run.overall));
+    return allAreas.map(a => {
+      const values = scored.map(r => ((r.run.areas || []).find(x => x.key === a.key) || {}).score).filter(v => typeof v === 'number');
+      return { ...a, average: values.length ? Math.round(values.reduce((s, v) => s + v, 0) / values.length) : null };
+    }).filter(a => a.average !== null);
+  }, [allAreas, rows, dimProgram, isFaculty]);
 
   const insights = useMemo(() => {
     const count = (...statuses) => mine.filter(s => statuses.includes(s.status)).length;
@@ -87,36 +97,73 @@ export default function Analytics({ syllabi, user }) {
     const out = [];
     const add = (title, text) => out.push({ n: String(out.length + 1).padStart(2, '0'), title: translateUI(title), text });
     if (isFaculty) {
+      const attention = count('for_revision', 'rejected');
       add('analytics.insight.yourScoreTitle', average === null ? translateUI('analytics.insight.noScoreText') : translateUI('analytics.insight.yourScoreText', { avg: average, count: bands.count }));
-      add('analytics.insight.pendingTitle', translateUI('analytics.insight.pendingText', { count: pending }));
-      add('analytics.insight.attentionTitle', translateUI('analytics.insight.attentionText', { count: count('for_revision', 'rejected') }));
+      add('analytics.insight.pendingTitle', translateUI(pending === 1 ? 'analytics.insight.pendingTextOne' : 'analytics.insight.pendingText', { count: pending }));
+      add('analytics.insight.attentionTitle', translateUI(attention === 1 ? 'analytics.insight.attentionTextOne' : 'analytics.insight.attentionText', { count: attention }));
       add('analytics.insight.tipTitle', translateUI('analytics.insight.tipText'));
       return out;
     }
     const programs = rows ? programScores(rows).filter(p => p.average !== null) : [];
-    if (programs.length) add('analytics.insight.topProgramTitle', translateUI('analytics.insight.topProgramText', { program: programs[0].program, avg: programs[0].average, count: programs[0].checked }));
+    if (programs.length) add('analytics.insight.topProgramTitle', translateUI(programs[0].checked === 1 ? 'analytics.insight.topProgramTextOne' : 'analytics.insight.topProgramText', { program: programs[0].program, avg: programs[0].average, count: programs[0].checked }));
     const scoredAreas = areas.filter(a => Number.isFinite(a.average)).sort((a, b) => a.average - b.average);
-    if (scoredAreas.length) add('analytics.insight.weakAreaTitle', translateUI('analytics.insight.weakAreaText', { area: tr(scoredAreas[0].name), avg: scoredAreas[0].average }));
-    add('analytics.insight.pendingTitle', translateUI('analytics.insight.pendingText', { count: pending }));
-    if (checks && checks.summary) add('analytics.insight.uncheckedTitle', translateUI('analytics.insight.uncheckedText', { count: checks.summary.unchecked }));
+    if (scoredAreas.length) {
+      if (scoredAreas[0].average >= 100) add('analytics.insight.allPerfectTitle', translateUI('analytics.insight.allPerfectText'));
+      else add('analytics.insight.weakAreaTitle', translateUI('analytics.insight.weakAreaText', { area: tr(scoredAreas[0].name), avg: scoredAreas[0].average }));
+    }
+    add('analytics.insight.pendingTitle', translateUI(pending === 1 ? 'analytics.insight.pendingTextOne' : 'analytics.insight.pendingText', { count: pending }));
+    if (checks && checks.summary) add('analytics.insight.uncheckedTitle', translateUI(checks.summary.unchecked === 1 ? 'analytics.insight.uncheckedTextOne' : 'analytics.insight.uncheckedText', { count: checks.summary.unchecked }));
     return out;
   }, [mine, rows, areas, checks, average, bands.count, isFaculty]);
 
   const barsTitle = translateUI(isFaculty ? 'analytics.barsTitleFaculty' : 'analytics.barsTitleAdmin');
   const none = <div className="empty">{translateUI(loaded ? 'analytics.empty' : 'analytics.loading')}</div>;
+  const hasData = bands.count > 0 || bars.length > 0 || areas.some(a => Number.isFinite(a.average));
+  const downloadReport = () => {
+    if (!hasData) return;
+    const title = isFaculty ? translateUI('ui.my_analytics_1ab328') : translateUI('ui.analytics_quality_dashboard_b85172');
+    const out = [
+      title.toUpperCase(),
+      yearName ? `AY ${yearName}` : '',
+      `${tr('Generated')}: ${fmt(new Date())}`,
+      '',
+      `${translateUI('analytics.averageLabel')}: ${Number.isFinite(average) ? `${average}%` : '—'} (${bands.count})`,
+      ...BANDS.map(([key, , label]) => `  - ${translateUI(label)}: ${bands[key]}%`),
+      '',
+      barsTitle.toUpperCase(),
+      ...(bars.length ? bars.map((d) => (isFaculty ? `  - ${d.label}: ${d.value}%` : `  - ${d.label}: ${d.value}% (${d.checked})`)) : [`  - ${translateUI('analytics.empty')}`]),
+      '',
+      translateUI('ui.quality_dimensions_41c80b').toUpperCase() + (dimProgram ? ` (${dimProgram})` : ''),
+      ...(areas.length ? areas.map((a) => `  - ${tr(a.name)}: ${a.average}%`) : ['  - —']),
+      '',
+      translateUI('ui.actionable_insights_9816fd').toUpperCase(),
+      ...insights.map((i) => `  ${i.n}. ${i.title}: ${i.text}`),
+    ].filter((line) => line !== undefined).join('\n');
+    const blob = new Blob([out + '\n'], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = isFaculty ? 'my-analytics-report.txt' : 'analytics-quality-report.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+    notify?.(translateUI('ui.report_downloaded_c0e45e'));
+  };
   return (
     <>
-      <PageHead title={isFaculty ? translateUI("ui.my_analytics_1ab328") : translateUI("ui.analytics_quality_dashboard_b85172")} subtitle={isFaculty ? translateUI("ui.track_your_personal_compliance_scores_and_submission_performance_b66964") : translateUI("ui.monitor_compliance_curriculum_coverage_submission_performance_and_78b463")} actions={<><YearFilter group="data" /><StableButton className="btn outline">{translateUI("ui.download_report_9f36e2")}</StableButton></>} />
+      <PageHead title={isFaculty ? translateUI("ui.my_analytics_1ab328") : translateUI("ui.analytics_quality_dashboard_b85172")} subtitle={isFaculty ? translateUI("ui.track_your_personal_compliance_scores_and_submission_performance_b66964") : translateUI("ui.monitor_compliance_curriculum_coverage_submission_performance_and_78b463")} actions={<><YearFilter group="data" /><StableButton type="button" className="btn outline" disabled={!loaded || !hasData} onClick={downloadReport}><Icon name="downloadSimple" size={15} />{translateUI("ui.download_report_9f36e2")}</StableButton></>} />
       <div className="analytics-grid two">
-        <ChartCard title={translateUI('analytics.spreadTitle')} subtitle={translateUI(isFaculty ? 'analytics.spreadSubtitleFaculty' : 'analytics.spreadSubtitleAdmin')} action={bands.count ? <ViewSwitch view={spreadView} setView={setSpreadView} /> : null}>
-          {bands.count ? <ScoreSpread average={average} bands={bands} view={spreadView} /> : none}
+        <ChartCard title={translateUI('analytics.spreadTitle')} subtitle={translateUI(isFaculty ? 'analytics.spreadSubtitleFaculty' : 'analytics.spreadSubtitleAdmin')}>
+          {bands.count ? <ScoreSpread average={average} bands={bands} /> : none}
         </ChartCard>
         <ChartCard title={barsTitle} subtitle={translateUI(isFaculty ? 'analytics.barsSubtitleFaculty' : 'analytics.barsSubtitleAdmin')} action={bars.length ? <ViewSwitch view={barsView} setView={setBarsView} /> : null}>
           {bars.length ? <ScoreBars data={bars} view={barsView} isFaculty={isFaculty} label={barsTitle} /> : none}
         </ChartCard>
       </div>
       <div className="analytics-grid two">
-        <ChartCard title={translateUI("ui.quality_dimensions_41c80b")} subtitle={isFaculty ? translateUI("ui.your_quality_scores_8f5d5e") : translateUI("ui.average_percentage_scores_by_program_3c980a")}>
+        <ChartCard title={translateUI("ui.quality_dimensions_41c80b")} subtitle={isFaculty ? translateUI("ui.your_quality_scores_8f5d5e") : translateUI("ui.average_percentage_scores_by_program_3c980a")}
+          action={!isFaculty && programCodes.length ? <Select aria-label={translateUI('analytics.dimensionsProgram')} value={dimProgram} onChange={e => setDimProgram(e.target.value)}>
+            <option value="">{translateUI('analytics.allPrograms')}</option>
+            {programCodes.map(code => <option key={code} value={code}>{code}</option>)}
+          </Select> : null}>
           {areas.length ? <Dimensions areas={areas} /> : none}
         </ChartCard>
         <ChartCard title={translateUI("ui.actionable_insights_9816fd")} subtitle={isFaculty ? translateUI("ui.tips_for_your_submissions_76ea2a") : translateUI("ui.ai_generated_quality_observations_82b3fd")}><div className="insights">{insights.map(i => <Insight key={i.n} {...i} />)}</div></ChartCard>

@@ -17,21 +17,32 @@ export function usePeriodicRefresh(enabled, refresh, intervalMs = 60000) {
   }, [enabled, intervalMs]);
 }
 
-export function useNotificationPolling(enabled, onChange, intervalMs = 25000) {
+export function useNotificationPolling(enabled, onChange, intervalMs = 25000, onYearChange = null) {
   const onChangeRef = useRef(onChange);
-  useEffect(() => { onChangeRef.current = onChange; });
+  const onYearChangeRef = useRef(onYearChange);
+  useEffect(() => { onChangeRef.current = onChange; onYearChangeRef.current = onYearChange; });
 
   useEffect(() => {
     if (!enabled) return undefined;
     let stopped = false;
     let last = null;
+    let lastYear = undefined;
+    let hiddenAt = 0;
     const tick = async () => {
-      if (document.visibilityState !== 'visible') return; // hidden tab: no requests
+      // Hidden tab: one small summary request a minute at most, so a new notification can still chime and pop up on the desktop.
+      if (document.visibilityState !== 'visible') {
+        if (Date.now() - hiddenAt < 60000) return;
+        hiddenAt = Date.now();
+      }
       try {
         const s = await notificationsApi.summary();
         if (stopped) return;
-        const key = `${s.unreadMessages}|${s.unreadNotifications}|${s.latestMessageAt}`;
-        if (last !== null && last !== key) onChangeRef.current();
+        const year = s.activeAcademicYear ?? null;
+        const yearChanged = lastYear !== undefined && year !== lastYear;
+        lastYear = year;
+        const key = `${s.unreadMessages}|${s.unreadNotifications}|${s.latestMessageAt}|${year || ''}`;
+        if (yearChanged && onYearChangeRef.current) onYearChangeRef.current(year);
+        else if (last !== null && last !== key) onChangeRef.current();
         last = key;
       } catch {
         // offline or signed out: try again on the next tick

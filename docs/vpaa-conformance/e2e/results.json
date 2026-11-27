@@ -3,7 +3,7 @@
     "label": "LOCAL E2E (staging-like topology: https frontend, TLS proxy, NODE_ENV=staging server, isolated scratch database, the new AI Checker on an offline stand-in for the Anthropic API). Not a staging E2E; no live Claude request.",
     "browser": "Microsoft Edge (Chromium) via playwright-core",
     "node": "v26.12.1",
-    "finishedAt": "2026-11-17T22:38:39.032Z",
+    "finishedAt": "2026-11-24T16:58:25.104Z",
     "scenarios": {
       "total": 25,
       "passed": 25,
@@ -53,7 +53,7 @@
         },
         {
           "ok": true,
-          "message": "CORS answers the configured frontend origin only, with credentials ({\"origin\":\"https://localhost:3664\",\"credentials\":\"true\",\"vary\":\"Origin\"})"
+          "message": "CORS answers the configured frontend origin only, with credentials ({\"origin\":\"https://localhost:3658\",\"credentials\":\"true\",\"vary\":\"Origin\"})"
         },
         {
           "ok": true,
@@ -85,7 +85,7 @@
         "docs/vpaa-conformance/e2e/E01-faculty-dashboard-1440.png"
       ],
       "failed": false,
-      "ms": 7377
+      "ms": 8236
     },
     {
       "id": "E02",
@@ -168,7 +168,7 @@
         "docs/vpaa-conformance/e2e/E02-builder-review-1440.png"
       ],
       "failed": false,
-      "ms": 17724
+      "ms": 18337
     },
     {
       "id": "E03",
@@ -265,7 +265,7 @@
         "docs/vpaa-conformance/e2e/E03-faculty-checker-1440.png"
       ],
       "failed": false,
-      "ms": 5082
+      "ms": 6380
     },
     {
       "id": "E04",
@@ -274,7 +274,7 @@
       "checks": [
         {
           "ok": true,
-          "message": "My Syllabi shows Submitted with the review chain (Dean, Asst. VPAA, LIC Director)"
+          "message": "My Syllabi shows the syllabus as Submitted"
         },
         {
           "ok": true,
@@ -316,7 +316,7 @@
       "notes": [],
       "evidence": [],
       "failed": false,
-      "ms": 8624
+      "ms": 10487
     },
     {
       "id": "E05",
@@ -407,7 +407,7 @@
         "docs/vpaa-conformance/e2e/E05-admin-official-check-1440.png"
       ],
       "failed": false,
-      "ms": 6782
+      "ms": 8360
     },
     {
       "id": "E06",
@@ -460,7 +460,7 @@
         "docs/vpaa-conformance/e2e/E06-review-document-1440.png"
       ],
       "failed": false,
-      "ms": 9904
+      "ms": 10323
     },
     {
       "id": "E07",
@@ -497,13 +497,13 @@
         }
       ],
       "notes": [
-        "buttons on the faculty checker after the return: REPORTS | SETTINGS | 1 | TF Test Faculty Faculty | Log out | 2026–2027 | IT 204 — Computer Programming 2 | Edit Syllabus | Re-Check again | Accept | Check & improve | Reject | Submit new version to Admin"
+        "buttons on the faculty checker after the return: Analytics | Reports | Settings | 1 | TF Test Faculty Faculty | Log out | 2026–2027 | IT 204 — Computer Programming 2 | Edit Syllabus | Re-Check again | Accept | Check & improve | Reject | Submit new version to Admin"
       ],
       "evidence": [
         "docs/vpaa-conformance/e2e/E07-faculty-after-return-1440.png"
       ],
       "failed": false,
-      "ms": 6614
+      "ms": 7618
     },
     {
       "id": "E08",
@@ -561,17 +561,17 @@
       ],
       "notes": [
         "provider requests during Check & improve: 0",
-        "after Check & improve: AI Recommendation (1) Accept applies and saves the displayed recommendation. Edit and apply saves your revision. You can accept other recommendations whose target fields are unchanged. Click Re-Check again when ready for a new score. Suggested alignment revision Step 3: Learning Plan · Learning plan (Row 2) Why this is suggested: fixes 1 ACTIVITY-FIT Partly aligned −1 points In plan[1].activities Scripted: the activities do not let students practise the ILO at its level. From the syllabus - Lecture-discussion on week Edit proposed text Checked against 4 related items: 1 improve and none get worse. It is safe to accept. Accept Check & improve Reject Check coverage: 69 of 81 catalogue entries verified What did you change? (required) Write at least a sentence so the reviewer knows what to look at. Submit new version to Admin",
-        "recommendation card after Check & improve: Suggested alignment revision | Step 3: Learning Plan · Learning plan (Row 2) | Why this is suggested: fixes 1 | ACTIVITY-FIT | Partly aligned | −1 points | In plan[1].activities |  | Scripted: the activities do not let students practise the ILO at its level. |  | From the syllabus | - Lecture-discussion on week | Edit proposed text |  | Checked against 4 related items: 1 improve and none get worse. It is safe to accept. |  | Accept | Check & improve | Reject || disabled: Accept=false, Check & improve=false, Reject=false",
-        "after Accept buttons: 1 | TF\nTest Faculty\nFaculty | Log out | 2026–2027 | IT 204 — Computer Programming 2 | Edit Syllabus | Re-Check again | Undo change | Submit new version to Admin",
-        "syllabus-check calls: POST /api/syllabus-check/runs/3/suggestions/RP%3Aactivities%3Ar2/refine 200 :: {\"status\":\"verified\",\"usedRewrite\":false,\"text\":\"- Scripted revision for faculty review: pairs solve guided problems on the week's topic\\n- Option: self-paced exercise or video walkthrough\",\"stats\":{\"checked\":4,\"improved\":1,\"worse\":0,\"same\":3,\"unverified\":0,\"points\":-1},\"blockers\":[],\"engine\":\"re-planned\",\"verificationToken\":\"<redacted>\"} || POST /api/syllabus-check/runs/3/decisions 201 :: {\"id\":1,\"action\":\"accept\",\"draft\":{\"path\":\"plan[1].activities\",\"replacement\":\"- Scripted revision for faculty review: pairs solve guided problems on the week's topic\\n- Option: self-paced exercise or video walkthrough\"}} || POST /api/syllabus-check/runs/3/decisions 201 :: {\"id\":2,\"action\":\"undo\",\"draft\":null}",
+        "after Check & improve: AI Recommendation (1) Suggested alignment revision Step 3: Learning Plan · Learning plan (Row 2) Why this is suggested: fixes 1 Edit proposed text Checked against 4 related items: 1 improve and none get worse. It is safe to accept. Accept Check & improve Reject AI questions: 146 of 146 answered What did you change? (required) Write at least a sentence so the reviewer knows what to look at. Submit new version to Admin",
+        "recommendation card after Check & improve: Suggested alignment revision | Step 3: Learning Plan · Learning plan (Row 2) | Why this is suggested: fixes 1 | Edit proposed text |  | Checked against 4 related items: 1 improve and none get worse. It is safe to accept. |  | Accept | Check & improve | Reject || disabled: Accept=false, Check & improve=false, Reject=false",
+        "after Accept buttons: Settings | 1 | TF\nTest Faculty\nFaculty | Log out | 2026–2027 | IT 204 — Computer Programming 2 | Edit Syllabus | Re-Check again | Undo change | Submit new version to Admin",
+        "syllabus-check calls: POST /api/syllabus-check/runs/1/suggestions/RP%3Aactivities%3Ar2/refine 200 :: {\"status\":\"verified\",\"usedRewrite\":false,\"text\":\"- Scripted revision for faculty review: pairs solve guided problems on the week's topic\\n- Option: self-paced exercise or video walkthrough\",\"stats\":{\"checked\":4,\"improved\":1,\"worse\":0,\"same\":3,\"unverified\":0,\"points\":-1},\"blockers\":[],\"engine\":\"re-planned\",\"verificationToken\":\"<redacted>\"} || POST /api/syllabus-check/runs/1/decisions 201 :: {\"id\":1,\"action\":\"accept\",\"draft\":{\"path\":\"plan[1].activities\",\"replacement\":\"- Scripted revision for faculty review: pairs solve guided problems on the week's topic\\n- Option: self-paced exercise or video walkthrough\"}} || POST /api/syllabus-check/runs/1/decisions 201 :: {\"id\":2,\"action\":\"undo\",\"draft\":null}",
         "failed responses: GET /api/auth/me 401 :: {\"error\":\"Not authenticated\"}"
       ],
       "evidence": [
         "docs/vpaa-conformance/e2e/E08-recommendation-actions-1440.png"
       ],
       "failed": false,
-      "ms": 18558
+      "ms": 19720
     },
     {
       "id": "E09",
@@ -612,7 +612,7 @@
         },
         {
           "ok": true,
-          "message": "a new version (v1.1) exists in the history"
+          "message": "a new version (v2) exists in the history"
         },
         {
           "ok": true,
@@ -638,7 +638,7 @@
         "docs/vpaa-conformance/e2e/E09-resubmitted-1440.png"
       ],
       "failed": false,
-      "ms": 38623
+      "ms": 40129
     },
     {
       "id": "E10",
@@ -663,7 +663,7 @@
         },
         {
           "ok": true,
-          "message": "the Dean stage shows as cleared (Decision Comments Messages Dean Test Administrator Asst. VPAA Not yet LIC Director Not yet Note to the faculty member Return for revision Revision history Close)"
+          "message": "the Dean stage shows as cleared (Decision Comments Messages Dean Test Administrator Asst. VPAA Reviewing now LIC Director Waiting VPAA Waiting You cleared this version. It has moved on to the n)"
         },
         {
           "ok": true,
@@ -695,7 +695,7 @@
         "docs/vpaa-conformance/e2e/E10-vpaa-approval-1440.png"
       ],
       "failed": false,
-      "ms": 41868
+      "ms": 47941
     },
     {
       "id": "E11",
@@ -768,7 +768,7 @@
         "docs/vpaa-conformance/e2e/E11-faculty-repository-1440.png"
       ],
       "failed": false,
-      "ms": 6142
+      "ms": 6808
     },
     {
       "id": "E12",
@@ -889,15 +889,15 @@
         }
       ],
       "notes": [
-        "page text with the AI down: Compliance check Checked against the Undergraduate Syllabus form. Only a form that does not follow the template stops you from submitting; the score and the other findings are advice for you and the reviewer. Re-Check again — Verification incomplete The AI check is incomplete, so there is no final AI score yet. You can still submit. AI alignment: not evaluated VPAA relationships checked: 0 of 7 AI unavailable Standard hybrid-2 · checked Nov 18, 2026 Contact hours: 5 a week, about 90 for the term. The plan covers 18 of 18 weeks. 1 finding behind the score Check coverage: 68 of 81 catalogue entries verified Submit to Admin",
-        "page tail with the AI down: IT 205 — Data Structures and Algorithms (synthetic) Draft Edit Syllabus Compliance check Checked against the Undergraduate Syllabus form. Only a form that does not follow the template stops you from submitting; the score and the other findings are advice for you and the reviewer. Re-Check again — Verification incomplete The AI check is incomplete, so there is no final AI score yet. You can still submit. AI alignment: not evaluated VPAA relationships checked: 0 of 7 AI unavailable Standard hybrid-2 · checked Nov 18, 2026 Contact hours: 5 a week, about 90 for the term. The plan covers 18 of 18 weeks. 1 finding behind the score Check coverage: 68 of 81 catalogue entries verified Submit to Admin",
+        "page text with the AI down: n",
+        "page tail with the AI down: CITE Dashboard Syllabus Builder Checker Syllabus Generator Syllabi Repository Analytics Reports Settings SYLLABUS MANAGEMENT SYSTEM 2 TF Test Faculty Faculty Log out Syllabus Checker Check your syllabus against the institutional template before submitting. 2026–2027 Subject IT 205 — Data Structures and Algorithms (synthetic) Edit Syllabus Re-Check again — Verification incomplete The AI check is incomplete, so there is no final AI score yet. You can still submit. AI alignment: not evaluated VPAA relationships checked: 0 of 7 1 AI questions: 0 of 146 answered Submit to Admin",
         "failure-mode outcomes: {\"ok\":{\"http\":200,\"overall\":99,\"passed\":true,\"status\":\"scored\",\"aiStatus\":\"ok\",\"evaluated\":7,\"complete\":true,\"reason\":null},\"down\":{\"http\":200,\"overall\":null,\"passed\":false,\"status\":\"incomplete\",\"aiStatus\":\"failed\",\"evaluated\":1,\"complete\":false,\"reason\":\"missing_evidence\"},\"rate\":{\"http\":200,\"overall\":null,\"passed\":false,\"status\":\"incomplete\",\"aiStatus\":\"failed\",\"evaluated\":1,\"complete\":false,\"reason\":\"missing_evidence\"},\"invalid\":{\"http\":200,\"overall\":null,\"passed\":false,\"status\":\"incomplete\",\"aiStatus\":\"failed\",\"evaluated\":1,\"complete\":false,\"reason\":\"missing_evidence\"},\"garbage\":{\"http\":200,\"overall\":null,\"passed\":false,\"status\":\"incomplete\",\"aiStatus\":\"failed\",\"evaluated\":1,\"complete\":false,\"reason\":\"missing_evidence\"},\"auth\":{\"http\":200,\"overall\":null,\"passed\":false,\"status\":\"incomplete\",\"aiStatus\":\"failed\",\"evaluated\":1,\"complete\":false,\"reason\":\"missing_evidence\"}}"
       ],
       "evidence": [
         "docs/vpaa-conformance/e2e/E12-ai-down-1440.png"
       ],
       "failed": false,
-      "ms": 8697
+      "ms": 9606
     },
     {
       "id": "E13",
@@ -922,7 +922,7 @@
         },
         {
           "ok": true,
-          "message": "the language choice survives a full reload (saved on the account)"
+          "message": "the language choice survives a full reload (saved on the account), on the same screen"
         },
         {
           "ok": true,
@@ -946,13 +946,13 @@
         }
       ],
       "notes": [
-        "AI Checker page in Filipino: CITE PANGKALAHATANG TANAW TAGABUO NG SILABUS AI CHECKER AKING MGA SILABUS IMBAKAN ESTADISTIKA MGA ULAT MGA SETTING SISTEMA NG PAMAMAHALA NG SILABUS 2 TF Test Faculty Guro Mag-sign out Tagasuri ng Silabus gamit ang AI Sinusuri ayon sa form ng Undergraduate Syllabus. Ang hindi pagsunod sa template lamang ang pumipigil sa pagpasa; gabay para sa iyo at sa tagasuri ang marka at iba pang resulta. 2026–2027 ASIGNATURA IT 205 — Data Structures and Algorithms (synthetic) Draft Baguhin ang Silabus Pagsusuri sa pagsunod Sinusuri ayon sa form ng Undergraduate Syllabus. Ang hindi pagsunod sa template lamang ang pumipigil sa pagpasa; gabay para sa iyo at sa tagasuri ang marka at iba pang resulta. Re-Check again — Hindi pa kumpleto ang beripikasyon Hindi pa kumpleto ang pagsusuri ng AI, kaya wala pang huling marka mula rito. Maaari ka pa ring magsumite. Pagkakatugma ayon sa AI: hindi pa nasusuri Mga ugnayang VPAA na nasuri: 1 sa 7 AI check incomplete Pamantayan hybrid-2 · sinuri noong Nob 18, 2026 Oras ng klase: 5 kada linggo, humigit-kumulang 90 para sa termino. Saklaw ng plano ang 18 sa 18 linggo. 1 resulta batayang marka Saklaw ng pagsusuri: 68 sa 81 tala sa katalogo ang napatunayan Isumite sa Admin"
+        "AI Checker page in Filipino: CITE Pangkalahatang Tanaw Tagabuo ng Silabus Tagasuri Tagalikha ng Silabus Mga Silabus Imbakan Estadistika Mga Ulat Mga Setting SISTEMA NG PAMAMAHALA NG SILABUS 2 TF Test Faculty Guro Mag-sign out Tagasuri ng Silabus Suriin ang iyong silabus ayon sa template ng institusyon bago ipasa. 2026–2027 Asignatura IT 205 — Data Structures and Algorithms (synthetic) Baguhin ang Silabus Re-Check again — Hindi pa kumpleto ang beripikasyon Hindi pa kumpleto ang pagsusuri ng AI, kaya wala pang huling marka mula rito. Maaari ka pa ring magsumite. Pagkakatugma ayon sa AI: hindi pa nasusuri Mga ugnayang VPAA na nasuri: 1 sa 7 1 Mga tanong sa AI: 41 sa 146 ang nasagot Isumite sa Admin"
       ],
       "evidence": [
         "docs/vpaa-conformance/e2e/E13-filipino-checker-1440.png"
       ],
       "failed": false,
-      "ms": 13143
+      "ms": 13776
     },
     {
       "id": "E14",
@@ -969,19 +969,19 @@
         },
         {
           "ok": true,
-          "message": "phone 375px: My Syllabi renders"
+          "message": "phone 375px: Syllabi renders"
         },
         {
           "ok": true,
-          "message": "phone 375px: My Syllabi has no horizontal page overflow (scrollWidth 375 <= 375)"
+          "message": "phone 375px: Syllabi has no horizontal page overflow (scrollWidth 375 <= 375)"
         },
         {
           "ok": true,
-          "message": "phone 375px: AI Checker renders"
+          "message": "phone 375px: Checker renders"
         },
         {
           "ok": true,
-          "message": "phone 375px: AI Checker has no horizontal page overflow (scrollWidth 375 <= 375)"
+          "message": "phone 375px: Checker has no horizontal page overflow (scrollWidth 375 <= 375)"
         },
         {
           "ok": true,
@@ -1017,19 +1017,19 @@
         },
         {
           "ok": true,
-          "message": "tablet 768px: My Syllabi renders"
+          "message": "tablet 768px: Syllabi renders"
         },
         {
           "ok": true,
-          "message": "tablet 768px: My Syllabi has no horizontal page overflow (scrollWidth 768 <= 768)"
+          "message": "tablet 768px: Syllabi has no horizontal page overflow (scrollWidth 768 <= 768)"
         },
         {
           "ok": true,
-          "message": "tablet 768px: AI Checker renders"
+          "message": "tablet 768px: Checker renders"
         },
         {
           "ok": true,
-          "message": "tablet 768px: AI Checker has no horizontal page overflow (scrollWidth 768 <= 768)"
+          "message": "tablet 768px: Checker has no horizontal page overflow (scrollWidth 768 <= 768)"
         },
         {
           "ok": true,
@@ -1065,19 +1065,19 @@
         },
         {
           "ok": true,
-          "message": "laptop 1024px: My Syllabi renders"
+          "message": "laptop 1024px: Syllabi renders"
         },
         {
           "ok": true,
-          "message": "laptop 1024px: My Syllabi has no horizontal page overflow (scrollWidth 1024 <= 1024)"
+          "message": "laptop 1024px: Syllabi has no horizontal page overflow (scrollWidth 1024 <= 1024)"
         },
         {
           "ok": true,
-          "message": "laptop 1024px: AI Checker renders"
+          "message": "laptop 1024px: Checker renders"
         },
         {
           "ok": true,
-          "message": "laptop 1024px: AI Checker has no horizontal page overflow (scrollWidth 1024 <= 1024)"
+          "message": "laptop 1024px: Checker has no horizontal page overflow (scrollWidth 1024 <= 1024)"
         },
         {
           "ok": true,
@@ -1113,19 +1113,19 @@
         },
         {
           "ok": true,
-          "message": "desktop 1440px: My Syllabi renders"
+          "message": "desktop 1440px: Syllabi renders"
         },
         {
           "ok": true,
-          "message": "desktop 1440px: My Syllabi has no horizontal page overflow (scrollWidth 1440 <= 1440)"
+          "message": "desktop 1440px: Syllabi has no horizontal page overflow (scrollWidth 1440 <= 1440)"
         },
         {
           "ok": true,
-          "message": "desktop 1440px: AI Checker renders"
+          "message": "desktop 1440px: Checker renders"
         },
         {
           "ok": true,
-          "message": "desktop 1440px: AI Checker has no horizontal page overflow (scrollWidth 1440 <= 1440)"
+          "message": "desktop 1440px: Checker has no horizontal page overflow (scrollWidth 1440 <= 1440)"
         },
         {
           "ok": true,
@@ -1160,7 +1160,7 @@
         "docs/vpaa-conformance/e2e/E14-checker-1440.png"
       ],
       "failed": false,
-      "ms": 28415
+      "ms": 30119
     },
     {
       "id": "E15",
@@ -1193,7 +1193,7 @@
       ],
       "evidence": [],
       "failed": false,
-      "ms": 4606
+      "ms": 3345
     },
     {
       "id": "E16",
@@ -1218,7 +1218,7 @@
       ],
       "evidence": [],
       "failed": false,
-      "ms": 165
+      "ms": 134
     },
     {
       "id": "E17",
@@ -1231,11 +1231,11 @@
         }
       ],
       "notes": [
-        "[PASS] the API is reached over https : localhost:3663 || [PASS] GET /api/health is 200 with the database reachable : HTTP 200 || [PASS] the health response reveals nothing but status and database || [PASS] an unauthenticated request is refused (401) : HTTP 401 || [PASS] CORS answers the configured frontend origin with credentials || [PASS] a foreign origin gets no CORS permission || [PASS] the allowed origin is never a wildcard || [PASS] a state-changing request from a foreign origin is refused (403 origin_not_allowed) : HTTP 403 || [PASS] a protected API is closed without a session (401) : HTTP 401 || [PASS] no session cookie is issued to an anonymous visitor ||  || SMOKE TEST PASSED: every check passed. || This test is read-only: it used no account and sent no model request."
+        "[PASS] the API is reached over https : localhost:3657 || [PASS] GET /api/health is 200 with the database reachable : HTTP 200 || [PASS] the health response reveals nothing but status and database || [PASS] an unauthenticated request is refused (401) : HTTP 401 || [PASS] CORS answers the configured frontend origin with credentials || [PASS] a foreign origin gets no CORS permission || [PASS] the allowed origin is never a wildcard || [PASS] a state-changing request from a foreign origin is refused (403 origin_not_allowed) : HTTP 403 || [PASS] a protected API is closed without a session (401) : HTTP 401 || [PASS] no session cookie is issued to an anonymous visitor ||  || SMOKE TEST PASSED: every check passed. || This test is read-only: it used no account and sent no model request."
       ],
       "evidence": [],
       "failed": false,
-      "ms": 340
+      "ms": 333
     },
     {
       "id": "E18",
@@ -1345,7 +1345,7 @@
         "docs/vpaa-conformance/e2e/E18-faculty-locked-1440.png"
       ],
       "failed": false,
-      "ms": 16630
+      "ms": 18083
     },
     {
       "id": "E19",
@@ -1415,7 +1415,7 @@
         "docs/vpaa-conformance/e2e/E19-subject-filters-375.png"
       ],
       "failed": false,
-      "ms": 8757
+      "ms": 11115
     },
     {
       "id": "E20",
@@ -1464,7 +1464,7 @@
         },
         {
           "ok": true,
-          "message": "the page header does not change height while the add-year popover is open (53 px before, 53 px after)"
+          "message": "the page header does not change height while the add-year popover is open (72 px before, 72 px after)"
         },
         {
           "ok": true,
@@ -1532,7 +1532,7 @@
         },
         {
           "ok": true,
-          "message": "the faculty member can start a new syllabus on IT 204 in 2027–2028 (HTTP 200 {\"savedAt\":\"2026-11-17T22:36:33.494Z\",\"bytes\":731,\"clos\":[{\"id\":\"c1\",\"title\":\"Outcome 1\",\"level\":\"Introductory\",\"stateme)"
+          "message": "the faculty member can start a new syllabus on IT 204 in 2027–2028 (HTTP 200 {\"savedAt\":\"2026-11-24T16:56:12.227Z\",\"bytes\":731,\"clos\":[{\"id\":\"c1\",\"title\":\"Outcome 1\",\"level\":\"Introductory\",\"stateme)"
         },
         {
           "ok": true,
@@ -1602,7 +1602,7 @@
         "docs/vpaa-conformance/e2e/E20-faculty-previous-year-1440.png"
       ],
       "failed": false,
-      "ms": 19543
+      "ms": 21886
     },
     {
       "id": "E21",
@@ -1729,7 +1729,7 @@
         "docs/vpaa-conformance/e2e/E21-admin-past-year-view-only-1440.png"
       ],
       "failed": false,
-      "ms": 13160
+      "ms": 14098
     },
     {
       "id": "E22",
@@ -1738,7 +1738,7 @@
       "checks": [
         {
           "ok": true,
-          "message": "the program created in 2028–2029 has no EGAs and no outcomes ({\"id\":3,\"code\":\"BSIT\",\"name\":\"Bachelor of Science in Information Technology\",\"outcomeCount\":0,\"egaCount\":0,\"inheritedFrom\":null})"
+          "message": "the program created in 2028–2029 has no EGAs and no outcomes ({\"id\":3,\"code\":\"BSIT\",\"name\":\"Bachelor of Science in Information Technology\",\"outcomeCount\":0,\"egaCount\":0,\"unlinkedPoCount\":0,\"inheritedFrom\":null})"
         },
         {
           "ok": true,
@@ -1746,7 +1746,7 @@
         },
         {
           "ok": true,
-          "message": "an outcome cannot be added before an EGA is saved"
+          "message": "an outcome cannot be added before an EGA is added"
         },
         {
           "ok": true,
@@ -1824,7 +1824,7 @@
         "docs/vpaa-conformance/e2e/E22-admin-past-year-outcomes-1440.png"
       ],
       "failed": false,
-      "ms": 16538
+      "ms": 18514
     },
     {
       "id": "E23",
@@ -1837,7 +1837,7 @@
         },
         {
           "ok": true,
-          "message": "the program was created with its EGA and its Program Outcome ({\"id\":4,\"code\":\"BSEE\",\"name\":\"BS Electrical Engineering (synthetic)\",\"outcomeCount\":1,\"egaCount\":1,\"inheritedFrom\":null})"
+          "message": "the program was created with its EGA and its Program Outcome ({\"id\":4,\"code\":\"BSEE\",\"name\":\"BS Electrical Engineering (synthetic)\",\"outcomeCount\":1,\"egaCount\":1,\"unlinkedPoCount\":0,\"inheritedFrom\":null})"
         },
         {
           "ok": true,
@@ -1917,7 +1917,7 @@
         },
         {
           "ok": true,
-          "message": "Save outcomes put version 2 in force and kept version 1"
+          "message": "Saving the outcomes put version 2 in force and kept version 1"
         },
         {
           "ok": true,
@@ -1971,7 +1971,7 @@
         "docs/vpaa-conformance/e2e/E23-admin-apply-to-subjects-1440.png"
       ],
       "failed": false,
-      "ms": 25328
+      "ms": 27523
     },
     {
       "id": "E24",
@@ -1988,11 +1988,11 @@
         },
         {
           "ok": true,
-          "message": "admin My Syllabi: the closed filter reads only the year (\"2028–2029\")"
+          "message": "admin Syllabi: the closed filter reads only the year (\"2028–2029\")"
         },
         {
           "ok": true,
-          "message": "admin My Syllabi: the open list tags 2028–2029 as current"
+          "message": "admin Syllabi: the open list tags 2028–2029 as current"
         },
         {
           "ok": true,
@@ -2036,11 +2036,11 @@
         },
         {
           "ok": true,
-          "message": "faculty My Syllabi: the closed filter reads only the year (\"2028–2029\")"
+          "message": "faculty Syllabi: the closed filter reads only the year (\"2028–2029\")"
         },
         {
           "ok": true,
-          "message": "faculty My Syllabi: the open list tags 2028–2029 as current"
+          "message": "faculty Syllabi: the open list tags 2028–2029 as current"
         },
         {
           "ok": true,
@@ -2073,7 +2073,7 @@
         "docs/vpaa-conformance/e2e/E24-faculty-dashboard-year-filter-1440.png"
       ],
       "failed": false,
-      "ms": 46093
+      "ms": 46514
     },
     {
       "id": "E25",
@@ -2202,7 +2202,7 @@
         }
       ],
       "notes": [
-        "compliance history after adoption: 75868 bytes"
+        "compliance history after adoption: 86261 bytes"
       ],
       "evidence": [
         "docs/vpaa-conformance/e2e/E25-faculty-review-notice-1440.png",
@@ -2210,7 +2210,7 @@
         "docs/vpaa-conformance/e2e/E25-faculty-after-adopt-1440.png"
       ],
       "failed": false,
-      "ms": 20590
+      "ms": 21802
     }
   ]
 }

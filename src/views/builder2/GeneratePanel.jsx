@@ -1,5 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import StableButton from '../../components/StableButton';
+import GeistProgress from '../../components/GeistProgress';
+import GeistStatusDot from '../../components/GeistStatusDot';
+import GeistSkeleton from '../../components/GeistSkeleton';
+import { GeminiEmblem } from '../../components/GeminiLoader';
 import { t as translateUI, tr } from '../../i18n/index.js';
 import { syllabusCheck } from '../../lib/api';
 
@@ -9,6 +13,9 @@ const hasPlanText = (d) => (d.plan || []).some((r) => filled(r.contents) || fill
 // What a section looks like when it is empty, for undoing a generation over a section the author had not started.
 const EMPTY = { clos: [], description: [], plan: [], reqs: [], grading: { rows: [], override: { on: false, term: '', final: '' } } };
 const MAX_POLL_FAILURES = 10;
+// The server's stages, in order (generate.js onProgress). The step list on screen follows them.
+const STAGES = ['clos', 'outline', 'weeks1', 'weeks2', 'admin', 'references', 'check'];
+const mmss = (ms) => { const t = Math.max(0, Math.floor(ms / 1000)); return Math.floor(t / 60) + ':' + String(t % 60).padStart(2, '0'); };
 
 // "AI Syllabus Generator": writes a first draft of the CLOs, the 18-week plan, requirements and grading for the chosen subject (server/lib/syllabuscheck/pipeline/generate.js).
 // It takes several minutes, so the server runs it as a background job: this panel starts it, shows its progress, and applies the result when it is done. The author can leave
@@ -16,7 +23,7 @@ const MAX_POLL_FAILURES = 10;
 // author reviews, edits and saves them as usual, and "Undo" puts back what was there before. It shows only when the server says the generator is on (GET /syllabus-check/status),
 // the author can edit, and a subject is chosen. beforeRun (optional) runs first: it saves the author's open edits, or, for a subject with no draft yet (syllabusId null), creates the draft
 // and answers its id (a whole number), which the panel then uses; showCost shows the run's estimated cost.
-export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, onSections, showCost = false }) {
+export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, onSections, onOpenBuilder, showCost = false }) {
   const id = typeof syllabusId === 'function' ? syllabusId() : syllabusId;
   const [available, setAvailable] = useState(false);
   const [phase, setPhase] = useState('idle'); // idle | confirm | starting | working | done | undone | error
@@ -29,6 +36,14 @@ export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, 
   const latest = useRef({});
   latest.current = { draft, onSections, id };
   const hasDraft = !!draft;
+  const [elapsed, setElapsed] = useState(0);
+  const busyNow = phase === 'starting' || phase === 'working';
+  useEffect(() => {
+    if (!busyNow) { setElapsed(0); return undefined; }
+    const began = Date.now();
+    const timer = setInterval(() => setElapsed(Date.now() - began), 1000);
+    return () => clearInterval(timer);
+  }, [busyNow]);
 
   useEffect(() => {
     let live = true;
@@ -90,6 +105,9 @@ export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, 
     return () => { live = false; clearTimeout(timer); };
   }, [phase, id]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const busy = phase === 'starting' || phase === 'working';
+  const showForm = !busy && phase !== 'done';
+
   if (!available || !editable || !draft || !draft.meta || !draft.meta.courseId) return null;
 
   const run = async () => {
@@ -108,50 +126,95 @@ export default function GeneratePanel({ draft, editable, syllabusId, beforeRun, 
     try { await onSections(previous.current); previous.current = null; setPhase('undone'); } catch (e) { fail(e.message); }
   };
 
-  const busy = phase === 'starting' || phase === 'working';
   const check = out && out.check;
+  // The score the AI Checker would give this draft (its no-AI rules and the alignment, server pipeline/generate.js expectedScore). An older run has none.
+  const expected = check && check.expected && Number.isFinite(check.expected.provisionalScore) ? check.expected : null;
+  const expectedText = !expected ? null
+    : expected.score !== null && expected.score !== undefined ? translateUI('generate.expected', { score: expected.score, band: tr(expected.band || ''), pass: expected.passMark })
+    : expected.blocking > 0 ? translateUI('generate.expectedBlocked', { score: expected.provisionalScore, count: expected.blocking, first: tr((expected.blockingMessages || [])[0] || '') })
+    : translateUI('generate.expectedPartial', { score: expected.provisionalScore });
   const cost = out && out.usage && Number.isFinite(out.usage.estimatedUsd) ? out.usage.estimatedUsd.toFixed(2) : null;
+  const stageIndex = progress && progress.stage ? STAGES.indexOf(progress.stage) : -1;
+  const total = (progress && progress.steps) || STAGES.length;
+  const percent = phase === 'starting' || !progress ? 3 : Math.min(97, Math.max(6, Math.round(((stageIndex < 0 ? progress.step || 0 : stageIndex) / total) * 100) + 4));
+  // The step list sits in the right-hand column. Before a run it only lists what the AI writes (numbered); during a run it follows the server's stage; after it, every step is done.
+  const stepState = (n) => (phase === 'done' ? 'done' : !busy ? 'idle' : stageIndex < 0 ? 'todo' : n < stageIndex ? 'done' : n === stageIndex ? 'now' : 'todo');
   return (
-    <section className="sm-card" aria-label={translateUI('generate.title')} style={{ marginBottom: 16 }}>
-      <header className="sm-card-h"><h4>{translateUI('generate.title')}</h4></header>
+    <div className="gen-layout">
+    <section className={'sm-card gen-card' + (busy ? ' is-working' : '')} aria-label={translateUI('generate.title')} aria-busy={busy || undefined}>
       <div className="sm-card-b">
-        <p className="hint">{translateUI('generate.intro')}</p>
-        {!id && <p className="hint">{translateUI('generate.willCreate')}</p>}
-        <label className="field">
-          <span>{translateUI('generate.notesLabel')}</span>
-          <textarea className="in" rows={3} maxLength={1500} value={notes} disabled={busy} aria-label={translateUI('generate.notesLabel')} onChange={(e) => setNotes(e.target.value)} />
-          <span className="hint">{translateUI('generate.notesHint')}</span>
-        </label>
+        {showForm && (
+          <>
+            <label className="field gen-notes">
+              <span>{translateUI('generate.notesLabel')}</span>
+              <textarea className="in" rows={7} maxLength={1500} value={notes} aria-label={translateUI('generate.notesLabel')} onChange={(e) => setNotes(e.target.value)} />
+              <span className="hint gen-notes-hint"><span>{translateUI('generate.notesHint')}</span><span className="gen-count" aria-hidden="true">{notes.length} / 1500</span></span>
+            </label>
+          </>
+        )}
         {phase === 'confirm' && <div className="info-banner warning" role="alert">{translateUI('generate.replaceNote')}</div>}
         {busy && (
-          <div className="info-banner" role="status"><div>
-            <div>{translateUI('generate.working')}</div>
-            {progress && progress.stage && <div>{translateUI('generate.progress', { step: progress.step, steps: progress.steps, stage: translateUI('generate.stage.' + progress.stage) })}</div>}
-            {progress && progress.steps > 0 && <progress max={progress.steps} value={progress.step || 0} aria-label={translateUI('generate.title')} style={{ width: '100%' }} />}
-          </div></div>
+          <div className="gen-run" role="status">
+            <div className="gen-run-top">
+              <GeminiEmblem size={52} className="gen-orb" />
+              <div className="gen-run-text">
+                <strong className="geist-status-inline"><GeistStatusDot state={phase === 'starting' ? 'QUEUED' : 'BUILDING'} />{translateUI('generate.workingTitle')}</strong>
+                <span key={(progress && progress.stage) || 'prep'} className="gen-stage-line">
+                  {progress && progress.stage ? translateUI('generate.stage.' + progress.stage) : translateUI('generate.preparing')}
+                </span>
+              </div>
+              <div className="gen-run-meta">
+                <span className="gen-pct" aria-hidden="true">{percent}%</span>
+                <span className="gen-time">{translateUI('generate.elapsed', { time: mmss(elapsed) })}</span>
+              </div>
+            </div>
+            <GeistProgress value={percent} className="gen-bar" ariaLabel={translateUI('generate.title')} />
+            <div className="gen-preview" aria-hidden="true">
+              <GeistSkeleton width="42%" height={14} />
+              <GeistSkeleton width="100%" height={11} />
+              <GeistSkeleton width="72%" height={11} />
+            </div>
+            <p className="hint gen-leave">{translateUI('generate.leaveNote')}</p>
+          </div>
         )}
-        {phase === 'error' && <div className="info-banner warning" role="alert">{translateUI('generate.failed', { reason: tr(message) })}</div>}
+        {phase === 'error' && <div className="info-banner warning geist-status-inline" role="alert"><GeistStatusDot state="ERROR" /><span>{translateUI('generate.failed', { reason: tr(message) })}</span></div>}
         {phase === 'undone' && <div className="info-banner" role="status">{translateUI('generate.undone')}</div>}
         {phase === 'done' && out && (
-          <div className="info-banner" role="status"><div>
-            <div>{translateUI(away ? 'generate.resumed' : 'generate.done')}</div>
-            {check && check.status === 'clean' && <div>{translateUI('generate.clean')}</div>}
-            {check && check.status === 'needs_review' && <div>{translateUI('generate.review', { count: (check.misalignmentsAfter || 0) + (check.notApplied || []).length })}</div>}
-            {check && check.status === 'not_checked' && <div>{translateUI('generate.notChecked')}</div>}
-            {(out.warnings || []).map((w) => <div key={w}>{tr(w)}</div>)}
-            {showCost && cost && <div>{translateUI('generate.cost', { cost })}</div>}
-          </div></div>
+          <div className="gen-done" role="status">
+            <div className="gen-done-text">
+              <strong className="geist-status-inline"><GeistStatusDot state="READY" />{translateUI('generate.doneTitle')}</strong>
+              <span>{translateUI(away ? 'generate.resumed' : 'generate.done')}</span>
+              {check && check.status === 'clean' && <span>{translateUI('generate.clean')}</span>}
+              {check && check.status === 'needs_review' && <span>{translateUI('generate.review', { count: (check.misalignmentsAfter || 0) + (check.notApplied || []).length })}</span>}
+              {check && check.status === 'not_checked' && <span>{translateUI('generate.notChecked')}</span>}
+              {expectedText && <span className="gen-expected">{expectedText} {translateUI('generate.expectedNote')}</span>}
+              {(out.warnings || []).map((w) => <span key={w}>{tr(w)}</span>)}
+              {showCost && cost && <span>{translateUI('generate.cost', { cost })}</span>}
+            </div>
+          </div>
         )}
-        <div className="confirm-actions" style={{ justifyContent: 'flex-start', gap: 8, marginTop: 14 }}>
-          {phase === 'confirm'
-            ? <>
-              <StableButton type="button" className="btn primary" onClick={run}>{translateUI('generate.replace')}</StableButton>
-              <StableButton type="button" className="btn outline" onClick={() => setPhase('idle')}>{translateUI('ui.cancel_77dfd2')}</StableButton>
-            </>
-            : <StableButton type="button" className="btn primary" disabled={busy} onClick={start}>{translateUI('generate.button')}</StableButton>}
+        <div className="confirm-actions gen-actions">
+          {phase === 'confirm' && <>
+            <StableButton type="button" className="btn primary" onClick={run}>{translateUI('generate.replace')}</StableButton>
+            <StableButton type="button" className="btn outline" onClick={() => setPhase('idle')}>{translateUI('ui.cancel_77dfd2')}</StableButton>
+          </>}
+          {showForm && phase !== 'confirm' && <StableButton type="button" className="btn primary" onClick={start}>{translateUI('generate.button')}</StableButton>}
+          {showForm && phase !== 'confirm' && <span className="hint gen-takes">{translateUI('generate.takes')}</span>}
+          {phase === 'done' && onOpenBuilder && <StableButton type="button" className="btn primary" onClick={onOpenBuilder}>{translateUI('generate.openBuilder')}</StableButton>}
           {phase === 'done' && previous.current && <StableButton type="button" className="btn outline" onClick={undo}>{translateUI('generate.undo')}</StableButton>}
+          {phase === 'done' && <StableButton type="button" className="btn ghost" onClick={() => { setPhase('idle'); setOut(null); }}>{translateUI('generate.again')}</StableButton>}
         </div>
       </div>
     </section>
+    <aside className="card gen-rail" aria-label={translateUI(busy || phase === 'done' ? 'generate.stepsLabel' : 'generate.writesLabel')}>
+      <h3>{translateUI(busy || phase === 'done' ? 'generate.stepsLabel' : 'generate.writesLabel')}</h3>
+      <ol className="gen-steps">
+        {STAGES.map((k, n) => {
+          const state = stepState(n);
+          return <li key={k} className={'gen-step ' + state} aria-current={state === 'now' ? 'step' : undefined}><span className="gen-dot" aria-hidden="true">{state === 'done' ? '✓' : state === 'idle' ? n + 1 : ''}</span>{translateUI('generate.stage.' + k)}</li>;
+        })}
+      </ol>
+    </aside>
+    </div>
   );
 }

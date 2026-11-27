@@ -1,15 +1,15 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
 const {contextFor}=require('./pdfImportIdentity');
-test('preview context reads only the selected program approved curricula, with no record writes',async()=>{
+
+const row={course_id:25,code:'IT-202',title:'System Integration',program_id:9,program_code:'BSIT-CYBERSECURITY',semester:'1st Semester',year_level:2,prerequisite:null,curriculum_year:'2031-2032',lecture_units:null,lab_units:null};
+test('preview context is the administrator\'s own subject, with no curriculum on file and no record writes',async()=>{
   const queries=[];
-  const db={query:async(sql,params)=>{queries.push({sql,params});return sql.includes('JOIN programs')?[[{course_id:25,code:'IT-202',title:'SYSTEM INTEGRATION AND ARCHITECTURE 1',program_code:'BSIT-CYBERSECURITY'}]]:[[{reference_id:4,program_code:'BSIT-CYBERSECURITY',curriculum_year:'2025-2026',courses_json:JSON.stringify([{code:'IT-202',title:'SYSTEM INTEGRATION AND ARCHITECTURE 1'}])}]];}};
-  const result=await contextFor(db,25);
-  assert.equal(result.selected.program,'BSIT-CYBERSECURITY');assert.equal(result.curricula[0].curriculumYear,'2025-2026');
-  assert.deepEqual(queries[1].params,['BSIT-CYBERSECURITY']);assert.ok(queries.every(q=>q.sql.startsWith('SELECT')));
+  const result=await contextFor({query:async(sql,p)=>{queries.push(sql);if(!/FROM courses c JOIN programs p/.test(sql))throw new Error('unexpected query: '+sql);return [p[0]===25||p[0]===9?[row]:[]];}},25);
+  assert.deepEqual(result.selected,{id:25,program:'BSIT-CYBERSECURITY',code:'IT-202',title:'System Integration'});
+  assert.deepEqual(result.curricula,[{id:'subject:25',origin:'admin',program:'BSIT-CYBERSECURITY',curriculumYear:'2031-2032',status:'approved',courses:[{code:'IT-202',title:'System Integration'}]}]);
+  assert.ok(queries.every(q=>/^SELECT/.test(q)));
 });
-test('missing subject or unavailable reference table provides no unverifiable Apply identity',async()=>{
+test('a missing subject provides no unverifiable Apply identity',async()=>{
   assert.deepEqual(await contextFor({query:async()=>[[]]},25),{selected:null,curricula:[]});
-  const result=await contextFor({query:async sql=>{if(sql.includes('JOIN programs'))return [[{course_id:25,code:'MA 7',title:'Calculus',program_code:'BSIE'}]];throw Object.assign(Error(),{code:'ER_NO_SUCH_TABLE'});}},25);
-  assert.deepEqual(result.curricula,[]);
 });

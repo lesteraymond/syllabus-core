@@ -69,9 +69,6 @@ function makeDb({ assigned = {}, syllabi = {}, beforeDelete, complianceInstalled
     if (masterData && sql.startsWith('SELECT ega_no, name, short_name FROM program_egas WHERE program_id = ?')) {
       return [masterData.program.egas.map(e => ({ ega_no: e.no, name: e.name, short_name: e.short }))];
     }
-    if (masterData && sql.startsWith("SELECT reference_id, program_code, curriculum_year, source, courses_json FROM syllabus_check_curricula WHERE status = 'approved' ORDER BY reference_id")) {
-      return [masterData.curricula];
-    }
     if (sql.startsWith('SELECT syllabus_id, user_id, status FROM syllabi WHERE') && !sql.includes('WHERE course_id')) return [syllabi[params[0]] ? [{ ...syllabi[params[0]] }] : []];
     if (sql.startsWith('SELECT course_code, title FROM syllabi WHERE syllabus_id')) return [syllabi[params[0]] ? [{ course_code: syllabi[params[0]].course_code || '', title: syllabi[params[0]].title || '' }] : []]; // lib/accountActivity.js subjectOf
     if (sql.startsWith('DELETE FROM syllabi WHERE syllabus_id')) {
@@ -95,6 +92,8 @@ function makeDb({ assigned = {}, syllabi = {}, beforeDelete, complianceInstalled
       const uid = params[params.length - 1];
       return [COURSES.filter((c) => !filtered || mine(uid).courses.includes(c.course_id)).map((c) => ({ ...c, clo_count: 0 }))];
     }
+    // the checker's own-subject lookup (lib/subjectReference.js): the first row of the fixture's curriculum, as the administrator's subject
+    if (masterData && sql.startsWith('SELECT c.course_id, c.code, c.title, c.program_id, p.code AS program_code')) { const m = masterData.curricula[0], s = JSON.parse(m.courses_json)[0]; return [[{ course_id: 10, code: s.code, title: s.title, program_id: 1, program_code: m.program_code, semester: '1st Semester', year_level: s.yearLevel, prerequisite: s.prereq, curriculum_year: m.curriculum_year, lecture_units: s.lecture, lab_units: s.lab }]]; }
     // what an admin's list needs to say what is still missing for each subject
     if (sql.startsWith('SELECT vision')) return [[{ vision: 'V', mission_lead: 'Lead', mission_items: JSON.stringify(['m1']), version: 1 }]];
     if (sql.startsWith('SELECT ega_no, name, short_name FROM institution_egas')) return [[{ ega_no: 1, name: 'E', short_name: 'E' }]];
@@ -105,14 +104,13 @@ function makeDb({ assigned = {}, syllabi = {}, beforeDelete, complianceInstalled
       return [PROGRAMS.filter((p) => !filtered || mine(params[0]).programs.includes(p.program_id))];
     }
     if (sql.startsWith('SELECT program_id FROM programs WHERE code')) { const p = PROGRAMS.find((x) => x.code === params[0]); return [p ? [{ program_id: p.program_id }] : []]; }
-    if (sql.startsWith('SELECT 1 FROM courses WHERE code')) return [COURSES.filter((c) => c.code === params[0] && (!sql.includes('course_id <>') || c.course_id !== params[1]) && c.program_id === params[sql.includes('course_id <>') ? 2 : 1]).map(() => ({ 1: 1 }))];
+    if (sql.startsWith('SELECT course_id, code FROM courses WHERE program_id = ?')) return [COURSES.filter((c) => c.program_id === params[0]).map((c) => ({ course_id: c.course_id, code: c.code }))];
     if (sql.startsWith('SELECT program_id FROM program_code_aliases')) return [[]]; // these fixtures have no historical codes
     // one syllabus for each subject (lib/subjectLock.js): the subject a code names, and the syllabi already on a subject
     if (sql.startsWith('SELECT course_id FROM courses WHERE code')) return [COURSES.filter((c) => c.code.toLowerCase() === String(params[0]).toLowerCase()).map((c) => ({ course_id: c.course_id }))];
     if (sql.startsWith('SELECT syllabus_id, user_id, status FROM syllabi WHERE course_id')) return [Object.values(syllabi).filter((r) => r.course_id === params[0] && r.syllabus_id !== params[1] && r.user_id === params[2]).map((r) => ({ syllabus_id: r.syllabus_id, user_id: r.user_id, status: r.status }))];
     if (sql.startsWith('SELECT label, start_year, is_current FROM academic_years')) throw Object.assign(new Error("Table 'academic_years' doesn't exist"), { code: 'ER_NO_SUCH_TABLE' }); // these fixtures are a database before the academic year scope
     if (sql.startsWith('SELECT 1 FROM academic_years')) return [['2026–2027', '2027–2028'].includes(params[0]) ? [{ 1: 1 }] : []];
-    if (sql.startsWith("SELECT program_code, curriculum_year, courses_json FROM syllabus_check_curricula WHERE status = 'approved'")) return [[{ program_code: 'BSIT', curriculum_year: '2022-2023', courses_json: JSON.stringify([{ code: 'IT 351', title: 'Networks', prereq: 'IT 204 - Programming 2', yearLevel: 3 }]) }]];
     if (sql.startsWith('SELECT code, name FROM programs')) return [PROGRAMS.map((p) => ({ code: p.code, name: p.name }))];
     if (sql.startsWith('INSERT INTO programs')) {
       const [code, name] = params;
@@ -294,12 +292,24 @@ test('a syllabus approved while an administrator deletes it is kept, and the ref
   });
 });
 
-test('starting a draft needs at least one assigned course (faculty); admins are never blocked', () => withServer({ assigned: ASSIGNED }, async ({ call }) => {
+test('starting a draft needs at least one assigned course for both faculty and admins', () => withServer({ assigned: ASSIGNED }, async ({ call }) => {
   assert.strictEqual((await call(fay, 'POST', '/syllabi/drafts')).status, 200);
   const none = await call(gus, 'POST', '/syllabi/drafts');
   assert.strictEqual(none.status, 403);
   assert.match(none.body.error, /No program or subject is assigned/);
-  assert.strictEqual((await call(admin, 'POST', '/syllabi/drafts')).status, 200);
+  const adminNone = await call(admin, 'POST', '/syllabi/drafts');
+  assert.strictEqual(adminNone.status, 403);
+  assert.match(adminNone.body.error, /No program or subject is assigned/);
+  // Once assigned their own program and subject, an admin can start a draft and sees only their assigned items under ?assigned=1.
+  await withServer({ assigned: { ...ASSIGNED, 1: { programs: [2], courses: [20] } } }, async ({ call: call2 }) => {
+    assert.strictEqual((await call2(admin, 'POST', '/syllabi/drafts')).status, 200);
+    const allCourses = await call2(admin, 'GET', '/courses');
+    assert.ok(allCourses.body.length > 1, 'catalog management still lists every subject');
+    const ownCourses = await call2(admin, 'GET', '/courses?assigned=1');
+    assert.deepStrictEqual(ownCourses.body.map((c) => c.id), [20]);
+    const ownPrograms = await call2(admin, 'GET', '/programs?assigned=1');
+    assert.deepStrictEqual(ownPrograms.body.map((p) => p.id), [2]);
+  });
 }));
 
 test('a program with no subject yet: the draft is refused and the message says a program is assigned', () => withServer({ assigned: { 5: { programs: [1], courses: [] } } }, async ({ call }) => {
@@ -337,7 +347,7 @@ test('a submitted syllabus is locked: the owner cannot edit it until the adminis
     assert.strictEqual(get.body.editable, false, 'editable ' + id);
   }
   const back = (await call(fay, 'GET', '/syllabi/8/content')).body; // returned for revision: told what the next version will be
-  assert.strictEqual(back.nextVersion, 'v1.1');
+  assert.strictEqual(back.nextVersion, 'v2'); // after the old 'v1.0' (version 1)
   assert.strictEqual(back.reviewerNote, '');
   assert.ok(!('nextVersion' in (await call(fay, 'GET', '/syllabi/6/content')).body));
   for (const id of [8, 9]) { // a draft, or one returned for revision, can be edited
@@ -430,8 +440,8 @@ test('the VPAA can approve a checked, cleared structured syllabus after the real
       assert.ok(db.queries.some(sql => sql.startsWith('SELECT 1 FROM ai_check_runs LIMIT 1')));
       assert.ok(db.queries.some(sql => sql.startsWith('SELECT v.syllabus_id, v.version_id, (v.content IS NOT NULL')),
         'approval required the administrator check for the current version');
-      assert.ok(db.queries.some(sql => sql.startsWith('SELECT reference_id, program_code, curriculum_year, source, courses_json FROM syllabus_check_curricula')),
-        'approval reached the real curriculum-backed hard check');
+      assert.ok(db.queries.some(sql => sql.startsWith('SELECT c.course_id, c.code, c.title, c.program_id, p.code AS program_code, c.academic_year')),
+        'approval reached the real hard check against the administrator\'s subject');
       assert.ok(db.writes.some(write => write.sql.startsWith('UPDATE syllabi SET status = ?') && write.params[0] === 'approved'));
     });
   } finally {
@@ -446,7 +456,7 @@ test('a VPAA approval is still rejected when the actual curriculum hard gate fai
   try {
     const fixture = validApprovalFixture();
     const invalid = JSON.parse(fixture.syllabus.content);
-    invalid.meta.code = 'IT 999';
+    invalid.meta.title = 'Another subject';
     fixture.syllabus.content = JSON.stringify(invalid);
     fixture.syllabusVersions[0].content = fixture.syllabus.content;
     const syllabi = { 44: fixture.syllabus };
@@ -481,7 +491,7 @@ test('an admin can add a subject to a program; faculty cannot; duplicates and un
 }));
 
 const TERM = { academicYear: '2026–2027', semester: '1st Semester', yearLevel: 3, prerequisite: 'IT 204 - Programming 2' };
-test("a subject's academic year, semester, year level and pre-requisite are validated, saved, and checked against the approved curriculum with a warning only", () => withServer({ assigned: ASSIGNED }, async ({ call, db }) => {
+test("a subject's academic year, semester, year level and pre-requisite are validated and saved", () => withServer({ assigned: ASSIGNED }, async ({ call, db }) => {
   const bad = async (patch, pattern) => { const r = await call(admin, 'POST', '/courses', { code: 'IT 3' + Math.floor(Math.random() * 1e6), title: 'T', program: 'BSIT', ...TERM, ...patch }); assert.strictEqual(r.status, 400, JSON.stringify(patch)); assert.match(r.body.error, pattern); };
   await bad({ academicYear: '2031–2032' }, /has not been added/);
   await bad({ academicYear: 'next year' }, /Choose the academic year/);
@@ -495,12 +505,12 @@ test("a subject's academic year, semester, year level and pre-requisite are vali
   assert.strictEqual(db.writes.filter((w) => /^UPDATE courses SET academic_year/.test(w.sql)).pop().params[3], null, 'no pre-requisite stored');
   await bad({ prerequisite: 'x'.repeat(256) }, /too long/);
   assert.strictEqual((await call(fay, 'POST', '/courses', { code: 'IT 399', title: 'X', program: 'BSIT', ...TERM })).status, 403);
-  // valid: the term is written, and a difference from the approved curriculum is reported but never refuses the save
+  // valid: the term is written
   const made = await call(admin, 'POST', '/courses', { code: 'IT 351', title: 'Networks', program: 'BSIT', ...TERM, prerequisite: 'None', yearLevel: 2 });
   assert.strictEqual(made.status, 200, JSON.stringify(made.body));
   const write = db.writes.filter((w) => /^UPDATE courses SET academic_year/.test(w.sql)).pop(); // the subject just added (IT 351)
   assert.deepStrictEqual(write.params.slice(0, 4), ['2026–2027', '1st Semester', 2, 'None']);
-  assert.deepStrictEqual(made.body.curriculumNote.differences.map((d) => d.field).sort(), ['prerequisite', 'yearLevel']);
+  assert.ok(!('curriculumNote' in made.body), 'nothing printed is compared');
   // editing an existing subject can set the term too; sending none leaves it alone
   const put = await call(admin, 'PUT', '/courses/10', { code: 'IT 101', title: 'Intro', ...TERM });
   assert.strictEqual(put.status, 200, JSON.stringify(put.body));

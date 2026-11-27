@@ -42,8 +42,9 @@ async function seed(cfg) {
   const course = masters.curricula[0].courses[0];
   const [c] = await db.query('INSERT INTO courses (course_id, code, title, program_id, standards_json) VALUES (?, ?, ?, ?, ?)', [content.meta.courseId, course.code, course.title, programId, JSON.stringify({ vision: masters.institution.vision, mission: masters.institution.mission, egas: masters.institution.egas, pos: masters.pos, versions: { vision: 1, egas: 1, pos: 1 } })]);
   for (const [i, clo] of content.clos.entries()) await db.query('INSERT INTO course_clos (course_id, sort_order, title, clo_level, statement, ega_nos, po_nos) VALUES (?, ?, ?, ?, ?, ?, ?)', [content.meta.courseId, i + 1, clo.title, LEVELS[i], clo.statement, clo.egas.join(','), clo.pos.join(',')]);
-  await db.query("INSERT INTO syllabus_check_curricula (program_code, curriculum_year, status, source, courses_json) VALUES (?, ?, 'approved', 'synthetic e2e test curriculum', ?)", ['BSIT', masters.curricula[0].curriculumYear, JSON.stringify([...masters.curricula[0].courses, { code: SECOND.code, title: SECOND.title, prereq: SECOND.prereq, lecture: SECOND.lecture, lab: SECOND.lab, yearLevel: SECOND.yearLevel }])]);
   await db.query('INSERT INTO courses (course_id, code, title, program_id, standards_json) SELECT ?, ?, ?, program_id, standards_json FROM courses WHERE course_id = ?', [SECOND.courseId, SECOND.code, SECOND.title, content.meta.courseId]);
+  // the administrator's units (faculty cannot type them)
+  for (const [id, u] of [[content.meta.courseId, course], [SECOND.courseId, SECOND]]) await db.query('UPDATE courses SET lecture_units = ?, lab_units = ? WHERE course_id = ?', [u.lecture, u.lab, id]);
   await db.query('INSERT INTO course_clos (course_id, sort_order, title, clo_level, statement, ega_nos, po_nos) SELECT ?, sort_order, title, clo_level, statement, ega_nos, po_nos FROM course_clos WHERE course_id = ?', [SECOND.courseId, content.meta.courseId]);
   // the catalog is per academic year: stamp the seeded program and subjects with the current year, as migrate-catalog-year does for existing rows
   // (a NULL year would follow the current year the day the administrator changes it)

@@ -18,6 +18,7 @@ const mailer = require('../lib/mailer');
 const { domain, isSchoolEmail } = require('../lib/emailDomain');
 const assignments = require('../lib/assignments');
 const accountActivity = require('../lib/accountActivity'); // name, language and photo changes in the account's Recent Activity (best effort)
+const reviewStages = require('../lib/reviewStages'); // notify a newly created reviewer about pending syllabi already on their turn (best effort)
 const router = express.Router();
 
 const { STAFF_ROLES: ROLES, isReviewer } = require('../lib/roles'); // admin = Dean / Academic Administrator; asst_vpaa, lic_director and vpaa review in the approval chain
@@ -113,6 +114,7 @@ router.post('/', requireAdmin, async (req, res) => {
     const mail = await mailer.sendCredentials({ to: email, name: firstName, password, reason: 'welcome' });
     // In the administrator's Recent Activity (lib/accountActivity.js): whom they registered, and as what. Never the password.
     await accountActivity.record(db, { userId: req.session.user.id, action: 'user_create', subject: `${firstName} ${lastName}`, notes: role });
+    await reviewStages.notifyNewReviewer(db, result.insertId, role);
     res.status(201).json({ id: result.insertId, email, role, firstName, lastName, emailSent: mail.sent, ...(mail.sent ? {} : { emailReason: mail.reason }) });
   } catch (err) {
     console.error('USERS ERROR:', err);
@@ -163,7 +165,7 @@ router.post('/:id/resend-credentials', requireAdmin, async (req, res) => {
 router.get('/me/assignments', requireAuth, async (req, res) => {
   try {
     const me = req.session.user;
-    if (isReviewer(me)) return res.json({ unrestricted: true, programIds: [], courseIds: [], programs: [], courses: [] });
+    if (isReviewer(me) && me.role !== 'admin') return res.json({ unrestricted: true, programIds: [], courseIds: [], programs: [], courses: [] });
     const db = req.app.locals.db;
     res.json({ unrestricted: false, ...(await assignments.describeAssignments(db, await assignments.loadAssignments(db, me.id))) });
   } catch (err) {

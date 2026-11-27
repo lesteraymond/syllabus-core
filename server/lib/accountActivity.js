@@ -8,7 +8,8 @@
 // Writing is best effort on purpose, like lib/activity.js: losing a line must never make the action itself fail (a sign-in, a save). Without
 // the table (before npm run migrate-account-activity) nothing is recorded and the read returns nothing; the server console says so once.
 const ACTIONS = ['login', 'logout', 'password_change', 'name_change', 'photo_change', 'language_change', 'draft_create', 'content_edit', 'syllabus_delete',
-  'login_failed', 'user_create', 'user_credentials', 'user_disable', 'user_enable', 'user_delete', 'user_assignments', 'generate'];
+  'login_failed', 'user_create', 'user_credentials', 'user_disable', 'user_enable', 'user_delete', 'user_assignments', 'generate',
+  'terms_accept']; // a student's agreement to the registration Terms and Conditions (routes/students.js): notes = '<version> at <ISO time>'
 // Autosave writes the content every few seconds: one "edited" line per syllabus per editing session, not one per save. A save within this many
 // minutes of the person's last "edited" line for the same syllabus is part of that session.
 const EDIT_SESSION_MINUTES = 30;
@@ -95,19 +96,29 @@ async function personOf(db, userId) {
 }
 
 // The account activity of one person (userId), or of everyone (userId null: the administrator's view), newest first, at most `limit` rows, in the shape
-// GET /api/logs returns. [] before the migration.
-async function listFor(db, userId, limit) {
+// GET /api/logs returns. [] before the migration. When `yearScope` has labels (Dashboard Recent Activity for a specific/current academic year),
+// only rows tied to a syllabus of that academic year are returned so a fresh academic year starts clean and switching back restores its history.
+async function listFor(db, userId, limit, { includeAuditMeta = false, yearScope = null } = {}) {
   try {
+    const where = [];
+    const params = [];
+    if (userId !== null) { where.push('a.user_id = ?'); params.push(userId); }
+    if (yearScope && yearScope.labels) {
+      where.push('s.syllabus_id IS NOT NULL AND COALESCE(s.academic_year, ?) IN (?)');
+      params.push(yearScope.current, yearScope.labels);
+    }
+    const filterSql = where.length ? 'WHERE ' + where.join(' AND ') + ' ' : '';
     const [rows] = await db.query(
       `SELECT a.activity_id, a.user_id, a.action, a.syllabus_id, a.subject, a.notes, a.created_at, u.first_name, u.last_name, s.course_code, s.title, a.*
        FROM account_activity a LEFT JOIN users u ON u.user_id = a.user_id LEFT JOIN syllabi s ON s.syllabus_id = a.syllabus_id
-       ${userId === null ? '' : 'WHERE a.user_id = ? '}ORDER BY a.created_at DESC, a.activity_id DESC LIMIT ${Number(limit)}`, userId === null ? [] : [userId]);
+       ${filterSql}ORDER BY a.created_at DESC, a.activity_id DESC LIMIT ${Number(limit)}`, params);
     return rows.map((r) => {
       // the syllabus as it is now; a deleted one (or one with no code yet) by the name recorded at the time
       const [code, ...rest] = String(r.subject || '').split(' — ');
       return {
         id: 'a' + r.activity_id, syllabusId: r.syllabus_id, userId: r.user_id, action: r.action, actionDate: r.created_at, notes: r.notes,
         user: r.first_name || r.last_name ? `${r.first_name} ${r.last_name}` : r.actor || (r.user_id === null ? 'Unknown account' : 'user #' + r.user_id), title: r.title || rest.join(' — ') || null, courseCode: r.course_code || code || null,
+        ...(includeAuditMeta ? { ipAddress: r.ip_address || null, userAgent: r.user_agent || null } : {}),
       };
     });
   } catch (error) {

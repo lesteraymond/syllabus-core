@@ -1,8 +1,11 @@
 // Reads the text OCR returned for a Certificate of Registration ("Official Registration Form") into the few fields
-// needed to verify a BSIT student. Pure: no OCR, no database. OCR is imperfect, so every field may come back null
+// needed to verify a BSIT, BSCPE or BSIE student (lib/corPrograms.js). Pure: no OCR, no database. OCR is imperfect, so every field may come back null
 // and the caller decides (verified / pending admin review / rejected).
 //
-// Fields: studentId, studentName, program, bsit ('yes' | 'maybe' | 'no'), yearLevel, section, schoolYear, term, printedAt, subjects[].
+// Fields: studentId, studentName, program, programCode ('BSIT' | 'BSCPE' | 'BSIE' | null), programOk ('yes' | 'maybe' | 'no'), yearLevel, section,
+// schoolYear, term, printedAt, subjects[].
+const { PROGRAMS, ANY_SECTION, sectionCode, programOf } = require('./corPrograms');
+const ONE_SECTION = new RegExp(ANY_SECTION.source, 'i');
 
 // Characters OCR commonly confuses inside numbers.
 const DIGITS = { O: '0', o: '0', Q: '0', D: '0', I: '1', l: '1', '|': '1', S: '5', s: '5', B: '8', Z: '2' };
@@ -29,22 +32,16 @@ function findName(text) {
 
 // The Course/Major text, read from every OCR pass. The college name in the page header ("COLLEGE OF INFORMATION
 // TECHNOLOGY AND ENGINEERING") is on every CITE student's COR whatever their program, so it is never evidence.
+// -> an accepted program's full name, or the partial text read after "Science in" ("SCIENCE IN INFORMATION ...": a program, but not clearly an accepted
+// one, e.g. Information Systems), or null. Information ... Technology a few OCR words apart still reads as BSIT, as before.
 function findProgram(text) {
   const flat = text.split('\n').filter((l) => !/COLLEGE\s+OF/i.test(l)).join(' ');
-  const full = flat.match(/BACHELOR\s+OF\s+SCIENCE\s+IN\s+INFORMATION\s+TECHNOLOGY/i);
-  if (full) return 'BACHELOR OF SCIENCE IN INFORMATION TECHNOLOGY';
-  const m = flat.match(/SCIENCE\s+IN\s+(INFORMAT\w*)(?:\W+(?:\w+\W+){0,6}?(TECHNOLOGY))?/i);
+  const found = PROGRAMS.find((p) => p.full.test(flat));
+  if (found) return found.name;
+  const m = flat.match(/SCIENCE\s+IN\s+(INFORMAT\w*|COMPUT\w*|INDUSTR\w*)(?:\W+(?:\w+\W+){0,6}?(TECHNOLOGY))?/i);
   if (!m) return null;
-  return m[2] ? 'BACHELOR OF SCIENCE IN INFORMATION TECHNOLOGY' : 'SCIENCE IN INFORMATION ...';
-}
-
-// 'yes': the course reads Information Technology, or a BSIT section is on the subject rows.
-// 'maybe': only "Science in Information" was readable (could be Information Systems): needs an admin to look.
-// 'no': nothing program-like was read.
-function bsitConfidence(program, text) {
-  if (program && /TECHNOLOGY/.test(program)) return 'yes';
-  if (/\bBS\s*IT\s*\d[A-Z]?\b/i.test(text)) return 'yes';
-  return program ? 'maybe' : 'no';
+  if (m[2] && /^INFORMAT/i.test(m[1])) return PROGRAMS[0].name;
+  return 'SCIENCE IN ' + m[1].toUpperCase() + ' ...';
 }
 
 function findTerm(text) {
@@ -68,16 +65,16 @@ function findPrinted(text) {
   return `${m[1]}-${p(m[2])}-${p(m[3])} ${p(m[4])}:${m[5]}:00`;
 }
 
-// A subject row starts with a code (IT-401, CAPSPRO 2, IT-ELEC3) and carries a BSIT section. Titles are best-effort.
+// A subject row starts with a code (IT-401, CAPSPRO 2, IT-ELEC3) and carries a section of an accepted program (BSIT3A, BSCPE2B, BSIE1A). Titles are best-effort.
 function findSubjects(text) {
   const out = [];
   for (const line of text.split('\n')) {
-    const sec = line.match(/\bBS\s*IT\s*\d[A-Z]?\b/i);
+    const sec = line.match(ONE_SECTION);
     if (!sec) continue;
     const code = line.match(/^\W*([A-Z]{2,8}[ -]?(?:ELEC\s?)?\d{1,3}[A-Z]?)\b/i);
     if (!code) continue;
     const title = clean(line.slice(code[0].length, sec.index).replace(/[|[\]_]/g, ' ').replace(/\bS\s*\d?:?\d{0,2}:?\d{0,2}[AP]?M?-?[\d:]*[AP]?M?\b/gi, ' '));
-    out.push({ code: clean(code[1]).toUpperCase(), title, section: clean(sec[0]).toUpperCase().replace(/\s+/g, '') });
+    out.push({ code: clean(code[1]).toUpperCase(), title, section: sectionCode(sec[0]) });
   }
   return out;
 }
@@ -85,13 +82,15 @@ function findSubjects(text) {
 function parseCor(text) {
   const t = String(text || '').replace(/\r/g, '');
   const program = findProgram(t);
-  const bsit = bsitConfidence(program, t);
-  const sections = [...t.matchAll(/\bBS\s*IT\s*\d[A-Z]?\b/gi)].map((x) => x[0].toUpperCase().replace(/\s+/g, ''));
+  const sections = [...t.matchAll(ANY_SECTION)].map((x) => sectionCode(x[0]));
+  const found = programOf(program && !program.endsWith('...') ? program : '', sections); // the printed course first, else the sections on the subject rows
+  const ok = found.ok === 'no' && program ? 'maybe' : found.ok; // a partial "SCIENCE IN ..." is a program, just not a clear one
   return {
     studentId: findStudentId(t),
     studentName: findName(t),
-    program: bsit === 'yes' ? 'BACHELOR OF SCIENCE IN INFORMATION TECHNOLOGY' : program,
-    bsit,
+    program: ok === 'yes' ? found.name : program,
+    programCode: ok === 'yes' ? found.code : null,
+    programOk: ok,
     yearLevel: findYearLevel(t),
     section: sections[0] || null,
     ...findTerm(t),

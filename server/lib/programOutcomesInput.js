@@ -21,7 +21,8 @@ function parseEgas(egas) {
   });
 }
 
-// [{ no, short, text, egas }] -> [{ no, short, text, egas: sorted unique }]. Up to 50 outcomes; a PO may map only to EGAs in `validEgaNos` (a Set of numbers).
+// [{ no, short, text, egas }] -> [{ no, short, text, egas: sorted unique }]. Up to 50 outcomes; a PO may map only to EGAs in `validEgaNos` (a Set of numbers),
+// and every PO must map to at least one (owner decision 2026-11-20: the PO-to-EGA link is required; the AI Checker's P-03 checks CLO tags against it).
 function parsePos(pos, validEgaNos, programCode = 'this program') {
   if (!Array.isArray(pos) || pos.length > 50) throw httpError(400, 'Provide a list of up to 50 program outcomes');
   const seen = new Set();
@@ -33,6 +34,7 @@ function parsePos(pos, validEgaNos, programCode = 'this program') {
     if (typeof p.text !== 'string' || !p.text.trim() || p.text.length > 2000) throw httpError(400, `PO ${no} needs its statement (max 2000 characters)`);
     const egas = Array.isArray(p.egas) ? [...new Set(p.egas.map(Number))] : [];
     if (egas.some((e) => !validEgaNos.has(e))) throw httpError(400, `PO ${no} maps to an EGA that does not exist in ${programCode}`);
+    if (!egas.length) throw httpError(400, `PO ${no} must be linked to at least one EGA of ${programCode}`);
     return { no, short: p.short.trim(), text: p.text.trim(), egas: egas.sort((a, b) => a - b) };
   });
 }

@@ -24,3 +24,4 @@
 @import "./styles.css" layer(legacy);
 @import "./theme.css" layer(legacy);
 @import "./responsive.css" layer(legacy);
+@import "./appearance.css" layer(legacy);

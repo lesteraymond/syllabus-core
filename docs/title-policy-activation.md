@@ -2,6 +2,8 @@
 
 Approved in Stage E.2 (Decision 1) for **controlled** activation. **It is not active**: the default policy is `shadow`. Activating it in production needs your explicit go-ahead.
 
+**Since 2026-11-25 (v1.98.36), spacing and hyphens never make a different title, whatever the policy** (owner decision; `titles.js` `sameTitle`): "2(INTERMEDIATE" and "2 (INTERMEDIATE" are one title. What still waits for activation is letter case and Unicode forms.
+
 ## What the policy does
 
 `SYLLABUS_CHECK_TITLE_POLICY=normalized` makes the official course-title check (CUR-FIELD `meta.title`) compare titles after:

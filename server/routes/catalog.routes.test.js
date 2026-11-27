@@ -101,6 +101,7 @@ function makeDb() {
     if (sql.startsWith('SELECT academic_year FROM programs WHERE program_id')) return [[{ academic_year: null }]];
     if (/information_schema/.test(sql)) return [sql.includes('COUNT(*)') ? [{ n: 0 }] : []]; // the version tables are not migrated here
     if (/program_outcome_sources|program_po_reference_(active|versions|remediation|audit)/.test(sql)) throw Object.assign(new Error('no table'), { code: 'ER_NO_SUCH_TABLE' }); // isolated unmigrated database
+    if (sql.startsWith('SELECT academic_year FROM syllabi')) return [[{ academic_year: null }]]; // lib/activeYearGate.js pastYearOf: no recorded year, so editable
     throw new Error('unexpected query: ' + sql);
   };
   const conn = { query: async (q, p) => handle(q, p), beginTransaction: async () => {}, commit: async () => {}, rollback: async () => {}, release: () => {} };
@@ -274,6 +275,61 @@ test('a PO that a CLO of the program is tagged with cannot be removed; text, map
   assert.strictEqual((await call(admin, 'PUT', '/programs/BSIE/outcomes', { pos: [], version: 1 })).status, 409);
 }));
 
+// The outcomes dialog's one Save: PUT /programs/:id/setup stores the EGAs and POs together.
+const setup = (egas, pos, versions = { egas: 1, pos: 1 }) => ({ egas, pos, versions });
+const outcomesOf = async (call, code) => (await call(admin, 'GET', '/programs/' + code + '/outcomes')).body;
+
+test('one save adds an EGA and links a PO to it, and only a list that changed gets a new version', () => withServer(async ({ call }) => {
+  const r = await call(admin, 'PUT', '/programs/BSIT/setup', setup([ega(1, 'Thinker'), ega(2, 'Professional'), ega(3, 'Steward')], [po(1, [1], 'Apply knowledge'), po(2, [2, 3], 'Be ethical')]));
+  assert.strictEqual(r.status, 200, JSON.stringify(r.body));
+  assert.deepStrictEqual(r.body.egas.map((e) => e.no), [1, 2, 3]);
+  assert.deepStrictEqual(r.body.pos.map((p) => p.egas), [[1], [2, 3]]);
+  assert.deepStrictEqual(r.body.versions, { egas: 2, pos: 2 });
+  const text = await call(admin, 'PUT', '/programs/BSIT/setup', setup(r.body.egas, [po(1, [1], 'Apply knowledge, reworded'), po(2, [2, 3], 'Be ethical')], r.body.versions));
+  assert.strictEqual(text.status, 200, JSON.stringify(text.body));
+  assert.deepStrictEqual(text.body.versions, { egas: 2, pos: 3 }, 'only the POs changed');
+  const name = await call(admin, 'PUT', '/programs/BSIT/setup', setup([ega(1, 'Thinker, renamed'), ega(2, 'Professional'), ega(3, 'Steward')], text.body.pos, text.body.versions));
+  assert.strictEqual(name.status, 200, JSON.stringify(name.body));
+  assert.deepStrictEqual(name.body.versions, { egas: 3, pos: 3 }, 'only the EGAs changed');
+  assert.deepStrictEqual((await outcomesOf(call, 'BSIE')).versions, { egas: 1, pos: 1 }, 'another program is never touched');
+}));
+
+test('one save can unlink an EGA from the POs and remove it, which two separate saves could not', () => withServer(async ({ call }) => {
+  // BSIE's EGA 1 is used only by its PO 1 (IE 101's CLO uses EGA 2)
+  assert.strictEqual((await call(admin, 'PUT', '/programs/BSIE/egas', { egas: [ega(2, 'Leader')], version: 1 })).status, 409, 'saving the EGAs alone is refused: PO 1 still links to EGA 1');
+  const r = await call(admin, 'PUT', '/programs/BSIE/setup', setup([ega(2, 'Leader')], [po(1, [2], 'Design systems')]));
+  assert.strictEqual(r.status, 200, JSON.stringify(r.body));
+  assert.deepStrictEqual(r.body.egas.map((e) => e.no), [2]);
+  assert.deepStrictEqual(r.body.pos[0].egas, [2]);
+}));
+
+test('nothing is written when any part of the save is refused', () => withServer(async ({ call, db }) => {
+  const before = JSON.stringify({ egas: db.s.egas, pos: db.s.pos, programs: db.s.programs });
+  const unknown = await call(admin, 'PUT', '/programs/BSIT/setup', setup([ega(1, 'Renamed'), ega(2, 'Professional')], [po(1, [1]), po(2, [2, 3])])); // no EGA 3 in the list
+  assert.strictEqual(unknown.status, 400);
+  assert.match(unknown.body.error, /PO 2 maps to an EGA that does not exist in BSIT/);
+  const unlinked = await call(admin, 'PUT', '/programs/BSIT/setup', setup([ega(1, 'Renamed'), ega(2, 'Professional')], [po(1, [1]), po(2, [])]));
+  assert.strictEqual(unlinked.status, 400);
+  assert.match(unlinked.body.error, /PO 2 must be linked to at least one EGA/);
+  const egaInUse = await call(admin, 'PUT', '/programs/BSIT/setup', setup([ega(2, 'Professional')], [po(1, [2]), po(2, [2])])); // IT 204's CLO uses EGA 1
+  assert.strictEqual(egaInUse.status, 409);
+  assert.match(egaInUse.body.error, /EGA 1 is used by IT 204/);
+  const poInUse = await call(admin, 'PUT', '/programs/BSIT/setup', setup([ega(1, 'Renamed'), ega(2, 'Professional')], [po(2, [2])])); // IT 204's CLO uses PO 1
+  assert.strictEqual(poInUse.status, 409);
+  assert.match(poInUse.body.error, /PO 1 is used by IT 204/);
+  assert.strictEqual(JSON.stringify({ egas: db.s.egas, pos: db.s.pos, programs: db.s.programs }), before, 'no EGA, PO or version changed');
+}));
+
+test('a save built on an old copy of either list is refused, even when that list itself is unchanged', () => withServer(async ({ call }) => {
+  const now = await outcomesOf(call, 'BSIT');
+  assert.strictEqual((await call(admin, 'PUT', '/programs/BSIT/setup', setup(now.egas, [po(1, [1], 'Changed'), po(2, [2], 'Be ethical')], now.versions))).status, 200); // pos v2
+  const stale = await call(admin, 'PUT', '/programs/BSIT/setup', setup([ega(1, 'Renamed'), ega(2, 'Professional')], [po(1, [1], 'Apply knowledge'), po(2, [2], 'Be ethical')], { egas: 1, pos: 1 }));
+  assert.strictEqual(stale.status, 409);
+  assert.match(stale.body.error, /changed by someone else/);
+  assert.deepStrictEqual((await outcomesOf(call, 'BSIT')).egas.map((e) => e.name), ['Thinker', 'Professional']);
+  assert.strictEqual((await call(fay, 'PUT', '/programs/BSIT/setup', setup(now.egas, now.pos))).status, 403, 'only an administrator saves');
+}));
+
 test('a PO can map only to EGAs of its own program', () => withServer(async ({ call }) => {
   const r = await call(admin, 'PUT', '/programs/BSIT/outcomes', { pos: [po(1, [1, 3]), po(2, [2])], version: 1 }); // BSIT has no EGA 3
   assert.strictEqual(r.status, 400);
@@ -373,6 +429,23 @@ test('saving an editable draft canonicalizes the program code from its assigned 
   assert.strictEqual(db.s.saved[0].meta.program, 'NEW-IT');
   assert.deepStrictEqual(db.s.saved[0].description, old.description);
   assert.deepStrictEqual(db.s.saved[0].plan, old.plan);
+}));
+
+test('faculty cannot set the units, not even while the administrator has not set them', () => withServer(async ({ call, db }) => {
+  const old = JSON.parse(db.s.syllabi[1].content);
+  const put = (who, meta) => call(who, 'PUT', '/syllabi/1/content', { sections: { meta: { ...old.meta, courseId: 10, ...meta } } });
+  // nothing on the subject, nothing in the syllabus of this subject: a typed or forged value is not kept
+  db.s.syllabi[1].content = JSON.stringify({ ...old, meta: { ...old.meta, courseId: 20 } });
+  assert.strictEqual((await put(fay, { lecture: '9', lab: '9' })).status, 200);
+  assert.deepStrictEqual([db.s.saved.at(-1).meta.lecture, db.s.saved.at(-1).meta.lab], ['', ''], 'another subject starts without units');
+  // a draft that already had units keeps them
+  db.s.syllabi[1].content = JSON.stringify({ ...old, meta: { ...old.meta, courseId: 10, lecture: '2', lab: '1' } });
+  assert.strictEqual((await put(fay, { lecture: '9', lab: '9' })).status, 200);
+  assert.deepStrictEqual([db.s.saved.at(-1).meta.lecture, db.s.saved.at(-1).meta.lab], ['2', '1'], 'the units it had stay');
+  // set by the administrator: forced
+  Object.assign(db.s.courses[0], { lecture_units: '3.0', lab_units: '0.0' });
+  assert.strictEqual((await put(fay, { lecture: '9', lab: '9' })).status, 200);
+  assert.deepStrictEqual([db.s.saved.at(-1).meta.lecture, db.s.saved.at(-1).meta.lab], ['3', '0']);
 }));
 
 test("the administrator's year level, pre-requisite and semester are forced into Step 1 on every save; a subject without them leaves Step 1 editable", () => withServer(async ({ call, db }) => {

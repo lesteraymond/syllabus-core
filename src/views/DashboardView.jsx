@@ -7,24 +7,26 @@ import { PageHead, Card, Icon, Progress, QualityMini } from '../components/ui';
 import UpcomingDeadlines from '../components/UpcomingDeadlines';
 import ProgramTrendModal from '../components/ProgramTrendModal';
 import TimeUsageCard from '../components/TimeUsageCard';
-import { describeActivity, groupByDay } from '../lib/activityView';
+import { describeActivity, groupByDay, isRecentActivity } from '../lib/activityView';
 import TypewriterText from '../components/TypewriterText';
-import { compliance as complianceApi, courses as coursesApi, outcomes as outcomesApi, logs as logsApi, users as usersApi } from '../lib/api';
+import { compliance as complianceApi, courses as coursesApi, outcomes as outcomesApi } from '../lib/api';
 import { adminStatCards } from '../lib/adminDashboardStats';
 import { canAuthor, isReviewer, roleAllows } from '../lib/roles';
-import { FACULTY_SUBMITTED, aiAverage, approval, programCoverage, scoreTone, snapshotOf } from '../lib/complianceStats';
+import { FACULTY_SUBMITTED, aiAverage, approval, programCoverage, scoreTone, snapshotOf, submittedStatCount } from '../lib/complianceStats';
 import { sentenceCase } from '../lib/sentenceCase';
 import { dayPeriod } from '../lib/phTime';
-import Select from '../components/Select';
 import CustomizeQuickActionsModal from '../components/CustomizeQuickActionsModal';
 import { navItems } from '../data/initialData';
+import { reviewQueue } from '../lib/reviewView';
 
 // Stat card icon per label (Phosphor names, see Icon in ui.jsx)
 const STAT_ICONS = {
+  'Submitted': 'notebook',
   'My Submissions': 'notebook',
   'Approved': 'approved',
   'Pending Review': 'hourglassMedium',
   'For Revision': 'revise',
+  'Compliance Score': 'shieldCheck',
   'AI Compliance Score': 'shieldCheck',
   'Programs': 'program',
   'Subjects': 'subject',
@@ -36,6 +38,7 @@ const STAT_ICONS = {
 
 const QA_SUB_KEYS = {
   builder: 'dashboard.quickActions.sub.builder',
+  generator: 'dashboard.quickActions.sub.generator',
   'my-syllabi': 'dashboard.quickActions.sub.mySyllabi',
   ai: 'dashboard.quickActions.sub.ai',
   review: 'dashboard.quickActions.sub.review',
@@ -45,6 +48,7 @@ const QA_SUB_KEYS = {
   analytics: 'dashboard.quickActions.sub.analytics',
   reports: 'dashboard.quickActions.sub.reports',
   users: 'dashboard.quickActions.sub.users',
+  'audit-log': 'dashboard.quickActions.sub.auditLog',
   settings: 'dashboard.quickActions.sub.settings',
 };
 
@@ -62,6 +66,10 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
   const key = 'dashboard.good' + period[0].toUpperCase() + period.slice(1);
   const greeting = name ? translateUI(key, { name }) : translateUI(key + 'NoName');
   const my = useMemo(() => syllabi.filter(s => s.userId === user.id), [syllabi, user]);
+  // Submitted stat card counts unique subjects this person has submitted (submitted, under_review, for_revision, approved); drafts and VPAA-rejected syllabi are excluded.
+  const mySubmitted = useMemo(() => submittedStatCount(my), [my]);
+  // The same queue Review & Approval shows (its count), so the quick action and that page always agree (E2E report 2026-11-23, BUG-019).
+  const myReviewQueue = useMemo(() => reviewQueue(syllabi, user.role, user.id).queue.length, [syllabi, user.role, user.id]);
   const isFac = user.role === 'faculty';
   // A deadline row of the user's own: with no syllabus of theirs for that subject yet (nothing to show under My Syllabi) it opens the Syllabus Builder
   // for a new one; with one already (draft, submitted...) it opens My Syllabi, where that syllabus is.
@@ -86,7 +94,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
       }));
   }, [user?.role]);
 
-  const [customKeys, setCustomKeys] = useState(() => {
+  const readStoredQuickActions = () => {
     try {
       const stored = JSON.parse(localStorage.getItem(storageKey));
       if (Array.isArray(stored) && stored.length > 0) {
@@ -95,7 +103,11 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
       }
     } catch {}
     return defaultKeys;
-  });
+  };
+  const [customKeys, setCustomKeys] = useState(readStoredQuickActions);
+  useEffect(() => {
+    setCustomKeys(readStoredQuickActions());
+  }, [storageKey, availableNav, defaultKeys]);
 
   const handleSaveQuickActions = (newKeys) => {
     setCustomKeys(newKeys);
@@ -110,7 +122,6 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
   const submitted = data.filter(s => s.status === 'submitted').length;
   const underReview = data.filter(s => s.status === 'under_review').length;
   const forRevision = data.filter(s => s.status === 'for_revision').length;
-  const total = data.length;
   // The AI checks behind the compliance numbers: the latest stored check of each syllabus (an administrator: every submitted syllabus;
   // a faculty member: their own). Read once when the dashboard opens. If it cannot be read, the approval numbers still show and the
   // AI score is a dash. The AI score and the approval share are different things and are never mixed.
@@ -140,44 +151,20 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
   const catalogCounts = { programs: catalog.programs ? catalog.programs.length : null, subjects: catalog.subjects ? catalog.subjects.length : null };
 
   const stats = isFac
-    ? [['My Submissions', String(total), 'Total uploaded', 'blue'], ['Approved', String(approved), translateUI('dashboard.stats.approvedHint', { pct: share.percent }), 'green'], ['Pending Review', String(submitted + underReview), 'Awaiting decision', 'gold'], ['For Revision', String(forRevision), 'Needs changes', 'teal'], ['AI Compliance Score', aiScore === null ? '—' : `${aiScore}%`, translateUI(aiScore === null ? 'dashboard.stats.noChecks' : 'dashboard.stats.avgHint'), 'purple']]
-    : adminStatCards({ programs: catalogCounts.programs, subjects: catalogCounts.subjects, syllabi });
+    ? [['Submitted', String(mySubmitted), 'Total submitted', 'blue'], ['Approved', String(approved), translateUI('dashboard.stats.approvedHint', { pct: share.percent }), 'green'], ['Pending Review', String(submitted + underReview), 'Awaiting decision', 'gold'], ['For Revision', String(forRevision), 'Needs changes', 'teal'], ['Compliance Score', aiScore === null ? '—' : `${aiScore}%`, translateUI(aiScore === null ? 'dashboard.stats.noChecks' : 'dashboard.stats.avgHint'), 'purple']]
+    // the dean writes syllabi too: what they submitted (drafts not counted) is a card of its own, as on the faculty dashboard
+    : adminStatCards({ programs: catalogCounts.programs, subjects: catalogCounts.subjects, syllabi, mine: canAuthor(user.role) ? mySubmitted : null });
 
-  // Recent Activity as sentences under Today / Yesterday / a date (see lib/activityView.js); times are Philippine time.
-  // Each account sees only its own activity: the server sends only that (GET /api/logs): the review (submit, check, approve, ...) and the account's own
-  // activity (sign-in and sign-out, password, name, photo, language, drafts, edits, deletions, account management). It is an audit trail kept for
-  // transparency, so it cannot be cleared or hidden: there is no "Clear Logs", and a hide remembered in this browser from before is no longer applied.
-  // The administrator alone may also read everyone's, or one person's (GET /api/logs?scope=all[&userId=]); the server refuses anyone else.
+  // Recent Activity (personal, Facebook-style): shows only the signed-in user's own workflow and profile actions; security/auth and admin oversight live in the Admin Audit Log.
   const isAdminUser = user.role === 'admin';
-  const [activityScope, setActivityScope] = useState('mine'); // 'mine' | 'all' | a user id
-  const [people, setPeople] = useState([]);
-  const [others, setOthers] = useState({ rows: [], loading: false, error: '' });
-  useEffect(() => {
-    if (!isAdminUser) return undefined;
-    let live = true;
-    usersApi.list().then((list) => { if (live) setPeople(Array.isArray(list) ? list.filter((p) => p.role !== 'student') : []); }, () => {});
-    return () => { live = false; };
-  }, [isAdminUser]);
-  useEffect(() => {
-    if (!isAdminUser || activityScope === 'mine') return undefined;
-    let live = true;
-    setOthers((x) => ({ ...x, loading: true, error: '' }));
-    logsApi.list({ scope: 'all', userId: activityScope === 'all' ? undefined : activityScope })
-      .then((rows) => { if (live) setOthers({ rows: Array.isArray(rows) ? rows : [], loading: false, error: '' }); },
-        (e) => { if (live) setOthers({ rows: [], loading: false, error: e.message || '' }); });
-    return () => { live = false; };
-  }, [isAdminUser, activityScope, logs]); // read again whenever the app refreshes the person's own list
-  const viewingOthers = isAdminUser && activityScope !== 'mine';
   const activityGroups = useMemo(() => {
-    const source = viewingOthers ? others.rows : logs.filter(l => l.userId === user.id);
+    const source = logs.filter(l => l.userId === user.id && isRecentActivity(l));
     return groupByDay(source.map((l, i) => describeActivity(l, i, user.id)));
-  }, [logs, user, viewingOthers, others.rows]);
-  const activityPicker = isAdminUser ? (
-    <Select aria-label={translateUI('accountActivity.viewLabel')} value={activityScope} onChange={(e) => setActivityScope(e.target.value || 'mine')}>
-      <option value="mine">{translateUI('accountActivity.mine')}</option>
-      <option value="all">{translateUI('accountActivity.everyone')}</option>
-      {people.filter((p) => p.id !== user.id).map((p) => <option key={p.id} value={String(p.id)}>{(p.firstName + ' ' + p.lastName).trim() || p.email}</option>)}
-    </Select>
+  }, [logs, user]);
+  const auditLogLink = isAdminUser ? (
+    <button type="button" className="link-btn" onClick={() => setPage('audit-log')}>
+      {translateUI('auditLog.openLink')}
+    </button>
   ) : null;
 
   // The administrator's side (and the other reviewers): each program's subjects with an approved syllabus, out of all its subjects; AI check or not.
@@ -197,30 +184,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
       <section className="stat-grid">{stats.map(([a, b, c, d]) => <div className="stat-card" key={a}><div className={`stat-icon ${d}`}><Icon weight="regular" name={STAT_ICONS[a]} size={20} /></div><span>{tr(a)}</span><strong>{b}</strong><small>{tr(c)}</small></div>)}</section>
       <div className="dashboard-grids-wrap">
         <section className="dashboard-grid">
-        <Card title={translateUI('accountActivity.title')} action={activityPicker}>
-          <div className="feed">
-            {viewingOthers && others.error && <div className="info-banner warning" role="alert">{translateUI('accountActivity.unreadable') + tr(others.error)}</div>}
-            {activityGroups.map((g) => (
-              <section className="feed-day" key={g.label} aria-label={tr(g.label)}>
-                <h4 className="feed-date">{tr(g.label)}</h4>
-                <ol className="feed-list">
-                  {g.items.map((it) => (
-                    <li className={'feed-item ' + it.tone} key={it.key}>
-                      <span className="feed-ico"><Icon name={it.icon} size={18} weight="regular" /></span>
-                      <div className="feed-body">
-                        <p><strong>{tr(it.who)}</strong> {tr(it.verb)}{it.subject && <> <strong>{it.subject}</strong></>}</p>
-                        {(it.detail || it.note) && <small>{[it.detail, it.note && tr(it.note)].filter(Boolean).join(' · ')}</small>}
-                      </div>
-                      <time dateTime={it.iso}>{it.time}</time>
-                    </li>
-                  ))}
-                </ol>
-              </section>
-            ))}
-            {activityGroups.length === 0 && viewingOthers && !others.error && <div className="empty">{translateUI(others.loading ? 'accountActivity.loading' : 'accountActivity.none')}</div>}
-            {activityGroups.length === 0 && !viewingOthers && <div className="empty">{isFac ? translateUI("ui.nothing_yet_what_you_upload_submit_and_update_appears_here_f8bbff") : translateUI("ui.nothing_yet_your_reviews_and_decisions_appear_here_6bd686")}</div>}
-          </div>
-        </Card>
+        {(isFac || user.role === 'admin') && <Card title={translateUI("ui.upcoming_deadlines_b56518")} hideScrollbar><UpcomingDeadlines key={yearScope?.current?.label || 'cur'} role={user.role} onOpen={isFac ? openOwnDeadline : () => setPage('courses')} onOpenOwn={openOwnDeadline} /></Card>}
         <Card title={translateUI("dashboard.usage.title")}>
           <TimeUsageCard />
         </Card>
@@ -228,8 +192,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
           title={translateUI("ui.quick_actions_c40810")}
           action={
             <StableButton
-              className="btn ghost"
-              style={{ padding: '4px 8px', fontSize: '12px' }}
+              className="btn ghost qa-customize-btn"
               onClick={() => setCustomizeOpen(true)}
             >
               <StableLabel>{translateUI("dashboard.quickActions.customize")}</StableLabel>
@@ -245,8 +208,9 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
               let subtitle = translateUI(item.subKey);
 
               if (k === 'builder') {
-                title = isFac ? translateUI("ui.check_a_syllabus_f9c218") : translateUI("ui.new_syllabus_c4c7a9");
-                subtitle = isFac ? translateUI("ui.run_the_compliance_check_in_step_7_of_the_builder_d861f3") : translateUI(item.subKey);
+                // The check is no longer in the builder (it is the AI Checker), so the builder's card is about writing for everyone (E2E report 2026-11-23, BUG-028).
+                title = translateUI("ui.new_syllabus_c4c7a9");
+                subtitle = translateUI(item.subKey);
               } else if (k === 'my-syllabi') {
                 title = translateUI("ui.my_syllabi_3da1e8");
                 subtitle = sentenceCase(translateUI("ui.syllabi_in_your_account_732cf8").trim());
@@ -255,7 +219,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
                 subtitle = translateUI("ui.read_the_stored_check_of_each_submitted_syllabus_921a70");
               } else if (k === 'review') {
                 title = translateUI("ui.review_pending_syllabi_bf50c2");
-                subtitle = <>{submitted + underReview}<StableLabel>{translateUI("ui.submissions_awaiting_review_31080a")}</StableLabel></>;
+                subtitle = <>{myReviewQueue}<StableLabel>{translateUI("ui.submissions_awaiting_review_31080a")}</StableLabel></>;
               }
 
               return (
@@ -273,7 +237,7 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
         </Card>
       </section>
       <section className="dashboard-grid lower">
-        <Card title={translateUI("ui.program_compliance_943fac")} action={isFac ? null : <button type="button" className="link-btn card-action-btn" data-testid="view-analytics" disabled={!catalog.programs || !catalog.subjects} onClick={() => setTrendOpen(true)}>{tr("View analytics")}</button>}>
+        <Card title={translateUI("ui.program_compliance_943fac")} action={user.role !== 'admin' ? null : <button type="button" className="link-btn card-action-btn" data-testid="view-analytics" disabled={!catalog.programs || !catalog.subjects} onClick={() => setTrendOpen(true)}>{tr("View analytics")}</button>}>
           {coverage && coverage.length > 0
             ? coverage.map(p => <Progress key={p.program} label={p.program} value={p.percent} note={isFac
               ? (p.total ? translateUI('dashboard.stats.programAssigned', { done: p.approved, total: p.total }) : translateUI('dashboard.stats.programNoneAssigned'))
@@ -293,7 +257,28 @@ export default function Dashboard({ setPage, user, syllabi, logs, onNewSyllabus 
           {/* checks made with AI checking off are not AI results: left out of the snapshot, and counted here */}
           {snapshot.notAiChecked > 0 && <div className="snapshot-note">{translateUI(snapshot.notAiChecked === 1 ? 'snapshot.notAiCheckedOne' : 'snapshot.notAiChecked', { count: snapshot.notAiChecked })}</div>}
         </Card>
-        {(isFac || user.role === 'admin') && <Card title={translateUI("ui.upcoming_deadlines_b56518")} hideScrollbar><UpcomingDeadlines role={user.role} onOpen={isFac ? openOwnDeadline : () => setPage('courses')} onOpenOwn={openOwnDeadline} /></Card>}
+        <Card title={translateUI('accountActivity.title')} action={auditLogLink}>
+          <div className="feed">
+            {activityGroups.map((g) => (
+              <section className="feed-day" key={g.label} aria-label={tr(g.label)}>
+                <h4 className="feed-date">{tr(g.label)}</h4>
+                <ol className="feed-list">
+                  {g.items.map((it) => (
+                    <li className={'feed-item ' + it.tone} key={it.key}>
+                      <span className="feed-ico"><Icon name={it.icon} size={18} weight="regular" /></span>
+                      <div className="feed-body">
+                        <p><strong>{tr(it.who)}</strong> {tr(it.verb)}{it.subject && <> <strong>{it.subject}</strong></>}</p>
+                        {(it.detail || it.note) && <small>{[it.detail, it.note && tr(it.note)].filter(Boolean).join(' · ')}</small>}
+                      </div>
+                      <time dateTime={it.iso}>{it.time}</time>
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            ))}
+            {activityGroups.length === 0 && <div className="empty">{isFac ? translateUI("ui.nothing_yet_what_you_upload_submit_and_update_appears_here_f8bbff") : translateUI("ui.nothing_yet_your_reviews_and_decisions_appear_here_6bd686")}</div>}
+          </div>
+        </Card>
       </section>
       </div>
       {trendOpen && <ProgramTrendModal programs={catalog.programs || []} subjects={catalog.subjects || []} year={year === 'all' ? undefined : year} onClose={() => setTrendOpen(false)} />}

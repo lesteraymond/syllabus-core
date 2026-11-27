@@ -95,6 +95,18 @@ function questionsOf(map) {
     // asked with the whole-syllabus questions: it reads several weeks, and the CLO request already carries up to ~24 questions
     add('CLO-EVIDENCE', 'syllabus', from, [mapped], weeks.flatMap(w => [`activities:${w.rowId}`, `tasks:${w.rowId}`]));
   }
+  // CHED laboratory alignment (advisory, scored: false): only asked when the subject has labUnits > 0.
+  if (map.course.labUnits > 0) {
+    const labWeeks = map.weeks.filter(w => w.kind === 'lesson' && (w.activities.text || w.tasks.text));
+    if (labWeeks.length) {
+      const labPlan = labWeeks.map(w => `${weekLabel(w)}. Activities: ${clean(w.activities.text) || '(none)'} | Tasks: ${clean(w.tasks.text) || '(none)'}`).join('\n');
+      const unitsInfo = {
+        field: 'courseTitle', key: 'courseUnits', label: 'Course credit units (CHED)',
+        text: clean(`${map.course.code} ${map.course.title}: ${map.course.lectureUnits ?? 0} lecture unit(s), ${map.course.labUnits} laboratory unit(s)${map.course.contactHoursPerWeek ? ` (${map.course.contactHoursPerWeek} contact hours/week)` : ''}`),
+      };
+      add('LAB-ALIGNMENT', 'syllabus', { field: 'activities', key: 'plan:lab', label: 'Weekly activities and assessment tasks', text: labPlan }, [unitsInfo]);
+    }
+  }
   // references
   const topics = { field: 'plan', key: 'plan', label: 'All weekly topics, in order', text: planText };
   for (const ref of map.references) add('REF-RELEVANCE', 'syllabus', { field: 'references', key: `ref:${ref.group}:${ref.id}`, label: `Reference (${ref.group})`, text: ref.text }, planText ? [course, topics] : [course]);
@@ -102,7 +114,8 @@ function questionsOf(map) {
 }
 
 // The reuse key of a question: a full SHA-256 (it is also the primary key of a stored answer in replan_answers) of everything the answer depends on.
-const keyOf = (q, course, model) => crypto.createHash('sha256').update([R.VERSION, P.PROMPT_VERSION, model || '', course, q.relationship, q.from.text, ...q.to.map(t => `${t.label}=${t.text}`)].map(s => clean(s).toLowerCase()).join('␟')).digest('hex');
+// promptVersion: P.promptVersionFor(map.course): PROMPT_VERSION for every syllabus but one written in Filipino, so their keys are unchanged.
+const keyOf = (q, course, model, promptVersion = P.PROMPT_VERSION) => crypto.createHash('sha256').update([R.VERSION, promptVersion, model || '', course, q.relationship, q.from.text, ...q.to.map(t => `${t.label}=${t.text}`)].map(s => clean(s).toLowerCase()).join('␟')).digest('hex');
 
 function chunk(list, size) { const out = []; for (let i = 0; i < list.length; i += size) out.push(list.slice(i, i + size)); return out; }
 
@@ -123,11 +136,12 @@ async function askGroup(request, ask, usage, context) {
 async function judge(map, fixed, { ask, store = new Map(), model = '', retries = 1, concurrency = DEFAULT_CONCURRENCY } = {}) {
   const questions = questionsOf(map);
   const course = clean(`${map.course.code} ${map.course.title}`);
+  const promptVersion = P.promptVersionFor(map.course);
   const usage = { questions: questions.length, reused: 0, asked: 0, requests: 0, retries: 0, providerFailures: 0 };
   const answers = new Map(), reasons = new Map(), reused = new Set();
   const pending = [];
   // Stored answers: one round trip when the store can (answerStore.js getMany), else one lookup per key. A store may be a plain Map.
-  const keys = questions.map(q => keyOf(q, course, model));
+  const keys = questions.map(q => keyOf(q, course, model, promptVersion));
   let stored;
   if (typeof store.getMany === 'function') stored = await store.getMany([...new Set(keys)]);
   else { stored = new Map(); for (const k of keys) { const v = await store.get(k); if (v) stored.set(k, v); } }
@@ -144,7 +158,7 @@ async function judge(map, fixed, { ask, store = new Map(), model = '', retries =
   for (const [group, list] of groups) for (const part of chunk(list, MAX_QUESTIONS_PER_REQUEST)) parts.push({ group, part });
   const runPart = async ({ group, part }) => {
     if (typeof ask !== 'function') { for (const q of part) reasons.set(q.id, 'no provider'); return; }
-    let request = { id: group, course: { code: map.course.code, title: map.course.title, program: map.course.program }, questions: part };
+    let request = { id: group, course: { ...map.course }, questions: part };
     for (let attempt = 0; attempt <= retries; attempt++) {
       const { answers: got, rejected } = await askGroup(request, ask, usage, context);
       for (const [id, a] of got) { answers.set(id, a); reasons.delete(id); }
@@ -164,7 +178,7 @@ async function judge(map, fixed, { ask, store = new Map(), model = '', retries =
   const results = questions.map((q, i) => {
     const a = answers.get(q.id);
     const verdict = a ? R.verdictOf(q.relationship, a.items) : R.VERDICT.INSUFFICIENT_EVIDENCE;
-    if (a && !reused.has(q.id) && verdict !== R.VERDICT.INSUFFICIENT_EVIDENCE) toStore.push({ key: keys[i], answer: a, meta: { relationship: q.relationship, model, promptVersion: P.PROMPT_VERSION, rulesVersion: R.VERSION } });
+    if (a && !reused.has(q.id) && verdict !== R.VERDICT.INSUFFICIENT_EVIDENCE) toStore.push({ key: keys[i], answer: a, meta: { relationship: q.relationship, model, promptVersion, rulesVersion: R.VERSION } });
     return {
       id: q.id, relationship: q.relationship, area: R.CHECKLISTS[q.relationship].area, scored: R.CHECKLISTS[q.relationship].scored,
       field: q.from.field, fieldKey: q.from.key, label: q.from.label, text: q.from.text, to: q.to, parents: q.parents,
@@ -177,7 +191,7 @@ async function judge(map, fixed, { ask, store = new Map(), model = '', retries =
   setStatuses(results, fixed);
   const counted = results.filter(r => r.status === 'failing' || r.status === 'waiting');
   return {
-    version: R.VERSION, promptVersion: P.PROMPT_VERSION, results, usage,
+    version: R.VERSION, promptVersion, results, usage,
     // complete: every question got a valid answer or a definite INSUFFICIENT_EVIDENCE; none was lost to the provider or a rejected reply
     complete: results.every(r => !r.reason),
     deductions: R.deductions(counted),

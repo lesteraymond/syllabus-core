@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { mapPdfFields, preparePdfImport } from './pdfImport.js';
+import { importIdentity, titleMatches } from './pdfImportReview.js';
 const require = createRequire(import.meta.url);
 const { extractPdf } = require('../../server/lib/pdfImport');
 const read = async file => JSON.parse(await fs.readFile(new URL(`../../docs/lcup-approved-offline/${file}`, import.meta.url)));
@@ -59,12 +60,16 @@ test('Cyber IT-202 cannot import BSIT IT202; approved unique punctuation variant
   Object.assign(d.meta,{program:'BSCPE',code:'CpE-304',title:'FUNDAMENTALS OF MIXED SIGNALS AND SENSORS'});
   assert.equal(apply({...fields(),code:'CpE 304',title:'Fundamentals of Mixed Signals and Sensors'},d).mismatch,false);
 });
-for(const key of ['it202','ie402','cpe304'])test(`${key}: real worker preview and Apply preserve verified CLO/PO/EGA/ILO information`,async()=>{
+for(const key of ['it202','ie402','cpe304'])test(`${key}: real worker preview and Apply preserve verified CLO/PO/EGA/ILO information`,async t=>{
   const fixture=await read(`${key}.fixture.json`),snapshot=await read('masters.json');
   const master=snapshot.programs[fixture.content.meta.program].masters;
   const course=master.curricula[0].courses.find(c=>c.code.toUpperCase().replace(/[^A-Z0-9]/g,'')===fixture.content.meta.code.toUpperCase().replace(/[^A-Z0-9]/g,''));
   const d=structuredClone(fixture.content);Object.assign(d.meta,{courseId:25,code:course.code,title:course.title});
-  const bytes=await fs.readFile(new URL(`../../${fixture.source.file}`,import.meta.url)),preview=await extractPdf(bytes);
+  // The approved source PDFs are kept local-only and may be absent from a checkout: skip, and say so, rather than fail.
+  let bytes;
+  try { bytes=await fs.readFile(new URL(`../../${fixture.source.file}`,import.meta.url)); }
+  catch(error){ if(error.code==='ENOENT'){ t.skip(`source PDF not in this checkout: ${fixture.source.file}`); return; } throw error; }
+  const preview=await extractPdf(bytes);
   const options={planRows:preview.layout.planRows,identityContext:{selected:{id:25,program:d.meta.program,code:course.code,title:course.title},curricula:master.curricula}};
   const unchanged=structuredClone(d);
   const result=apply(preview.fields,d,options),c=result.content,expected=fixture.content;
@@ -98,4 +103,31 @@ test('a subject code spelled with a space matches the curriculum spelling with a
   assert.doesNotThrow(()=>apply(f,d,{identityContext:c}));
   const other=context(d);other.curricula[0].courses=[{code:'IT-205',title:'COMPUTER PROGRAMMING 2(INTERMEDIATE PROGRAMMING)'}];
   assert.throws(()=>apply(f,d,{identityContext:other}),/selectMatchingSubject/);
+});
+test('course titles match across "&"/"and", roman/arabic numerals and an optional trailing note, but not two different notes', () => {
+  for (const [a, b] of [['Data Structures & Algorithms', 'DATA STRUCTURES AND ALGORITHMS'], ['Physics II', 'Physics 2'], ['Computer Programming 2', 'COMPUTER PROGRAMMING II (INTERMEDIATE PROGRAMMING)'], ['Physics 1 (Lecture)', 'Physics I']])
+    assert.equal(titleMatches(a, b), true, `${a} = ${b}`);
+  for (const [a, b] of [['Physics (Lecture)', 'Physics (Laboratory)'], ['Physics 2', 'Physics 3'], ['', '']])
+    assert.equal(titleMatches(a, b), false, `${a} != ${b}`);
+});
+
+test('a PDF is matched with the administrator\'s subject of any curriculum year, one with nothing on file included', () => {
+  const selected = { id: 25, program: 'BSAI', code: 'AI-201', title: 'Machine Learning 1' };
+  const context = { selected, curricula: [{ id: 'subject:25', origin: 'admin', program: 'BSAI', curriculumYear: '2031-2032', status: 'approved', courses: [{ code: 'AI-201', title: 'Machine Learning 1' }] }] };
+  const meta = { courseId: 25, program: 'BSAI', code: 'AI-201', title: 'Machine Learning 1', curriculumYear: '2022-2023' };
+  const found = importIdentity({ code: 'AI 201', title: 'Machine Learning 1' }, meta, context, true);
+  assert.equal(found.ok, true); assert.equal(found.curriculumYear, '2031-2032');
+  context.curricula[0].curriculumYear = null;
+  assert.equal(importIdentity({ code: 'AI 201', title: 'Machine Learning 1' }, meta, context, true).curriculumYear, '2022-2023', 'a subject without a curriculum year leaves the draft\'s');
+  assert.equal(importIdentity({ code: 'AI 999', title: 'Machine Learning 1' }, meta, context, true).ok, false, 'another code is still refused');
+});
+
+test('a PDF does not set the units where they are locked (faculty), and says so when they differ', () => {
+  const d = base(); Object.assign(d.meta, { lecture: '2', lab: '1' });
+  const f = { ...fields(), credits: '3 units lecture / 2 units laboratory' };
+  const open = apply(f, d).content.meta; assert.deepEqual([open.lecture, open.lab], ['3', '2'], 'an administrator\'s import reads them');
+  const locked = apply(f, d, { lockUnits: true });
+  assert.deepEqual([locked.content.meta.lecture, locked.content.meta.lab], ['2', '1']);
+  assert.ok(locked.warnings.some(w => w.key === 'pdfImport.unitsKept')); assert.ok(!locked.warnings.some(w => w.key === 'pdfImport.creditsReview'));
+  assert.ok(!apply({ ...f, credits: '2 units lecture / 1 unit laboratory' }, d, { lockUnits: true }).warnings.some(w => w.key === 'pdfImport.unitsKept'), 'nothing to say when they are the same');
 });

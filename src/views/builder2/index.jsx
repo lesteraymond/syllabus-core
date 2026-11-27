@@ -1,3 +1,4 @@
+import { GeistToastCard, inferToastType } from '../../components/GeistToast';
 import StableButton from '../../components/StableButton';
 import { useInactiveYear } from '../../components/InactiveYearNotice';
 import { tr } from "../../i18n/index.js";
@@ -20,6 +21,8 @@ import UploadPanel from './UploadPanel';
 import { useCatalog } from './useCatalog';
 import { useDraft, newId } from './useDraft';
 import { preparePdfImport } from '../../lib/pdfImport';
+import { builderHash, newImportJobId, pageOfHash } from '../../lib/builderRoute';
+import { waitForImportJob } from '../../lib/pdfImportResume';
 import { prefersReducedMotion } from './parts';
 import { warningCount } from '../../lib/complianceView';
 import { canSubmitHybrid, applySuggestion } from '../../lib/hybridCheck';
@@ -35,15 +38,16 @@ const STEP_CONFIG = STEPS.map((s) => ({
 }));
 
 // The new syllabus builder: same shell as the current one (course strip, stepper, "Step N of 7" card, auto-save status),
-// driven by the rules in src/lib/syllabusModel.js. It is used when VITE_NEW_BUILDER=true; until then the previous builder is the default.
-export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSubmitted, onOpenChecker }) {
-  const { draft, apply, set, setAndSave, save, saveNow, reload, load, syllabusId } = useDraft(editing);
+// driven by the rules in src/lib/syllabusModel.js. It is the default; VITE_NEW_BUILDER=false at build time goes back to the previous builder.
+// `restore` ({ mode, job }) comes from the URL after a page refresh (lib/builderRoute.js): reopen the PDF import and pick its scan up again.
+export default function SyllabusBuilderV2({ editing, restore = null, user, notify, setPage, onSubmitted, onOpenChecker }) {
+  const { draft, apply, set, setAndSave, save, saveNow, reload, attachExisting, load, syllabusId } = useDraft(editing);
   const importBase = useRef(null);
   const importIdentity = useRef(null);
   const inactiveYear = useInactiveYear(load.academicYear); // another academic year: no new AI check (lib/activeYearGate.js)
   // Locked syllabi retain their submitted catalog. Step 2's syllabus-owned values always take precedence in the model.
   const frozen = !!draft && !load.loading && !load.editable && !!draft.catalog;
-  const { model, programList, loading: catalogLoading, error: catalogError, refresh: refreshCatalog, resolvedProgramCode } = useCatalog(draft ? draft.meta.program : '', { snapshot: frozen ? draft.catalog : null, live: !frozen, courseId: draft?.meta.courseId, year: load.academicYear || undefined });
+  const { model, programList, loading: catalogLoading, error: catalogError, refresh: refreshCatalog, resolvedProgramCode } = useCatalog(draft ? draft.meta.program : '', { snapshot: frozen ? draft.catalog : null, live: !frozen, courseId: draft?.meta.courseId, year: load.academicYear || undefined, assigned: !frozen });
   useEffect(() => {
     if (load.editable && !frozen && resolvedProgramCode && draft?.meta.program !== resolvedProgramCode) {
       apply(current => ({ ...current, meta: { ...current.meta, program: resolvedProgramCode } }));
@@ -62,7 +66,12 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
   // preserves the draft; only explicit import confirmation replaces sections.
   const aiGate = useAiGate(); // who has the final say: 'advisory' (the person decides) or 'required' (a completed AI check too)
   const policy = useAdminPolicy(); // the administrator's "Strict format validation" switch decides whether faculty complete the steps in order
-  const [mode, setMode] = useState('form');
+  const [mode, setMode] = useState(() => (restore?.mode === 'upload' && user?.role !== 'admin' ? 'upload' : 'form'));
+  // The PDF scan of the open import (its id is in the URL), so a refresh or a return to the upload tab reads it again instead of scanning again.
+  const [importJob, setImportJob] = useState(() => (restore?.mode === 'upload' ? restore.job || null : null));
+  const draftNow = useRef(draft);
+  draftNow.current = draft;
+  const uploading = useRef(null); // { job, running }: the scan this builder uploaded itself
   // The rules the server named when it refused a submit (the form does not follow the template).
   const [submitFailed, setSubmitFailed] = useState([]);
   // What the latest compliance run says: decides whether the submit button reads "Submit anyway" (warnings remain).
@@ -92,7 +101,7 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
   useEffect(() => {
     if (!program) { setCourseList([]); return undefined; }
     let live = true;
-    coursesApi.list(program, { except: syllabusId() }, load.academicYear || undefined).then((l) => { if (live) setCourseList(l); }).catch(() => { if (live) setCourseList([]); });
+    coursesApi.list(program, { except: syllabusId(), assigned: true }, load.academicYear || undefined).then((l) => { if (live) setCourseList(l); }).catch(() => { if (live) setCourseList([]); });
     return () => { live = false; };
   }, [program, courseTick, load.academicYear]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -110,7 +119,13 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
   }, [subjectId, load.editable, courseTick]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => {
     if (!standardsLocked || !draft || !draft.outcomes) return;
-    if (withStandards(draft, subjectStandards) !== draft) apply((x) => withStandards(x, subjectStandards));
+    const synced = withStandards(draft, subjectStandards);
+    if (synced !== draft) {
+      if (importBase.current !== null && importBase.current === JSON.stringify(draft)) {
+        importBase.current = JSON.stringify(synced);
+      }
+      apply((x) => withStandards(x, subjectStandards));
+    }
   }, [standardsLocked, subjectStandards, draft]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const poReview = standardsLocked && !!draft && poReviewPending(draft, subjectStandards) ? { syllabusId: syllabusId(), flush: saveNow, onAdopted: () => { notify(translateUI('poReview.adopted')); reload(); } } : null;
@@ -127,6 +142,14 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
     clearTimeout(toastTimer.current);
     toastTimer.current = setTimeout(() => setToast(null), 10000);
   }, [save]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Keep the URL on this work (the draft, the open PDF import and its scan) so a refresh comes back to it (lib/builderRoute.js). Only while the
+  // URL is on the builder: App writes "#builder" when the builder opens (a history entry), this then only replaces it, adding no entries.
+  useEffect(() => {
+    if (pageOfHash(window.location.hash) !== 'builder') return;
+    const next = builderHash({ id: syllabusId(), mode, job: importJob });
+    if (window.location.hash !== next) window.history.replaceState(window.history.state, '', next);
+  });
 
   if (load.loading || catalogLoading) return <div className="empty">{translateUI("ui.loading_the_syllabus_builder_e89b32")}</div>;
   if (load.error || catalogError) return <div className="info-banner warning">{translateUI("ui.could_not_open_the_builder_7169ab")}{tr(load.error || catalogError)}</div>;
@@ -227,15 +250,20 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
   };
 
   // No subject chosen: the PDF names it. The server scans the PDF and returns the one assigned subject its course code matches;
-  // select that subject, save the draft, and keep the preview so the file is not scanned twice.
-  const extractAndSelectSubject = async (file) => {
-    const preview = await syllabiApi.extractPdf(file);
-    let course;
-    try { course = await coursesApi.get(preview.subject.id); } catch { throw new Error('pdfImport.failed'); }
-    const next = applyCourse(draft, course);
-    if (!(await setAndSave(next))) throw new Error('pdfImport.saveFailed');
-    if (!syllabusId()) throw new Error('pdfImport.chooseSubject');
-    // Saving a subject lets the locked standards settle into the draft, so the form is not compared with this snapshot at Apply.
+  // if the user already has an editable draft on that subject, attach to it instead of creating a duplicate (409 syllabus_exists).
+  // Otherwise select that subject, save the draft, and keep the preview so the file is not scanned twice.
+  const extractAndSelectSubject = async (file, job) => selectSubjectFrom(await syllabiApi.extractPdf(file, { job }));
+  const selectSubjectFrom = async (preview) => {
+    if (preview.existingSyllabus?.id) {
+      await attachExisting(preview.existingSyllabus.id);
+    } else {
+      let course;
+      try { course = await coursesApi.get(preview.subject.id); } catch { throw new Error('pdfImport.failed'); }
+      const next = applyCourse(draftNow.current, course);
+      if (!(await setAndSave(next))) throw new Error('pdfImport.saveFailed');
+      if (!syllabusId()) throw new Error('pdfImport.chooseSubject');
+    }
+    // Saving or attaching a subject lets the locked standards settle into the draft, so the form is not compared with this snapshot at Apply.
     importBase.current = null;
     importIdentity.current = preview.identityContext;
     return preview;
@@ -243,27 +271,62 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
 
   const importPdf = async (file) => {
     setBusy(true);
+    // Name the scan before uploading: its id goes into the URL now, so a refresh while the server reads the PDF picks the scan up again.
+    const job = newImportJobId();
+    setImportJob(job);
     try {
-      if (!draft.meta.courseId) return await extractAndSelectSubject(file);
-      // Extraction is read-only: an existing draft does not need to pass form
-      // save validation merely to preview the PDF that will replace its fields.
-      let id = syllabusId();
-      if (!id) {
-        if (!(await saveFirst())) throw new Error('pdfImport.saveFailed');
-        id = syllabusId();
-      }
-      if (!id) throw new Error('pdfImport.chooseSubject');
-      importBase.current = JSON.stringify(draft);
-      const preview = await syllabiApi.importPdf(id, file);
-      importIdentity.current = preview.identityContext;
-      return preview;
+      const running = importPdfAs(file, job);
+      uploading.current = { job, running, file: { name: file.name, size: file.size } };
+      return await running;
+    } catch (error) {
+      setImportJob((current) => (current === job ? null : current));
+      throw error;
     } finally {
       setBusy(false);
     }
   };
-  const applyPdfImport = async (fields, { planRows = null, prerequisiteChoice = null } = {}) => {
+  // After a refresh (or a return to the upload tab): wait for the scan the server kept and finish it as the upload would have,
+  // without uploading or scanning again. A scan that found its subject selects it, unless the draft has one by now.
+  const resumeImport = async (job, { signal, onStatus } = {}) => {
+    if (uploading.current?.job === job) { // this builder is still uploading it (the upload tab was reopened)
+      onStatus?.({ state: 'running', file: uploading.current.file });
+      return uploading.current.running;
+    }
+    let found;
+    try { found = await waitForImportJob(job, { get: syllabiApi.pdfImportJob, signal, onStatus }); }
+    catch (error) {
+      // The server no longer has this scan: take it out of the URL, so the next refresh opens an empty upload tab.
+      if (error.message === 'pdfImport.interrupted') setImportJob((current) => (current === job ? null : current));
+      throw error;
+    }
+    const { kind, result } = found;
+    if (signal?.aborted) throw Object.assign(new Error('aborted'), { name: 'AbortError' });
+    if (kind === 'extract' && !syllabusId() && !draftNow.current?.meta.courseId) {
+      setBusy(true);
+      try { return await selectSubjectFrom(result); } finally { setBusy(false); }
+    }
+    importIdentity.current = result.identityContext;
+    return result;
+  };
+  const resumeImportFile = (job, { name, signal } = {}) => syllabiApi.pdfImportJobFile(job, { name, signal });
+  const importPdfAs = async (file, job) => {
+    if (!draft.meta.courseId) return await extractAndSelectSubject(file, job);
+    // Extraction is read-only: an existing draft does not need to pass form
+    // save validation merely to preview the PDF that will replace its fields.
+    let id = syllabusId();
+    if (!id) {
+      if (!(await saveFirst())) throw new Error('pdfImport.saveFailed');
+      id = syllabusId();
+    }
+    if (!id) throw new Error('pdfImport.chooseSubject');
+    importBase.current = JSON.stringify(draft);
+    const preview = await syllabiApi.importPdf(id, file, { job });
+    importIdentity.current = preview.identityContext;
+    return preview;
+  };
+  const applyPdfImport = async (fields, { planRows = null, prerequisiteChoice = null, next = null } = {}) => {
     if (!load.editable || (importBase.current !== null && importBase.current !== JSON.stringify(draft))) throw new Error('pdfImport.draftChanged');
-    const mapped = preparePdfImport(fields, draft, newId, { planRows, prerequisiteChoice, identityContext: importIdentity.current });
+    const mapped = preparePdfImport(fields, draft, newId, { planRows, prerequisiteChoice, identityContext: importIdentity.current, lockUnits: termLocked });
     setBusy(true);
     try {
       setLastRun(null);
@@ -276,16 +339,22 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
       }
       importBase.current = null;
       // Apply only fills and saves the form. AI CHECK is a separate, deliberate step (the Review step) once the person has fixed the extracted text.
-      notify(translateUI('pdfImport.checked'));
-      setMode('form'); setStep(0);
+      // The template scan passed in the upload panel. "Check with AI" and "Submit directly" both land on the Review step,
+      // where the AI CHECK and Submit buttons are; the form's own step rules still apply before submitting.
+      const reviewStep = STEP_CONFIG.findIndex((s) => s.key === 'review');
+      notify(translateUI(next === 'ai' ? 'pdfImport.nextAi' : next === 'submit' ? 'pdfImport.nextSubmit' : 'pdfImport.checked'));
+      setVisited({ 0: 1, 1: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1 });
+      setImportJob(null); // applied: the scan is done with, and the upload tab opens empty again
+      setMode('form'); setStep(next && reviewStep >= 0 ? reviewStep : 0);
       return true;
     } finally { setBusy(false); }
   };
 
-  // Faculty work only on what an admin assigned to them: the server sends just those programs. With none, the
-  // builder stays closed; a syllabus whose course was un-assigned opens read-only with the reason.
-  const state = !!user && user.role === 'faculty' ? assignmentState(mine) : null; // 'none' | 'noSubject' | 'ok' | null
-  const noAccess = !!user && user.role === 'faculty' && (programList.length === 0 || state === 'none' || (state === 'noSubject' && !draft.meta.courseId));
+  // Authors (faculty and administrators) work only on programs and subjects assigned to them: the server sends just those.
+  // With none, the builder stays closed; a syllabus whose course was un-assigned opens read-only with the reason.
+  const isAuthorRole = !!user && (user.role === 'faculty' || user.role === 'admin');
+  const state = isAuthorRole ? assignmentState(mine) : null; // 'none' | 'noSubject' | 'ok' | null
+  const noAccess = isAuthorRole && (programList.length === 0 || state === 'none' || (state === 'noSubject' && !draft.meta.courseId));
   const accessMessage = state === 'noSubject' ? ASSIGNMENT_MESSAGES.noSubject : ASSIGNMENT_MESSAGES.none;
   const editable = load.editable && !noAccess;
   const existing = load.status !== 'draft';
@@ -303,18 +372,19 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
   const theirs = blocking.filter((i) => i.source === 'admin'); // set up by an administrator: faculty can only wait for it
   const prv = STEP_CONFIG[step - 1];
   const nxt = STEP_CONFIG[step + 1];
-  const saveText = save.state === 'error' ? 'Not saved. ' + (save.message || 'Check your connection') + ' ' : save.state === 'saving' || save.state === 'pending' ? 'Saving...' : 'Auto-save enabled' + (save.time ? ' · saved ' + save.time : '');
+  const hasDraft = !!syllabusId();
+  const saveText = save.state === 'error' ? 'Not saved. ' + (save.message || 'Check your connection') + ' ' : save.state === 'saving' || save.state === 'pending' ? 'Saving...' : !hasDraft ? translateUI('builder.notSavedYet') : 'Auto-save enabled' + (save.time ? ' · saved ' + save.time : '');
 
   return (
     <>
-      <PageHead title={translateUI("ui.syllabus_builder_editor_ac6179")} subtitle={translateUI("ui.fill_in_the_institutional_syllabus_form_step_by_step_every_part_i_35903f")} actions={<StableButton className="btn outline" disabled={!load.editable} onClick={saveDraft}>{translateUI("builder.saveAsDraft")}</StableButton>} />
+      <PageHead title={translateUI("ui.syllabus_builder_editor_ac6179")} subtitle={translateUI("ui.fill_in_the_institutional_syllabus_form_step_by_step_every_part_i_35903f")} actions={mode === 'form' ? <StableButton className="btn outline" disabled={!load.editable} onClick={saveDraft}>{translateUI("builder.saveAsDraft")}</StableButton> : null} />
       <div className="bld2-modes" role="tablist" aria-label={translateUI("ui.how_to_submit_0e4bbb")}>
         <button type="button" role="tab" aria-selected={mode === 'form'} className={mode === 'form' ? 'active' : ''} onClick={() => setMode('form')}>{translateUI("ui.fill_in_the_form_e4aa1f")}</button>
         {!isAdmin && <button type="button" role="tab" aria-selected={mode === 'upload'} className={mode === 'upload' ? 'active' : ''} onClick={() => setMode('upload')}>{translateUI("ui.upload_a_file_instead_eaad9b")}</button>}
       </div>
       {mode === 'upload' && (
         <div className="bld2-slide bld2-from-right">
-          <UploadPanel draft={draft} hasCourse={!!draft.meta.courseId} busy={busy} disabled={!editable} disabledReason={noAccess ? accessMessage : load.lockedReason} onExtract={importPdf} onApply={applyPdfImport} onChooseCourse={() => { setMode('form'); setStep(0); }} />
+          <UploadPanel draft={draft} hasCourse={!!draft.meta.courseId} busy={busy} disabled={!editable} disabledReason={noAccess ? accessMessage : load.lockedReason} onExtract={importPdf} resumeJob={importJob} onResume={resumeImport} onResumeFile={resumeImportFile} onApply={applyPdfImport} onChooseCourse={() => { setMode('form'); setStep(0); }} />
         </div>
       )}
       <div className={'bld2-slide bld2-from-left' + (mode === 'upload' ? ' bld2-hidden' : '')} hidden={mode === 'upload'}>
@@ -340,7 +410,9 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
         </nav>
         <section className="editor-card" aria-labelledby="bld2-title">
           {noAccess && <div className="info-banner warning">{tr(accessMessage)}</div>}
-          {!noAccess && !load.editable && load.lockedReason && <div className="info-banner warning">{tr(load.lockedReason)}{translateUI("ui.you_can_read_this_syllabus_but_not_change_it_until_an_administrat_4f4ecd")}</div>}
+          {/* A past academic year's syllabus is a record (server lib/activeYearGate.js): its own banner, not the assignment wording. */}
+          {!noAccess && !load.editable && load.lockedCode === 'past_academic_year' && <div className="info-banner warning" role="note" data-testid="past-year-notice">{tr(load.lockedReason)}</div>}
+          {!noAccess && !load.editable && load.lockedReason && load.lockedCode !== 'past_academic_year' && <div className="info-banner warning">{tr(load.lockedReason)}{translateUI("ui.you_can_read_this_syllabus_but_not_change_it_until_an_administrat_4f4ecd")}</div>}
           {revising && editable && (
             <div className="info-banner rv-revising" role="status">
               <span><b>{load.status === 'rejected' ? translateUI("builder.rejectedTitle") : translateUI("ui.returned_for_revision_d2426a")}</b>{translateUI("ui.your_next_submission_becomes_d37d36") + (load.nextVersion || tr('the next version')) + translateUI("ui.once_you_change_something_b3eaf9") + (load.version || tr('the version you submitted')) + translateUI("ui.and_every_earlier_version_stay_in_the_history_f8dfa6")}</span>
@@ -400,7 +472,17 @@ export default function SyllabusBuilderV2({ editing, user, notify, setPage, onSu
         </section>
       </div>
       </div>
-      {toast && <div className="bld2-toast" role="status"><span>{tr(toast.msg)}</span>{toast.action && <button type="button" onClick={toast.action.fn}>{tr(toast.action.label)}</button>}</div>}
+      {toast && (
+        <div className="geist-toaster">
+          <GeistToastCard
+            className="bld2-toast"
+            text={toast.msg}
+            type={toast.type || inferToastType(toast.msg)}
+            action={toast.action ? { label: toast.action.label, fn: toast.action.fn, dismiss: false } : null}
+            onDismiss={() => { clearTimeout(toastTimer.current); setToast(null); }}
+          />
+        </div>
+      )}
     </>
   );
 }

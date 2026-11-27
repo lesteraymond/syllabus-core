@@ -45,7 +45,7 @@ test('the prompt states constructive alignment and shows an apply outcome under 
   assert.match(P.JUDGE_SYSTEM, /TASK-FIT level=no/);
   assert.match(P.JUDGE_SYSTEM, /CLO-EVIDENCE:\n  activities - .*\n  tasks - /);
   assert.match(P.REWRITE_SYSTEM, /tasks: .*at the level of that ILO's own verb/);
-  assert.equal(P.PROMPT_VERSION, 'replan-prompt-6');
+  assert.equal(P.PROMPT_VERSION, 'replan-prompt-7');
   assert.equal(R.VERSION, 'replan-rules-2', 'answers judged under the old rules are never reused');
 });
 

@@ -21,8 +21,12 @@ fs.writeFileSync(path.join(__dirname, '..', DIR + '-outside.pdf'), 'outside the 
 test.after(() => { fs.rmSync(ROOT, { recursive: true, force: true }); fs.rmSync(path.join(__dirname, '..', DIR + '-outside.pdf'), { force: true }); });
 
 const dean = { id: 1, role: 'admin' }, fay = { id: 5, role: 'faculty' }, gus = { id: 6, role: 'faculty' }, vpaa = { id: 7, role: 'vpaa' }, student = { id: 8, role: 'student' };
+const asst = { id: 2, role: 'asst_vpaa' };
+const ROLES = { 1: 'admin', 2: 'asst_vpaa', 5: 'faculty', 6: 'faculty', 7: 'vpaa', 8: 'student' };
+const reviewStages = require('../lib/reviewStages');
 
-function makeDb() {
+// stages: the review stages cleared, [{ syllabus_id, version_id, stage }] (lib/reviewStages.js). Syllabus 10's newest version is 100.
+function makeDb({ stages = [] } = {}) {
   const syllabi = {
     10: { syllabus_id: 10, user_id: 5, status: 'submitted', file_path: '/uploads/1791000000000-1.pdf' },
     11: { syllabus_id: 11, user_id: 5, status: 'draft', file_path: '/uploads/syllabi/data-analytics.pdf' },
@@ -32,10 +36,20 @@ function makeDb() {
     15: { syllabus_id: 15, user_id: 5, status: 'submitted', file_path: '/uploads/notes.html' },
     16: { syllabus_id: 16, user_id: 5, status: 'submitted', file_path: '/uploads/gone.pdf' },
     17: { syllabus_id: 17, user_id: 5, status: 'submitted', file_path: '/uploads/%61vatars/u1.pdf' },
+    18: { syllabus_id: 18, user_id: 1, status: 'under_review', file_path: '/uploads/1791000000000-1.pdf' }, // the dean's own, not sent for review yet
+    19: { syllabus_id: 19, user_id: 5, status: 'approved', file_path: '/uploads/1791000000000-1.pdf' },
   };
-  const versions = [{ version_id: 100, syllabus_id: 10, file_path: '/uploads/1791000000000-2.pdf' }, { version_id: 101, syllabus_id: 11, file_path: '/uploads/syllabi/data-analytics.pdf' }];
+  const versions = [{ version_id: 100, syllabus_id: 10, file_path: '/uploads/1791000000000-2.pdf' }, { version_id: 101, syllabus_id: 11, file_path: '/uploads/syllabi/data-analytics.pdf' }, { version_id: 180, syllabus_id: 18, file_path: '/uploads/1791000000000-1.pdf' }];
   const handle = (sql, p = []) => {
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [[{ user_id: p[0] }]];
+    if (sql.startsWith('SELECT user_id, role FROM users WHERE user_id IN')) return [p[0].map((id) => ({ user_id: id, role: ROLES[id] }))];
+    if (sql.startsWith('SELECT 1 FROM syllabus_review_stages')) return [[]];
+    if (sql.startsWith('SELECT syllabus_id, MAX(version_id) AS version_id FROM syllabus_versions')) {
+      return [p[0].map((id) => versions.filter((v) => v.syllabus_id === id).slice(-1)[0]).filter(Boolean).map((v) => ({ syllabus_id: v.syllabus_id, version_id: v.version_id }))];
+    }
+    if (sql.startsWith('SELECT s.syllabus_id, s.version_id, s.stage')) {
+      return [stages.filter((r) => p[0].includes(r.syllabus_id)).map((r) => ({ ...r, reviewer_id: 1, note: null, cleared_at: '2026-03-02T00:00:00Z', first_name: 'Rev', last_name: 'Iewer' }))];
+    }
     if (sql.startsWith('SELECT syllabus_id, user_id, status, file_path FROM syllabi WHERE syllabus_id')) return [syllabi[p[0]] ? [{ ...syllabi[p[0]] }] : []];
     if (sql.startsWith('SELECT file_path FROM syllabus_versions WHERE version_id = ? AND syllabus_id = ?')) return [versions.filter((v) => v.version_id === p[0] && v.syllabus_id === p[1]).map((v) => ({ file_path: v.file_path }))];
     throw new Error('unexpected query: ' + sql);
@@ -43,10 +57,12 @@ function makeDb() {
   return { query: async (q, p) => handle(q, p) };
 }
 
-async function withServer(fn) {
+async function withServer(opts, fn) {
+  if (typeof opts === 'function') { fn = opts; opts = {}; }
+  reviewStages.resetInstalledCache();
   const app = express();
   app.use((req, res, next) => { const h = req.headers['x-test-user']; req.session = h ? { user: JSON.parse(h) } : {}; next(); });
-  app.locals.db = makeDb();
+  app.locals.db = makeDb(opts);
   app.use('/api/syllabi', require('./syllabusFiles'));
   const server = await new Promise((resolve) => { const sv = app.listen(0, () => resolve(sv)); });
   const get = async (as, route) => {
@@ -65,13 +81,40 @@ test('the owner and a reviewer read the file; another faculty member gets 404, a
   const mine = await get(fay, '/10/file');
   assert.strictEqual(mine.status, 200);
   assert.match(mine.text, /current/);
-  for (const reviewer of [dean, vpaa]) assert.strictEqual((await get(reviewer, '/10/file')).status, 200);
+  for (const reviewer of [dean, asst]) assert.strictEqual((await get(reviewer, '/10/file')).status, 200);
   assert.strictEqual((await get(gus, '/10/file')).status, 404);       // a colleague's submitted syllabus
   assert.strictEqual((await get(fay, '/11/file')).status, 200);       // the owner's own draft, in a subfolder of the upload folder
   assert.strictEqual((await get(dean, '/11/file')).status, 404);      // a draft is the author's alone
   assert.strictEqual((await get(fay, '/999/file')).status, 404);
   assert.strictEqual((await get(fay, '/abc/file')).status, 404);
   assert.strictEqual((await get(fay, '/12/file')).status, 404);       // no file on this syllabus
+}));
+
+// What the lists hide from a reviewer stays closed here too (lib/reviewStages.js assertReviewerMayOpen; pre-deploy report 2026-11-24, M4).
+test('the VPAA reads the file only once the dean, the Asst. VPAA and the LIC Director have cleared it, or once it is approved', () => withServer(async (get) => {
+  const early = await get(vpaa, '/10/file');
+  assert.strictEqual(early.status, 409);
+  assert.strictEqual(JSON.parse(early.text).code, 'STAGES_PENDING');
+  assert.strictEqual((await get(vpaa, '/10/file?version=100')).status, 409); // an older version's file too
+  assert.strictEqual((await get(vpaa, '/19/file')).status, 200);             // approved: the shared Repository
+}));
+
+test('the VPAA reads the file once all three stages are cleared on the newest version', () => withServer({
+  stages: ['dean', 'asst_vpaa', 'lic_director'].map((stage) => ({ syllabus_id: 10, version_id: 100, stage })),
+}, async (get) => {
+  assert.strictEqual((await get(vpaa, '/10/file')).status, 200);
+}));
+
+test('the dean\'s own syllabus is closed to the other reviewers until the dean sends it; the dean reads it', () => withServer(async (get) => {
+  for (const reviewer of [asst, vpaa]) assert.strictEqual((await get(reviewer, '/18/file')).status, 409, reviewer.role);
+  assert.strictEqual(JSON.parse((await get(asst, '/18/file')).text).code, 'not_sent_for_review');
+  assert.strictEqual((await get(dean, '/18/file')).status, 200);
+}));
+
+test('the dean\'s own syllabus reaches the Asst. VPAA once the dean sends it for review (the dean stage cleared)', () => withServer({
+  stages: [{ syllabus_id: 18, version_id: 180, stage: 'dean' }],
+}, async (get) => {
+  assert.strictEqual((await get(asst, '/18/file')).status, 200);
 }));
 
 test('the file is sent as a private PDF that the browser may not sniff or cache', () => withServer(async (get) => {

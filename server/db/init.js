@@ -5,11 +5,7 @@ const path = require('path');
 const bcrypt = require('bcryptjs');
 
 async function init() {
-  const conn = await mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASS,
-  });
+  const conn = await mysql.createConnection(require('../lib/dbConfig').resolveConnectionConfig(process.env, { includeDatabase: false }));
 
   console.log('Connected to MySQL.');
 

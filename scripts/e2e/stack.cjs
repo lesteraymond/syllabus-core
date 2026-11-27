@@ -23,7 +23,11 @@ const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.
 
 function makeCert(dir) {
   const key = path.join(dir, 'e2e-key.pem'), cert = path.join(dir, 'e2e-cert.pem');
-  const r = spawnSync('openssl', ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', key, '-out', cert, '-days', '2', '-subj', '/CN=localhost', '-addext', 'subjectAltName=DNS:localhost,IP:127.0.0.1'], { encoding: 'utf8' });
+  // On Windows openssl is often only in Git's usr/bin, which is not on PATH outside Git Bash: try that copy when the plain name is not found.
+  const gitOpenssl = process.platform === 'win32' ? [process.env.ProgramFiles, process.env['ProgramFiles(x86)']].filter(Boolean).map((p) => path.join(p, 'Git', 'usr', 'bin', 'openssl.exe')).find((p) => fs.existsSync(p)) : null;
+  const run = (bin) => spawnSync(bin, ['req', '-x509', '-newkey', 'rsa:2048', '-nodes', '-keyout', key, '-out', cert, '-days', '2', '-subj', '/CN=localhost', '-addext', 'subjectAltName=DNS:localhost,IP:127.0.0.1'], { encoding: 'utf8' });
+  let r = run('openssl');
+  if (r.error && r.error.code === 'ENOENT' && gitOpenssl) r = run(gitOpenssl);
   if (r.status !== 0) throw new Error('openssl could not create the throwaway local certificate: ' + (r.stderr || '').split('\n')[0]);
   return { key: fs.readFileSync(key), cert: fs.readFileSync(cert) };
 }

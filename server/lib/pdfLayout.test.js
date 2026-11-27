@@ -60,3 +60,21 @@ test('scanned grid detection recovers cell boundaries without sending images to 
 test('wrapped words stay within their cell while bullet boundaries remain visible', () => {
   assert.equal(paragraphs([item('A worked', 10, 10), item('example.', 10, 25), item('• Verify it.', 10, 40)]), 'A worked example.\n• Verify it.');
 });
+test('a week whose number is printed below a page break keeps the part above the break', () => {
+  const first = { number: 1, width: 760, height: 600, boxes: [...band(20, 55), ...band(55, 300), ...band(300, 580)], items: [
+    ...header.map((text, i) => item(text, xs[i] + 5, 25)),
+    item('2-3', 25, 80), item('ILO1: Describe hardware. [CLO 1]', 85, 80), item('Hardware', 215, 80), item('Lab', 345, 80), item('Quiz', 475, 80), item('Care', 605, 80),
+    item('ILO1: Define an algorithm,', 85, 320), item('Algorithms', 215, 320),
+  ] };
+  const second = { number: 2, width: 760, height: 600, boxes: [...band(20, 200), ...band(200, 300)], items: [
+    item('3-5', 25, 30), item('including its structure. [CLO 2]', 85, 30), item('Flowcharts', 215, 30), item('Draw', 345, 30), item('Test', 475, 30), item('Patience', 605, 30),
+    item('6', 25, 220), item('ILO2: Review. [CLO 1]', 85, 220), item('Review', 215, 220), item('Drill', 345, 220), item('Quiz', 475, 220), item('Focus', 605, 220),
+  ] };
+  const result = recoverTables([first, second]);
+  assert.deepEqual(result.planRows.map(row => row.week), ['2-3', '3-5', '6']);
+  assert.equal(result.planRows[0].ilo, 'ILO1: Describe hardware. [CLO 1]');
+  assert.equal(result.planRows[1].ilo, 'ILO1: Define an algorithm,\nincluding its structure. [CLO 2]');
+  assert.equal(result.planRows[1].contents, 'Algorithms\nFlowcharts');
+  assert.deepEqual(result.planRows[1].sourcePages, [1, 2]);
+  assert.deepEqual(result.warnings, []);
+});

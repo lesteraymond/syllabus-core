@@ -17,7 +17,7 @@ function makeDb() {
   };
   const yearOfProgram = (p) => p.academic_year || '2027–2028';
   const handle = (sql, p = []) => {
-    if (s.noCurriculumColumn && /curriculum_year/.test(sql) && !/syllabus_check_curricula/.test(sql)) throw Object.assign(new Error("Unknown column 'c.curriculum_year'"), { code: 'ER_BAD_FIELD_ERROR' }); // a database before migrate-curriculum-year
+    if (s.noCurriculumColumn && /curriculum_year/.test(sql)) throw Object.assign(new Error("Unknown column 'c.curriculum_year'"), { code: 'ER_BAD_FIELD_ERROR' }); // a database before migrate-curriculum-year
     if (/^(INSERT|UPDATE|DELETE)\b/i.test(sql)) s.writes.push({ sql, params: [...p] });
     if (sql.startsWith('SELECT user_id FROM users WHERE user_id')) return [[{ user_id: p[0] }]];
     if (sql.startsWith('SELECT label, start_year, is_current FROM academic_years')) return [YEARS];
@@ -25,7 +25,7 @@ function makeDb() {
     if (sql.startsWith('SELECT 1 FROM academic_years WHERE label')) return [YEARS.filter((y) => y.label === p[0]).map(() => ({ 1: 1 }))];
     if (sql.startsWith('SELECT p.program_id, p.code, p.name, COUNT(o.po_no)')) {
       const year = sql.includes('COALESCE(p.academic_year, ?) = ?') ? p[1] : null;
-      return [s.programs.filter((x) => !year || yearOfProgram(x) === year).map((x) => ({ program_id: x.program_id, code: x.code, name: x.name, outcome_count: 0, ega_count: x.egaCount || 0 }))];
+      return [s.programs.filter((x) => !year || yearOfProgram(x) === year).map((x) => ({ program_id: x.program_id, code: x.code, name: x.name, outcome_count: 0, ega_count: x.egaCount || 0, unlinked_count: x.unlinkedCount || 0 }))];
     }
     if (sql.startsWith('SELECT c.course_id, c.code, c.title, c.program_id, p.code AS program_code, COUNT')) {
       const year = sql.includes('COALESCE(p.academic_year, ?) = ?') ? p[sql.includes('p.code = ?') ? 2 : 1] : null;
@@ -35,11 +35,11 @@ function makeDb() {
     if (sql.startsWith('SELECT code, name FROM programs WHERE COALESCE(academic_year, ?) = ?')) return [s.programs.filter((x) => yearOfProgram(x) === p[1])];
     if (sql.startsWith('SELECT a.program_id FROM program_code_aliases')) return [[]];
     if (sql.startsWith('INSERT INTO programs (code, name, academic_year)')) { const x = { program_id: 100 + s.programs.length, code: p[0], name: p[1], academic_year: p[2] }; s.programs.push(x); return [{ insertId: x.program_id }]; }
-    if (sql.startsWith('SELECT 1 FROM courses WHERE code = ? AND program_id = ?')) return [s.courses.filter((c) => c.code === p[0] && c.program_id === p[1]).map(() => ({ 1: 1 }))];
+    if (sql.startsWith('SELECT course_id, code FROM courses WHERE program_id = ?')) return [s.courses.filter((c) => c.program_id === p[0]).map((c) => ({ course_id: c.course_id, code: c.code }))];
+    if (sql.startsWith('UPDATE courses SET lecture_units = ?')) { const c = s.courses.find((x) => x.course_id === p[2]); if (c) Object.assign(c, { lecture_units: p[0], lab_units: p[1] }); return [{}]; }
     if (sql.startsWith('INSERT INTO courses')) { const prog = s.programs.find((x) => x.program_id === p[2]); const c = { course_id: 200 + s.courses.length, code: p[0], title: p[1], program_id: p[2], program_code: prog.code, academic_year: null, standards_json: p[3] }; s.courses.push(c); return [{ insertId: c.course_id }]; }
     if (sql.startsWith('UPDATE courses SET academic_year = ?, semester')) { const c = s.courses.find((x) => x.course_id === p[4]); if (c) c.academic_year = p[0]; return [{}]; }
     if (sql.startsWith('UPDATE courses SET curriculum_year = ? WHERE course_id = ?')) { const c = s.courses.find((x) => x.course_id === p[1]); if (c) c.curriculum_year = p[0]; return [{}]; }
-    if (sql.startsWith('SELECT 1 FROM courses WHERE code = ? AND course_id <> ? AND program_id = ?')) return [s.courses.filter((c) => c.code === p[0] && c.course_id !== p[1] && c.program_id === p[2]).map(() => ({ 1: 1 }))];
     if (sql.startsWith('UPDATE courses SET code = ?, title = ? WHERE course_id = ?')) { const c = s.courses.find((x) => x.course_id === p[2]); if (c) Object.assign(c, { code: p[0], title: p[1] }); return [{}]; }
     if (sql.startsWith('UPDATE courses SET academic_year = ? WHERE')) { const c = s.courses.find((x) => x.course_id === p[1]); if (c) c.academic_year = p[0]; return [{}]; }
     if (sql.startsWith('SELECT COALESCE(p.academic_year, ?) AS year FROM courses c JOIN programs p')) { const c = s.courses.find((x) => x.course_id === p[1]); return [c ? [{ year: yearOfProgram(s.programs.find((x) => x.program_id === c.program_id)) }] : []]; }
@@ -61,7 +61,6 @@ function makeDb() {
       return [same.slice(0, 1)];
     }
     if (sql.startsWith('SELECT program_id, code, name, egas_version, pos_version FROM programs WHERE program_id')) return [s.programs.filter((x) => x.program_id === Number(p[0]))];
-    if (sql.startsWith("SELECT program_code, curriculum_year, courses_json FROM syllabus_check_curricula")) return [[]];
     throw new Error('unexpected query: ' + sql);
   };
   const conn = { query: async (q, p) => handle(q, p), beginTransaction: async () => {}, commit: async () => {}, rollback: async () => {}, release: () => {} };
@@ -96,6 +95,9 @@ test('the program list tells which programs have EGAs and outcomes, so the admin
   assert.deepStrictEqual([row.egaCount, row.outcomeCount, row.inheritedFrom], [0, 0, null], 'a program with no EGAs and no outcomes reports zeros (needs setup)');
   db.s.programs.find((p) => p.code === 'BSIT').egaCount = 3;
   assert.strictEqual((await call(admin, 'GET', '/programs?year=' + encodeURIComponent('2026–2027'))).body[0].egaCount, 3);
+  assert.strictEqual(row.unlinkedPoCount, 0);
+  db.s.programs.find((p) => p.code === 'BSIT').unlinkedCount = 9;
+  assert.strictEqual((await call(admin, 'GET', '/programs?year=' + encodeURIComponent('2026–2027'))).body[0].unlinkedPoCount, 9, 'POs not linked to an EGA are counted (the link is required, 2026-11-20)');
 }));
 
 test('a faculty member may look at the previous and the current year only', () => withServer(async ({ call }) => {
@@ -252,4 +254,31 @@ test('before migrate-curriculum-year the catalog works as before; setting a curr
   assert.deepStrictEqual(list.map((c) => [c.code, c.curriculumYear]), [['IT 106', null]], 'the list falls back and still answers');
   const refused = await call(admin, 'POST', '/courses', { code: 'IT 107', title: 'X', program: 'BSIT', curriculumYear: '2022-2023', ...TERM });
   assert.strictEqual(refused.status, 503); assert.match(refused.body.error, /migrate-curriculum-year/);
+}));
+
+// ---- units, and one code a hyphen or a space apart (2026-11-25) ----
+test('a subject has lecture and laboratory units of its own; they are validated, changed, cleared, and left alone when not sent', () => withServer(async ({ call, db }) => {
+  const made = await call(admin, 'POST', '/courses', { code: 'U 101', title: 'Units', program: 'BSIT', programName: 'BS Information Technology', lecture: '2', lab: '1', ...TERM });
+  assert.strictEqual(made.status, 200, JSON.stringify(made.body));
+  const row = () => db.s.courses.find((c) => c.code === 'U 101');
+  assert.deepStrictEqual([row().lecture_units, row().lab_units], [2, 1]);
+  assert.strictEqual((await call(admin, 'PUT', '/courses/' + row().course_id, { code: 'U 101', title: 'Units' })).status, 200);
+  assert.deepStrictEqual([row().lecture_units, row().lab_units], [2, 1], 'not sent: kept');
+  assert.strictEqual((await call(admin, 'PUT', '/courses/' + row().course_id, { code: 'U 101', title: 'Units', lecture: '3', lab: '0' })).status, 200);
+  assert.deepStrictEqual([row().lecture_units, row().lab_units], [3, 0]);
+  const bad = await call(admin, 'PUT', '/courses/' + row().course_id, { code: 'U 101', title: 'Units', lecture: '4 O', lab: '4' });
+  assert.strictEqual(bad.status, 400); assert.match(bad.body.error, /units/);
+  assert.deepStrictEqual([row().lecture_units, row().lab_units], [3, 0], 'a refused value changes nothing');
+  assert.strictEqual((await call(admin, 'PUT', '/courses/' + row().course_id, { code: 'U 101', title: 'Units', lecture: '', lab: '' })).status, 200);
+  assert.deepStrictEqual([row().lecture_units, row().lab_units], [null, null], 'sent empty: cleared');
+}));
+
+test('one program cannot have a subject code twice, a hyphen or a space apart; another program can', () => withServer(async ({ call, db }) => {
+  assert.strictEqual((await call(admin, 'POST', '/courses', { code: 'H 301', title: 'One', program: 'BSIT', programName: 'BS Information Technology' })).status, 200);
+  for (const code of ['H-301', 'h 301', 'H 301-']) {
+    const twin = await call(admin, 'POST', '/courses', { code, title: 'Two', program: 'BSIT' });
+    assert.strictEqual(twin.status, 409, code); assert.match(twin.body.error, /already exists/);
+  }
+  const own = db.s.courses.find((c) => c.code === 'H 301');
+  assert.strictEqual((await call(admin, 'PUT', '/courses/' + own.course_id, { code: 'H-301', title: 'One' })).status, 200, 'a subject can change its own spelling');
 }));
